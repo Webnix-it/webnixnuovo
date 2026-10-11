@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Servizi — Webnix | Siti Web, Loghi e Grafica per Nuove Attività</title>
+  <meta name="description" content="Pacchetti Webnix con prezzi chiari una tantum: Sito Web Base, Avvio Locale, Identità & Brand. Cosa include e cosa NO, senza costi nascosti.">
+  <meta name="theme-color" content="#0d1117">
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <main id="corpo-pagina">
+    <!-- 🔁 LOADER INIZIALE (senza pallino) -->
+    <div id="global-loader2">
+      <div id="loader-circle2">
+        <span id="loader-ring2"></span>
+        <div id="loader-text2">
+          <strong>WEBNIX</strong><br>
+          <small>DIGITAL AGENCY</small>
+        </div>
+      </div>
+      <p id="loading-text2">Caricamento in corso...</p>
+      <div id="progress-bar-container2">
+        <div id="progress-bar-fill2"></div>
+      </div>
+    </div>
+
+    <!-- ============ HEADER + NAV ============ -->
+    <header id="header">
+      <a id="logo-link" href="index.html" aria-label="Webnix home">
+        <img id="logo-header" src="loghi/WEBNIX.png" alt="Webnix — Digital Agency">
+      </a>
+      <nav id="nav-desk" aria-label="Navigazione principale">
+        <a href="index.html" aria-label="Home"><span class="etichetta-nav">Home</span><i class="fa-solid fa-house icona-nav" aria-hidden="true"></i></a>
+        <a href="servizi.html" attivo="si" aria-label="Servizi"><span class="etichetta-nav">Servizi</span><i class="fa-solid fa-briefcase icona-nav" aria-hidden="true"></i></a>
+        <a href="faq.html" aria-label="FAQ"><span class="etichetta-nav">FAQ</span><i class="fa-solid fa-circle-question icona-nav" aria-hidden="true"></i></a>
+        <a href="assistenza.html" aria-label="Assistenza"><span class="etichetta-nav">Assistenza</span><i class="fa-solid fa-screwdriver-wrench icona-nav" aria-hidden="true"></i></a>
+        <a href="chi-siamo.html" aria-label="Chi Siamo"><span class="etichetta-nav">Chi Siamo</span><i class="fa-solid fa-users icona-nav" aria-hidden="true"></i></a>
+        <a href="chi-siamo.html#infoContactsSection" aria-label="Contatti"><span class="etichetta-nav">Contatti</span><i class="fa-solid fa-envelope icona-nav" aria-hidden="true"></i></a>
+        <a href="admin.html" aria-label="Area Admin" title="Area Admin"><span class="etichetta-nav">Admin</span><i class="fa-solid fa-user-shield icona-nav" aria-hidden="true"></i></a>
+        <a id="link-bozza-nav" href="index.html#contatti"><span id="bozza-norme">Bozza Gratuita</span><span id="bozza-hover">In 48h, gratis →</span></a>
+    </nav>
+      <button id="hamburger" type="button" aria-label="Apri menu" aria-expanded="false">
+        <i class="fa-solid fa-bars" aria-hidden="true"></i>
+      </button>
+    </header>
+    <!-- Overlay scuro + drawer mobile (vetro blur) -->
+    <div id="overlay-mobile"></div>
+    <aside id="drawer-mobile" aria-label="Menu mobile">
+      <button id="chiusura-drawer" type="button" aria-label="Chiudi menu">
+        <i class="fa-solid fa-xmark" aria-hidden="true"></i>
+      </button>
+      <nav id="nav-mobile">
+        <a href="index.html"><i class="fa-solid fa-house" aria-hidden="true"></i>Home</a>
+        <a href="servizi.html"><i class="fa-solid fa-briefcase" aria-hidden="true"></i>Servizi</a>
+        <a href="faq.html"><i class="fa-solid fa-circle-question" aria-hidden="true"></i>FAQ</a>
+        <a href="assistenza.html"><i class="fa-solid fa-screwdriver-wrench" aria-hidden="true"></i>Assistenza</a>
+        <a href="chi-siamo.html"><i class="fa-solid fa-users" aria-hidden="true"></i>Chi Siamo</a>
+        <a href="chi-siamo.html#infoContactsSection"><i class="fa-solid fa-envelope" aria-hidden="true"></i>Contatti</a>
+        <a href="admin.html"><i class="fa-solid fa-user-shield" aria-hidden="true"></i>Admin</a>
+      </nav>
+      <a id="bottone-bozza-drawer" href="index.html#contatti">
+        <button id="bottone1-footer" type="button" data-sopra="Bozza gratis in 48h" data-sotto="Richiedi ora →" title="Zero costi, zero impegno"></button>
+      </a>
+    </aside>
+
+    <section id="banda-pagina" reveal>
+      <h1>I nostri servizi</h1>
+      <p>Solo HTML, CSS e JavaScript puro. Nessun WordPress, nessun canone mensile nascosto. Il codice è tuo per sempre.</p>
+    </section>
+    <section id="sezione-servizi-completi" class="sezione-comune" reveal>
+      <div class="intestazione-sezione" reveal>
+        <span class="eyebrow-sezione">Tutti i pacchetti</span>
+        <h2 class="titoli-sezione">Scegli con trasparenza radicale</h2>
+        <p class="sottotitolo-sezione">Ogni pacchetto dichiara onestamente cosa include e cosa NON include. Il "Sito Web Base" è la porta d'ingresso: bozza gratuita in 48 ore, paghi solo se approvi.</p>
+      </div>
+      <div id="griglia-servizi"></div>
+    </section>
+
+    <!-- ============ PACCHETTI CON ANTEPRIMA IMMAGINI (slider) ============ -->
+    <section id="sezione-pacchetti" reveal>
+      <div class="intestazione-sezione" reveal>
+        <h2 class="titoli-sezione">I Nostri Servizi</h2>
+        <p class="sottotitolo-sezione">Anteprime reali dei nostri lavori: scorri le immagini, scopri cosa offriamo e acquista il pacchetto.</p>
+      </div>
+
+      <div id="griglia-prodotti">
+
+        <!-- Prodotto 1: Sito Web - Base -->
+        <div id="prodotto-card">
+          <h2 id="titolo-prodotto">💻 Sito Web - Base</h2>
+          <hr id="lineatitoloht">
+          <div id="prezzo">-</div>
+          <div id="sottotitolo">Un pacchetto essenziale per chi vuole un sito web elegante e funzionale da condividere direttamente sui social, perfetto per la bio di Instagram, Facebook o altre piattaforme.</div>
+          <div id="icona-prodotto"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M20 3H4c-1.1 0-2 .9-2 2v11c0 1.1.9 2 2 2h6l-2 3v1h12v-1l-2-3h2c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 13H4V5h16v11z"/></svg></div>
+          <div id="consegna-info">🚚 <strong>Consegna entro 5-12 giorni lavorativi</strong></div>
+          <button id="bottone-scopri" type="button">✅ Scopri cosa offriamo</button>
+          <div id="sezione-cosa-offriamo">
+            <h3 id="titolo-sezione">Cosa Offriamo:</h3>
+            <ul id="lista-caratteristiche">
+              <li>1 Pagina con design moderno e personalizzato.</li>
+              <li>Sito responsive: perfetto su smartphone, tablet e desktop.</li>
+              <li>Hosting gratuito e permanente su GitHub Pages o Netlify (entrambi veloci e affidabili). Possibilità di usare un altro hosting su richiesta.</li>
+              <li>Creazione di un logo personalizzato per il tuo brand (se necessario).</li>
+              <li>Integrazione con i tuoi profili social (Instagram, Facebook, LinkedIn, ecc.).</li>
+              <li>CookieBot gratuito per la gestione dei cookie (conformità GDPR di base).</li>
+              <li>Pagine legali di base generate con IA: Privacy Policy, Termini e Condizioni, Cookie Policy.</li>
+              <li>⚠️ Nota: le pagine legali sono generate automaticamente e non sostituiscono una consulenza legale. Consigliamo di farle validare da un professionista.</li>
+              <li>Modulo di contatto funzionante.</li>
+              <li>Offriamo un periodo di assistenza gratuita di 30 giorni dopo il completamento del progetto. Durante questo periodo, puoi richiedere fino a 3 modifiche al tuo sito web senza costi aggiuntivi (escluso nuove funzionalità). Dopo le 3 modifiche gratuite o il termine dei 30 giorni, eventuali ulteriori interventi saranno valutati e potrebbero comportare costi extra, in base alla complessità della richiesta. Siamo comunque a disposizione per fornirti un preventivo dettagliato.</li>
+              <li>Consegna stimata in 5-12 giorni lavorativi.</li>
+            </ul>
+            <ul id="lista-caratteristiche2">
+              <p><br>❌ <strong>Cosa NON è incluso:</strong></p>
+              <li>Ottimizzazione per i motori di ricerca (SEO): il sito non è pensato per apparire su Google. È progettato per essere condiviso tramite link diretto (es. bio di Instagram, WhatsApp, ecc.).</li>
+              <li>Dominio personalizzato: la registrazione del dominio (es. www.tuositoweb.it) non è inclusa.</li>
+              <li>Servizi di terze parti: strumenti come Iubenda, PayPal, Stripe o newsletter non sono inclusi.</li>
+              <li>Manutenzione post-consegna: aggiornamenti successivi non sono inclusi nel pacchetto.</li>
+              <p><br>❓ <strong>Quali sono i costi futuri per mantenere il sito web attivo?</strong></p>
+              ✅ Nessun Costo
+            </ul>
+          </div>
+          <button id="bottone-acquista" type="button" data-servizio="sito-web">Acquista questo pacchetto</button>
+        </div>
+
+        <!-- Prodotto 2: Creazione Logo -->
+        <div id="prodotto-card">
+          <h2 id="titolo-prodotto">🎨 Creazione Logo</h2>
+          <hr id="lineatitoloht">
+          <div id="prezzo">-</div>
+          <div id="sottotitolo">Rendi unico il tuo brand con un logo professionale</div>
+          <div id="icona-prodotto"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg></div>
+          <div id="consegna-info">🚚 <strong>Consegna in 1-3 giorni lavorativi (spesso entro 24h).</strong></div>
+          <button id="bottone-scopri" type="button">✅ Scopri cosa offriamo</button>
+          <div id="sezione-cosa-offriamo">
+            <h3 id="titolo-sezione">Cosa Offriamo:</h3>
+            <ul id="lista-caratteristiche">
+              <li>Logo personalizzato creato da zero in base al tuo stile, settore e obiettivi.</li>
+              <li>File in tutti i formati principali: PNG (trasparente), JPG, SVG (vettoriale), PDF.</li>
+              <li>3D Logo (in formato digitale)</li>
+              <li>Formati adatti a ogni uso: web, social, biglietti da visita, packaging e stampe grandi.</li>
+              <li>Revisione fino al risultato perfetto.</li>
+              <li>Consegna in 1-3 giorni lavorativi (spesso entro 24h).</li>
+            </ul>
+            <ul id="lista-caratteristiche2">
+              <p><br>❌ <strong>Cosa NON è incluso:</strong></p>
+              <li>Stampa fisica (forniamo solo il file digitale pronto per la stampa).</li>
+            </ul>
+          </div>
+          <button id="bottone-acquista" type="button" data-servizio="creazione-logo">Acquista questo pacchetto</button>
+        </div>
+
+        <!-- Prodotto 3: Creazione Grafica -->
+        <div id="prodotto-card">
+          <h2 id="titolo-prodotto">🖼️ Creazione Grafica</h2>
+          <hr id="lineatitoloht">
+          <div id="prezzo">-</div>
+          <div id="sottotitolo">Dai visibilità ai tuoi eventi, prodotti o promozioni</div>
+          <div id="icona-prodotto"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"/></svg></div>
+          <div id="consegna-info">🚚 <strong>Consegna in 1-3 giorni lavorativi (spesso entro 24 ore)</strong></div>
+          <button id="bottone-scopri" type="button">✅ Scopri cosa offriamo</button>
+          <div id="sezione-cosa-offriamo">
+            <h3 id="titolo-sezione">Cosa Offriamo:</h3>
+            <ul id="lista-caratteristiche">
+              <li>1 Grafica personalizzata</li>
+              <li>2 proposte di design per scegliere lo stile che preferisci</li>
+              <li>Formati file (PNG, JPG ecc..)</li>
+              <li>Formato per social o stampa</li>
+              <li>1 revisione inclusa</li>
+              <li>Copywriting o slogan pubblicitario.</li>
+              <li>Consegna in 1-3 giorni lavorativi (spesso entro 24 ore)</li>
+            </ul>
+            <ul id="lista-caratteristiche2">
+              <p><br>❌ <strong>Cosa NON è incluso:</strong></p>
+              <li>Stampa fisica (forniamo solo il file digitale pronto per la stampa).</li>
+            </ul>
+          </div>
+          <button id="bottone-acquista" type="button" data-servizio="creazione-locandina">Acquista questo pacchetto</button>
+        </div>
+
+        <!-- Prodotto 4: Brand Identity -->
+        <div id="prodotto-card">
+          <h2 id="titolo-prodotto">🔥 Brand Identity</h2>
+          <hr id="lineatitoloht">
+          <div id="prezzo">-</div>
+          <div id="sottotitolo">Costruisci un'identità visiva unica e riconoscibile per il tuo brand</div>
+          <div id="icona-prodotto"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M13.5.67s.74 2.65.74 4.8c0 2.06-1.35 3.73-3.41 3.73-2.07 0-3.63-1.67-3.63-3.73l.03-.36C5.21 7.21 4 10.72 4 14c0 4.42 3.58 8 8 8s8-3.58 8-8C20 8.61 17.41 3.8 13.5.67zM11.71 19c-3.14 0-5.71-2.57-5.71-5.71 0-1.62.58-3.05 1.5-4.18.3 1.63 1.6 2.9 3.2 2.9 1.77 0 3.2-1.43 3.2-3.2 0-.84-.32-1.6-.84-2.19 1.93 1.88 3.15 4.56 3.15 7.54 0 3.37-2.54 6.14-5.71 6.84z"/></svg></div>
+          <div id="consegna-info">🚚 <strong>Consegna in 2-7 giorni lavorativi (spesso entro 48 ore)</strong></div>
+          <button id="bottone-scopri" type="button">✅ Scopri cosa include</button>
+          <div id="sezione-cosa-offriamo">
+            <h3 id="titolo-sezione">Cosa Offriamo:</h3>
+            <ul id="lista-caratteristiche">
+              <li>Logo personalizzato</li>
+              <li>Favicon (per web)</li>
+              <li>Palette colori personalizzata.</li>
+              <li>Selezione tipografica (font per titoli, testi e accenti).</li>
+              <li>Creazione di pattern o texture uniche per il brand.</li>
+              <li>Set di icone o simboli coordinati allo stile del logo.</li>
+              <li>Definizione dello stile fotografico (moodboard e guida visiva).</li>
+              <li>Anteprima del logo su prodotti (t-shirt, tazze, badge, ecc.)</li>
+              <li>Linee guida di composizione e uso del logo su sfondi chiari/scuri.</li>
+              <li>Tone of Voice (voce del brand: formale, amichevole, creativa, ecc.).</li>
+              <li>Mini Brand Book in PDF (palette, font, loghi, pattern, stili e regole d'uso).</li>
+              <li>Consegna in 5–8 giorni lavorativi.</li>
+            </ul>
+            <ul id="lista-caratteristiche2">
+              <p><br>❌ <strong>Cosa NON è incluso:</strong></p>
+              <li>Naming (creazione del nome del brand).</li>
+              <li>Copywriting o slogan pubblicitario.</li>
+              <li>Materiali stampati (biglietti, brochure, packaging).</li>
+              <li>Stampa fisica (forniamo solo il file digitale pronto per la stampa)</li>
+              <li>Template social (opzionale +20€).</li>
+            </ul>
+          </div>
+          <button id="bottone-acquista" type="button" data-servizio="brand-identity">Richiedi un Preventivo</button>
+        </div>
+
+        <!-- Prodotto 5: Rebranding Social -->
+        <div id="prodotto-card">
+          <h2 id="titolo-prodotto">📱 Rebranding Social</h2>
+          <hr id="lineatitoloht">
+          <div id="prezzo">-</div>
+          <div id="sottotitolo">Dai un nuovo look ai tuoi profili social e migliora la tua presenza online.</div>
+          <div id="icona-prodotto"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M18 1.01L6 1 5 1.5v4h11.5L16 3H8v5.5h9.51l.49-.5V11l-4 3.5 4 3.5v3l-.49-.5H8V22h8l1-.5V1.5l-1-.49zM6.5 10l-4 3.5 4 3.5V15h4v-2h-4v-3z"/></svg></div>
+          <div id="consegna-info">🚚 <strong>Consegna completa entro 24-48 ore</strong></div>
+          <button id="bottone-scopri" type="button">✅ Scopri cosa offriamo</button>
+          <div id="sezione-cosa-offriamo">
+            <h3 id="titolo-sezione">Cosa Offriamo:</h3>
+            <ul id="lista-caratteristiche">
+              <li>Rebranding dei post e profilo (colori, layout e stile)</li>
+              <li>Aggiornamento della biografia e delle informazioni profilo</li>
+              <li>Consigli per un impatto visivo più forte</li>
+              <li>Strategie per rendere il tuo profilo più professionale e coerente</li>
+              <li>Mini guida step by step: 'Come andare virale in 30 giorni'</li>
+              <li>Consigli per aumentare l'engagement organico</li>
+              <li>Strategia settimanale: cosa postare, quando e perché</li>
+              <li>5+ prompt pronti per ChatGPT per generare idee, testi e caption</li>
+              <li>Template per contenuti virali (reels e post)</li>
+              <li>Creazione logo (se necessario).</li>
+              <li>Consegna completa entro 24-48 ore</li>
+            </ul>
+          </div>
+          <button id="bottone-acquista" type="button" data-servizio="rebranding-social">Acquista questo pacchetto</button>
+        </div>
+
+        <!-- Prodotto 6: Post + Copywriting -->
+        <div id="prodotto-card">
+          <h2 id="titolo-prodotto">📝 Post+Copywriting</h2>
+          <hr id="lineatitoloht">
+          <div id="prezzo">-</div>
+          <div id="sottotitolo">Un post perfetto per i Social e ads</div>
+          <div id="icona-prodotto"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/></svg></div>
+          <div id="consegna-info">🚚 <strong>Consegna in 1-3 giorni lavorativi (spesso entro 12 ore)</strong></div>
+          <button id="bottone-scopri" type="button">✅ Scopri cosa offriamo</button>
+          <div id="sezione-cosa-offriamo">
+            <h3 id="titolo-sezione">Cosa Offriamo:</h3>
+            <ul id="lista-caratteristiche">
+              <li>1 Post/carosello personalizzato</li>
+              <li>Formati file (PNG, JPG ecc..)</li>
+              <li>Formato per social</li>
+              <li>Caption (Copywriting) + Hashtag</li>
+              <li>Adatto anche per Facebook Ads, Instagram Ads o Google Display</li>
+              <li>Ottimizzazione del messaggio per massimizzare engagement o conversioni</li>
+              <li>1 revisione inclusa</li>
+              <li>Consegna in 1-2 giorni lavorativi (spesso entro 12 ore)</li>
+            </ul>
+            <ul id="lista-caratteristiche2">
+              <p><br>❌ <strong>Cosa NON è incluso:</strong></p>
+              <li>Gestione diretta della campagna pubblicitaria (può essere aggiunta come extra).</li>
+              <li>Budget per la pubblicità (gestito da te sulla piattaforma).</li>
+              <li>Creazione di più di un post (può essere aggiunto come extra).</li>
+            </ul>
+          </div>
+          <button id="bottone-acquista" type="button" data-servizio="post-copywriting">Acquista questo pacchetto</button>
+        </div>
+
+        <!-- Prodotto 7: Restyling Sito Web -->
+        <div id="prodotto-card">
+          <h2 id="titolo-prodotto">✍️ Restyling Sito Web</h2>
+          <hr id="lineatitoloht">
+          <div id="prezzo">-</div>
+          <div id="sottotitolo">Rinnova il tuo sito esistente con un design moderno, responsive e più efficace.</div>
+          <div id="icona-prodotto"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M7 14c-1.66 0-3 1.34-3 3 0 1.31 1.16 2.41 2.59 2.59.36-.61.99-1.06 1.72-1.06.97 0 1.76.79 1.76 1.76 0 .73-.45 1.36-1.06 1.72 1.43.17 2.59-.93 2.59-2.55 0-1.66-1.34-3-3-3zm13.71-9.37l-1.34-1.34c-.39-.39-1.02-.39-1.41 0L9 12.25 11.75 15l8.96-8.96c.39-.39.39-1.02 0-1.41z"/></svg></div>
+          <div id="consegna-info">🚚 <strong>Consegna in 3-6 giorni lavorativi</strong></div>
+          <button id="bottone-scopri" type="button">✅ Scopri cosa offriamo</button>
+          <div id="sezione-cosa-offriamo">
+            <h3 id="titolo-sezione">Cosa Offriamo:</h3>
+            <ul id="lista-caratteristiche">
+              <li>Nuovo design moderno e professionale, coerente con il tuo brand</li>
+              <li>Versione completamente responsive (adatta a smartphone, tablet e desktop)</li>
+              <li>Miglioramento dell'usabilità e della navigazione</li>
+              <li>Aggiornamento di testi e immagini (se forniti)</li>
+              <li>Logo personalizzato creato da zero (se necessario)</li>
+              <li>Consegna in 3-6 giorni lavorativi</li>
+            </ul>
+            <ul id="lista-caratteristiche2">
+              <p><br>❌ <strong>Cosa NON è incluso:</strong></p>
+              <li>Modulo di contatto.</li>
+              <li>Integrazione con servizi esterni (es. Calendly, EmailJS, newsletter).</li>
+              <li>Funzionalità dinamiche (form, login, carrello).</li>
+              <li>Creazione di nuove pagine o contenuti non forniti.</li>
+              <li>Trasferimento o gestione del dominio.</li>
+              <li>Manutenzione o aggiornamenti futuri.</li>
+              <li>Pagine legali.</li>
+            </ul>
+          </div>
+          <button id="bottone-acquista" type="button" data-servizio="restyling-sito-web">Acquista questo pacchetto</button>
+        </div>
+
+        <!-- Prodotto 8: Calendario Prenotazione -->
+        <div id="prodotto-card">
+          <h2 id="titolo-prodotto">📅 Calendario Prenotazione</h2>
+          <hr id="lineatitoloht">
+          <div id="prezzo">-</div>
+          <div id="sottotitolo">Un calendario privato da condividere direttamente con i tuoi clienti per gestire appuntamenti o sessioni.</div>
+          <div id="icona-prodotto"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19a2 2 0 0 0 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11zM9 10H7v2h2v-2zm4 0h-2v2h2v-2zm4 0h-2v2h2v-2z"/></svg></div>
+          <div id="consegna-info">🚚 <strong>Consegna in 1-2 giorni lavorativi</strong></div>
+          <button id="bottone-scopri" type="button">✅ Scopri cosa offriamo</button>
+          <div id="sezione-cosa-offriamo">
+            <p>Organizza la tua giornata in modo semplice e veloce grazie a uno strumento pratico e funzionale.<br>
+            Un calendario privato da condividere direttamente con i tuoi clienti abituali tramite un link riservato.<br>
+            Solo chi ha accesso al link può effettuare una prenotazione, ideale per sessioni di coaching, consulenze o appuntamenti personalizzati.<br>
+            Il link può essere condiviso facilmente con il tuo gruppo o con i clienti abituali.</p>
+            <p><strong>Come funziona:</strong> I tuoi clienti prenotano un appuntamento tramite il calendario, e tu ricevi automaticamente la prenotazione direttamente sul tuo Google Calendar.</p>
+            <ul id="lista-caratteristiche">
+              <li>Visualizzazione in Tempo Reale dello Stato della Giornata: mostra graficamente quanto è occupata una giornata con aggiornamento automatico senza ricaricare la pagina</li>
+              <li>Selezione del Giorno: calendario interattivo per scegliere una data, con navigazione tra mesi e disabilitazione delle date passate</li>
+              <li>Gestione degli Orari Giornalieri: definizione di orari operativi (es. 09:00–18:00) e intervalli configurabili (15, 30, 60 minuti)</li>
+              <li>Blocco Date e Orari Specifici: possibilità di bloccare manualmente intere giornate o singoli slot (es. festività, pause)</li>
+              <li>Disponibilità in Tempo Reale per i Clienti: ogni slot mostra se è disponibile, occupato o in prenotazione, con cambio colore dinamico</li>
+              <li>Conteggio Presenze per Ora/Giorno: visualizzazione del numero di persone già prenotate nello slot, con barra di progresso</li>
+              <li>Capacità Massima Configurabile: limite personalizzabile di persone per slot; superato il limite, lo slot diventa non disponibile</li>
+              <li>Aggiornamento Istantaneo per Tutti gli Utenti: sincronizzazione in tempo reale dello stato degli slot</li>
+              <li>Sistema di Prenotazione Sicuro: slot messo in attesa durante inserimento dati, con timeout per evitare blocchi infiniti</li>
+              <li>Backend per la Gestione Amministrativa: pannello admin protetto per modificare orari, bloccare slot e impostare capacità</li>
+            </ul>
+            <h3 id="titolo-sezione">Cosa Offriamo:</h3>
+            <ul id="lista-caratteristiche">
+              <li>Personalizzazione in base alla tua brand identity</li>
+              <li>Pagina di prenotazione tramite calendario (richiede solo il nome del cliente, senza altre informazioni)</li>
+              <li>Pagina login sicura e protetta</li>
+              <li>Pagina di gestione con configurazione di orari e giornate</li>
+              <li>Integrazione con Google Calendar per sincronizzare automaticamente gli appuntamenti</li>
+              <li>Guida pratica di configurazione e gestione</li>
+              <li>Informativa privacy (GDPR)</li>
+              <li>Possibilità di ricevere un avviso tramite WhatsApp (costo aggiuntivo)</li>
+            </ul>
+            <ul id="lista-caratteristiche2">
+              <p><br>❌ <strong>Cosa NON è incluso:</strong></p>
+              <li>Non è indicizzato sui motori di ricerca (es. Google)</li>
+              <li>Modulo di contatto.</li>
+              <li>Integrazione con servizi esterni (es. Calendly, EmailJS, newsletter).</li>
+              <li>Funzionalità dinamiche (form, carrello).</li>
+              <li>Creazione di nuove pagine</li>
+              <li>Manutenzione o aggiornamenti futuri.</li>
+              <p><br>❓ <strong>Quali sono i costi futuri per mantenere il calendario di prenotazione attivo?</strong></p>
+              ✅ Nessun Costo futuro
+            </ul>
+          </div>
+          <button id="bottone-acquista" type="button" data-servizio="calendario-prenotazione">Acquista questo pacchetto</button>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ============ SUPPORTO CLIENTI E GARANZIE ============ -->
+    <section id="sezione-supporto-garanzie" class="sezione-comune" reveal>
+      <div class="intestazione-sezione" reveal>
+        <span class="eyebrow-sezione">Supporto Clienti e Garanzie</span>
+        <h2 class="titoli-sezione">Al tuo fianco, prima e dopo il progetto</h2>
+        <p class="sottotitolo-sezione">Sei garanzie concrete: le trovi in ogni pacchetto, senza asterischi e senza costi nascosti.</p>
+      </div>
+      <div id="griglia-garanzie">
+        <div id="card-garanzia" reveal delay="1">
+          <div id="icona-garanzia"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="white" aria-hidden="true"><path d="M12 1a9 9 0 0 0-9 9v7a3 3 0 0 0 3 3h2v-8H5v-2a7 7 0 0 1 14 0v2h-3v8h2a3 3 0 0 0 3-3v-7a9 9 0 0 0-9-9z"/></svg></div>
+          <h3>Supporto Continuo</h3>
+          <p>Siamo al tuo fianco durante tutto il processo</p>
+        </div>
+        <div id="card-garanzia" reveal delay="2">
+          <div id="icona-garanzia"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="white" aria-hidden="true"><path d="M17.65 6.35A7.95 7.95 0 0 0 12 4a8 8 0 1 0 7.73 10h-2.08A6 6 0 1 1 12 6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/></svg></div>
+          <h3>Revisioni Gratuite</h3>
+          <p>Ogni pacchetto include modifiche per la tua soddisfazione</p>
+        </div>
+        <div id="card-garanzia" reveal delay="3">
+          <div id="icona-garanzia"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="white" aria-hidden="true"><path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20a8 8 0 1 1 0-16 8 8 0 0 1 0 16zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z"/></svg></div>
+          <h3>Consegne Puntuali</h3>
+          <p>Rispettiamo sempre le tempistiche concordate</p>
+        </div>
+        <div id="card-garanzia" reveal delay="4">
+          <div id="icona-garanzia"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="white" aria-hidden="true"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm-2 16l-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z"/></svg></div>
+          <h3>Qualità Garantita</h3>
+          <p>Ogni lavoro passa da un controllo qualità rigoroso</p>
+        </div>
+        <div id="card-garanzia" reveal delay="5">
+          <div id="icona-garanzia"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="white" aria-hidden="true"><path d="M21 6h-2v9H6v2c0 .55.45 1 1 1h11l4 4V7c0-.55-.45-1-1-1zm-4 6V3c0-.55-.45-1-1-1H3c-.55 0-1 .45-1 1v14l4-4h10c.55 0 1-.45 1-1z"/></svg></div>
+          <h3>Assistenza Post-Consegna</h3>
+          <p>Aiuto anche dopo la consegna del progetto</p>
+        </div>
+        <div id="card-garanzia" reveal delay="6">
+          <div id="icona-garanzia"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="white" aria-hidden="true"><path d="M11.8 10.9c-2.27-.59-3-1.2-3-2.15 0-1.09 1.01-1.85 2.7-1.85 1.77 0 2.44.85 2.5 2.1h2.21c-.07-1.72-1.12-3.3-3.21-3.81V3h-3v2.16c-1.94.42-3.5 1.68-3.5 3.95 0 2.31 1.91 3.46 4.7 4.13 2.5.6 3 1.48 3 2.41 0 .69-.49 1.79-2.7 1.79-2.06 0-2.87-.92-2.98-2.1h-2.2c.12 2.19 1.76 3.42 3.68 3.83V21h3v-2.15c1.95-.37 3.5-1.5 3.5-3.95 0-2.29-1.9-3.36-4.7-4.05z"/></svg></div>
+          <h3>Prezzi Trasparenti</h3>
+          <p>Nessun costo nascosto, paghi solo ciò che vedi</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ FOOTER ============ -->
+        <footer id="footer">
+          <div>
+            <div id="griglia2" reveal>
+              <div id="soluzionidigiatli">
+                <img src="WEBNIX-Logo-Solo-Simbolo-(1).png" id="logo2" alt="Simbolo Webnix">
+                <p>
+                  Soluzioni digitali per far crescere la tua attività.
+                  Aiutiamo le aziende a sviluppare la loro presenza online.
+                </p>
+              </div>
+
+              <div>
+                <h3 style="color: white; margin-bottom: 30px;">Link Utili</h3>
+                <ul id="ul2">
+                  <li><a href="index.html">Home</a></li>
+                  <li><a href="servizi.html">Servizi</a></li>
+                  <li><a href="chi-siamo.html">Chi Siamo</a></li>
+                  <li><a href="faq.html">FAQ</a></li>
+                  <li><a href="assistenza.html">Assistenza</a></li>
+                </ul>
+              </div>
+
+              <div>
+                <h3 style="color: white; text-align: left; margin-bottom: 30px;">Servizi</h3>
+                <ul id="ul2">
+                  <li><a href="servizi.html#sezione-servizi-completi">Siti Web</a></li>
+                  <li><a href="servizi.html#sezione-servizi-completi">Creazione Logo</a></li>
+                  <li><a href="servizi.html#sezione-servizi-completi">Locandine</a></li>
+                  <li><a href="servizi.html#sezione-servizi-completi">Rebranding Social</a></li>
+                  <li><a href="servizi.html#sezione-servizi-completi">Restyling Sito Web</a></li>
+                </ul>
+              </div>
+
+              <div>
+                <h3 style="color: white;">Social</h3>
+                <ul id="ul3">
+                  <div id="cards">
+                    <a href="https://wa.me/14132259397?text=Ciao!%20Sto%20cercando%20qualcuno%20che%20mi%20aiuti%20a%20creare%20una%20presenza%20online.%20Da%20dove%20possiamo%20partire?" target="_blank" rel="noopener" style="text-decoration: none; color: inherit;">
+                      <div class="card-container" id="Whatsapp">
+                        <div class="icon-container">
+                          <svg viewBox="0 0 16 16" class="bi bi-whatsapp" fill="currentColor" height="16" width="16" xmlns="http://www.w3.org/2000/svg" style="color: white;">
+                            <path fill="white" d="M13.601 2.326A7.854 7.854 0 0 0 7.994 0C3.627 0 .068 3.558.064 7.926c0 1.399.366 2.76 1.057 3.965L0 16l4.204-1.102a7.933 7.933 0 0 0 3.79.965h.004c4.368 0 7.926-3.558 7.93-7.93A7.898 7.898 0 0 0 13.6 2.326zM7.994 14.521a6.573 6.573 0 0 1-3.356-.92l-.24-.144-2.494.654.666-2.433-.156-.251a6.56 6.56 0 0 1-1.007-3.505c0-3.626 2.957-6.584 6.591-6.584a6.56 6.56 0 0 1 4.66 1.931 6.557 6.557 0 0 1 1.928 4.66c-.004 3.639-2.961 6.592-6.592 6.592zm3.615-4.934c-.197-.099-1.17-.578-1.353-.646-.182-.065-.315-.099-.445.099-.133.197-.513.646-.627.775-.114.133-.232.148-.43.05-.197-.1-.836-.308-1.592-.985-.59-.525-.985-1.175-1.103-1.372-.114-.198-.011-.304.088-.403.087-.088.197-.232.296-.346.1-.114.133-.198.198-.33.065-.134.034-.248-.015-.347-.05-.099-.445-1.076-.612-1.47-.16-.389-.323-.335-.445-.34-.114-.007-.247-.007-.38-.007a.729.729 0 0 0-.529.247c-.182.198-.691.677-.691 1.654 0 .977.71 1.916.81 2.049.098.133 1.394 2.132 3.383 2.992.47.205.84.326 1.129.418.475.152.904.129 1.246.08.38-.058 1.171-.48 1.338-.943.164-.464.164-.86.114-.943-.049-.084-.182-.133-.38-.232z"></path>
+                          </svg>
+                          <p>WhatsApp</p>
+                        </div>
+                      </div>
+                    </a>
+
+                    <!-- Instagram -->
+                    <a href="https://www.instagram.com/webnix.it" target="_blank" rel="noopener" style="text-decoration: none; color: inherit;">
+                      <div class="card-container" id="instagram">
+                        <div class="icon-container">
+                          <svg viewBox="0 0 24 24" fill="#fff">
+                            <path d="M12 0C8.74 0 8.333.015 7.053.072 5.775.132 4.905.333 4.14.63c-.789.306-1.459.717-2.126 1.384S.935 3.35.63 4.14C.333 4.905.131 5.775.072 7.053.012 8.333 0 8.74 0 12s.015 3.667.072 4.947c.06 1.277.261 2.148.558 2.913a5.885 5.885 0 0 0 1.384 2.126A5.868 5.868 0 0 0 4.14 23.37c.766.296 1.636.499 2.913.558C8.333 23.988 8.74 24 12 24s3.667-.015 4.947-.072c1.277-.06 2.148-.262 2.913-.558a5.898 5.898 0 0 0 2.126-1.384 5.86 5.86 0 0 0 1.384-2.126c.296-.765.499-1.636.558-2.913.06-1.28.072-1.687.072-4.947s-.015-3.667-.072-4.947c-.06-1.277-.262-2.149-.558-2.913a5.89 5.89 0 0 0-1.384-2.126A5.847 5.847 0 0 0 19.86.63c-.765-.297-1.636-.499-2.913-.558C15.667.012 15.26 0 12 0zm0 2.16c3.203 0 3.585.016 4.85.071 1.17.055 1.805.249 2.227.415.562.217.96.477 1.382.896.419.42.679.819.896 1.381.164.422.36 1.057.413 2.227.057 1.266.07 1.646.07 4.85s-.015 3.585-.074 4.85c-.061 1.17-.256 1.805-.421 2.227a3.81 3.81 0 0 1-.899 1.382 3.744 3.744 0 0 1-1.38.896c-.42.164-1.065.36-2.235.413-1.274.057-1.649.07-4.859.07-3.211 0-3.586-.015-4.859-.074-1.171-.061-1.816-.256-2.236-.421a3.716 3.716 0 0 1-1.379-.899 3.644 3.644 0 0 1-.9-1.38c-.165-.42-.359-1.065-.42-2.235-.045-1.26-.061-1.649-.061-4.844 0-3.196.016-3.586.061-4.861.061-1.17.255-1.814.42-2.234.21-.57.479-.96.9-1.381.419-.419.81-.689 1.379-.898.42-.166 1.051-.361 2.221-.421 1.275-.045 1.65-.06 4.859-.06l.045.03zm0 3.678a6.162 6.162 0 1 0 0 12.324 6.162 6.162 0 1 0 0-12.324zM12 16c-2.21 0-4-1.79-4-4s1.79-4 4-4 4 1.79 4 4-1.79 4-4 4zm7.846-10.405a1.441 1.441 0 0 1-2.88 0 1.44 1.44 0 0 1 2.88 0z"></path>
+                          </svg>
+                          <p>Instagram</p>
+                        </div>
+                      </div>
+                    </a>
+
+                    <a href="https://www.facebook.com/people/Webnix-Digital-Agency/61582890411506/" target="_blank" rel="noopener" style="text-decoration: none; color: inherit;">
+                      <div class="card-container" id="facebook">
+                        <div class="icon-container">
+                          <svg fill="#ffffff" height="200px" width="200px" version="1.1" xmlns="http://www.w3.org/2000/svg" viewBox="-337 273 123.5 256" xml:space="preserve">
+                            <path d="M-260.9,327.8c0-10.3,9.2-14,19.5-14c10.3,0,21.3,3.2,21.3,3.2l6.6-39.2c0,0-14-4.8-47.4-4.8c-20.5,0-32.4,7.8-41.1,19.3 c-8.2,10.9-8.5,28.4-8.5,39.7v25.7H-337V396h26.5v133h49.6V396h39.3l2.9-38.3h-42.2V327.8z"></path>
+                          </svg>
+                          <p>Facebook</p>
+                        </div>
+                      </div>
+                    </a>
+
+                    <a href="mailto:webnixit@gmail.com?subject=Richiesta%20di%20preventivo&body=Ciao!%20Sto%20cercando%20qualcuno%20che%20mi%20aiuti%20a%20creare%20una%20presenza%20online.%20Da%20dove%20possiamo%20partire?" style="text-decoration: none; color: inherit;">
+                      <div class="card-container" id="Gmail">
+                        <div class="icon-container">
+                          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" style="color: white;" fill="currentColor" viewBox="0 0 16 16">
+                            <path d="M2 2A2 2 0 0 0 .05 3.555L8 8.414l7.95-4.859A2 2 0 0 0 14 2zm-2 9.8V4.698l5.803 3.546zm6.761-2.97-6.57 4.026A2 2 0 0 0 2 14h6.256A4.5 4.5 0 0 1 8 12.5a4.49 4.49 0 0 1 1.606-3.446l-.367-.225L8 9.586zM16 9.671V4.697l-5.803 3.546.338.208A4.5 4.5 0 0 1 12.5 8c1.414 0 2.675.652 3.5 1.671"/>
+                            <path d="M15.834 12.244c0 1.168-.577 2.025-1.587 2.025-.503 0-1.002-.228-1.12-.648h-.043c-.118.416-.543.643-1.015.643-.77 0-1.259-.542-1.259-1.434v-.529c0-.844.481-1.4 1.26-1.4.585 0 .87.333.953.63h.03v-.568h.905v2.19c0 .272.18.42.411.42.315 0 .639-.415.639-1.39v-.118c0-1.277-.95-2.326-2.484-2.326h-.04c-1.582 0-2.64 1.067-2.64 2.724v.157c0 1.867 1.237 2.654 2.57 2.654h.045c.507 0 .935-.07 1.18-.18v.731c-.219.1-.643.175-1.237.175h-.044C10.438 16 9 14.82 9 12.646v-.214C9 10.36 10.421 9 12.485 9h.035c2.12 0 3.314 1.43 3.314 3.034zm-4.04.21v.227c0 .586.227.8.581.8.31 0 .564-.17.564-.743v-.367c0-.516-.275-.708-.572-.708-.346 0-.573.245-.573.791"/>
+                          </svg>
+                          <p>E-mail</p>
+                        </div>
+                      </div>
+                    </a>
+                  </div>
+                </ul>
+              </div>
+            </div>
+
+            <hr id="spaziohr">
+
+            <div id="metodidipagamanto">
+              <svg id="svgiconepay" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 16 16">
+                <path d="M0 4a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v1H0zm0 3v5a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7zm3 2h1a1 1 0 0 1 1 1v1a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1v-1a1 1 0 0 1 1-1"/>
+              </svg>
+              <svg id="svgiconepay" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <g>
+                  <path d="M0 0h24v24H0z" fill="none"></path>
+                  <path d="M22.222 15.768l-.225-1.125h-2.514l-.4 1.117-2.015.004a4199.19 4199.19 0 0 1 2.884-6.918c.164-.391.455-.59.884-.588.328.003.863.003 1.606.001L24 15.765l-1.778.003zm-2.173-2.666h1.62l-.605-2.82-1.015 2.82zM7.06 8.257l2.026.002-3.132 7.51-2.051-.002a950.849 950.849 0 0 1-1.528-5.956c-.1-.396-.298-.673-.679-.804C1.357 8.89.792 8.71 0 8.465V8.26h3.237c.56 0 .887.271.992.827.106.557.372 1.975.8 4.254L7.06 8.257zm4.81.002l-1.602 7.508-1.928-.002L9.94 8.257l1.93.002zm3.91-.139c.577 0 1.304.18 1.722.345l-.338 1.557c-.378-.152-1-.357-1.523-.35-.76.013-1.23.332-1.23.638 0 .498.816.749 1.656 1.293.959.62 1.085 1.177 1.073 1.782-.013 1.256-1.073 2.495-3.309 2.495-1.02-.015-1.388-.101-2.22-.396l.352-1.625c.847.355 1.206.468 1.93.468.663 0 1.232-.268 1.237-.735.004-.332-.2-.497-.944-.907-.744-.411-1.788-.98-1.774-2.122.017-1.462 1.402-2.443 3.369-2.443z"></path>
+                </g>
+              </svg>
+              <svg id="svgiconepay" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 16 16">
+                <path d="M14.06 3.713c.12-1.071-.093-1.832-.702-2.526C12.628.356 11.312 0 9.626 0H4.734a.7.7 0 0 0-.691.59L2.005 13.509a.42.42 0 0 0 .415.486h2.756l-.202 1.28a.628.628 0 0 0 .62.726H8.14c.429 0 .793-.31.862-.731l.025-.13.48-3.043.03-.164.001-.007a.35.35 0 0 1 .348-.297h.38c1.266 0 2.425-.256 3.345-.91q.57-.403.993-1.005a4.94 4.94 0 0 0 .88-2.195c.242-1.246.13-2.356-.57-3.154a2.7 2.7 0 0 0-.76-.59l-.094-.061ZM6.543 8.82a.7.7 0 0 1 .321-.079H8.3c2.82 0 5.027-1.144 5.672-4.456l.003-.016q.326.186.548.438c.546.623.679 1.535.45 2.71-.272 1.397-.866 2.307-1.663 2.874-.802.57-1.842.815-3.043.815h-.38a.87.87 0 0 0-.863.734l-.03.164-.48 3.043-.024.13-.001.004a.35.35 0 0 1-.348.296H5.595a.106.106 0 0 1-.105-.123l.208-1.32z"/>
+              </svg>
+              <svg id="svgiconepaybtc" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 16 16">
+                <path d="M5.5 13v1.25c0 .138.112.25.25.25h1a.25.25 0 0 0 .25-.25V13h.5v1.25c0 .138.112.25.25.25h1a.25.25 0 0 0 .25-.25V13h.084c1.992 0 3.416-1.033 3.416-2.82 0-1.502-1.007-2.323-2.186-2.44v-.088c.97-.242 1.683-.974 1.683-2.19C11.997 3.93 10.847 3 9.092 3H9V1.75a.25.25 0 0 0-.25-.25h-1a.25.25 0 0 0-.25.25V3h-.573V1.75a.25.25 0 0 0-.25-.25H5.75a.25.25 0 0 0-.25.25V3l-1.998.011a.25.25 0 0 0-.25.25v.989c0 .137.11.25.248.25l.755-.005a.75.75 0 0 1 .745.75v5.505a.75.75 0 0 1-.75.75l-.748.011a.25.25 0 0 0-.25.25v1c0 .138.112.25.25.25zm1.427-8.513h1.719c.906 0 1.438.498 1.438 1.312 0 .871-.575 1.362-1.877 1.362h-1.28zm0 4.051h1.84c1.137 0 1.756.58 1.756 1.524 0 .953-.626 1.45-2.158 1.45H6.927z"/>
+              </svg>
+              <svg viewBox="0 0 192 192" xmlns="http://www.w3.org/2000/svg" width="22px" fill="none">
+                <path stroke="#ffffff" stroke-linejoin="round" stroke-width="12" d="M99 22c-13.415 0-29.564 1.953-38.077 3.13-3.521.486-6.226 3.294-6.667 6.82L39.138 152.897c-1.154 9.233 5.793 17.672 15.093 17.36 7.908-.265 14.743-1.197 20.936-3.119 5.049-1.567 8.26-6.27 8.974-11.508L89 120l14.191 39.42c2.285 6.348 8.318 10.693 15.053 10.29 10.248-.611 18.11-2.294 27.788-5.98 4.703-1.791 6.264-7.558 3.671-11.871C139.848 135.468 136.165 121.216 131 104c0 0 22-14 22-38 0-36-30-44-54-44Z"></path>
+                <path fill="#ffffff" d="m85.929 87.19 4.363-32c.406-2.974 2.95-5.235 5.94-4.984C112.14 51.539 117.362 59.302 116 72c-1.142 10.655-7.352 19.734-24.13 21.635-3.613.409-6.433-2.843-5.941-6.446Z"></path>
+              </svg>
+            </div>
+
+            <div id="copyright-links">
+              <a href="privacy-policy.html">Privacy Policy</a>
+              <a href="termini-condizioni.html">Termini e Condizioni</a>
+              <a href="cookie-policy.html">Cookie Policy</a>
+            </div>
+          </div>
+
+          <div id="copyright-container">
+            <div id="copyright-main">
+              <p><strong id="anno-copyright">© 2026 Webnix</strong> · Tutti i diritti riservati · Realizzato con solo HTML, CSS e JavaScript.</p>
+              <p>webnixit@gmail.com</p>
+            </div>
+          </div>
+        </footer>
+  </main>
+
+  <script src="config.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>
