@@ -914,7 +914,7 @@ details.domanda summary:hover {
 
 /* ---------- FORM CONTATTI / BOZZA ---------- */
 #sezione-contatti { background: linear-gradient(180deg, transparent, rgba(232,28,255,.05) 30%, rgba(64,201,255,.05) 70%, transparent); }
-#contenitore-form { display: grid; grid-template-columns: 1.1fr .9fr; gap: clamp(30px, 5vw, 60px); align-items: start; }
+#contenitore-form { display: grid; grid-template-columns: 1fr; gap: clamp(30px, 5vw, 60px); align-items: start; max-width: 720px; margin-inline: auto; }
 #box-info-contatti { background: var(--sfondo-card); border-radius: var(--raggio); padding: 34px 30px; border: 1px solid rgba(255,255,255,.08); }
 .riga-info { display: flex; gap: 16px; align-items: flex-start; padding: 13px 0; border-bottom: 1px solid rgba(255,255,255,.06); }
 .riga-info:last-of-type { border-bottom: 0; }

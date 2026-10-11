@@ -340,22 +340,10 @@
       btn.type = "button";
       btn.className = "btn_seleziona";
       btn.textContent = s.cta;
-      var nomePacchetto = (s.eyebrow ? s.eyebrow + " " : "") + s.name;
       btn.addEventListener("click", function () {
-        /* Mappa il nome pacchetto -> opzione del menu a tendina */
-        var mappaOpzioni = {
-          "Sito Web Base": "Sito Web Base",
-          "Creazione Brand Identity": "Creazione Logo — Brand Identity",
-          "Creazione Grafica": "Creazione Grafica / Locandine",
-          "Rebranding Social": "Rebranding Social",
-          "Restyling Sito Web": "Restyling Sito Web"
-        };
+        /* Il form è stato rimosso: il click porta direttamente alla sezione contatti */
         var contatto = document.getElementById("contatti");
         if (contatto) contatto.scrollIntoView({ behavior: "smooth" });
-        var sel = document.getElementById("campo-servizio");
-        if (sel) sel.value = mappaOpzioni[nomePacchetto] || "Non lo so ancora";
-        var msg = document.getElementById("messaggio-modulo");
-        if (msg) { msg.removeAttribute("tipo"); msg.textContent = ""; }
       });
 
       [intest, prezzo, etich, desc, lista, btn].forEach(function (n) { card.appendChild(n); });
@@ -524,52 +512,7 @@
       });
   }
 
-  /* ---------- FORM CONTATTI → WHATSAPP ---------- */
-  function inizializzaForm() {
-    var form = document.getElementById("form-bozza");
-    if (!form) return;
-    var msg = document.getElementById("messaggio-modulo");
-    var area = document.getElementById("campo-descrizione");
-    var contatore = document.getElementById("contatore-caratteri");
-    var max = (CFG && CFG.reviews.maxChars) || 1000; // limite uniformato a 1000
-
-    if (area && contatore) {
-      function aggiorna() {
-        var resto = max - area.value.length;
-        contatore.textContent = resto + " caratteri rimanenti (max " + max + ")";
-        if (resto < 0) area.value = area.value.slice(0, max);
-      }
-      area.addEventListener("input", aggiorna);
-      aggiorna();
-    }
-
-    form.addEventListener("submit", function (e) {
-      e.preventDefault();
-      var nome = (document.getElementById("campo-nome") || {}).value || "";
-      var attivita = (document.getElementById("campo-attivita") || {}).value || "";
-      var tel = (document.getElementById("campo-telefono") || {}).value || "";
-      var servizio = (document.getElementById("campo-servizio") || {}).value || "Sito Web Base";
-      var desc = (document.getElementById("campo-descrizione") || {}).value || "";
-
-      if (!nome.trim() || !attivita.trim()) {
-        msg.textContent = "Inserisci almeno nome e attività: servono per preparare la bozza.";
-        msg.setAttribute("tipo", "errore");
-        return;
-      }
-      var testo =
-        "Ciao Webnix! Richiedo la BOZZA GRATUITA in 48h.\n" +
-        "• Nome: " + nome.trim() + "\n" +
-        "• Attività: " + attivita.trim() + "\n" +
-        "• Telefono: " + (tel.trim() || "n.d.") + "\n" +
-        "• Servizio: " + servizio + "\n" +
-        "• Dettaglio: " + (desc.trim() || "n.d.");
-      window.open(waLink(testo), "_blank", "noopener");
-      msg.textContent = "Perfetto! Ti abbiamo aperto WhatsApp: invia il messaggio precompilato e ricevi la bozza entro 48 ore.";
-      msg.setAttribute("tipo", "ok");
-      form.reset();
-      if (contatore) contatore.textContent = "";
-    });
-  }
+  /* ---------- FORM CONTATTI: rimosso su richiesta, la sezione usa solo i link diretti ---------- */
 
   /* ---------- BOTTONE 1: stato [attivo] per touch ---------- */
   function inizializzaBottoneTouch() {
@@ -661,7 +604,6 @@
     renderPortfolio();
     inizializzaFiltri();
     caricaRecensioni();
-    inizializzaForm();
     inizializzaBottoneTouch();
     applicaConfigLink();
     inizializzaPacchetti();
