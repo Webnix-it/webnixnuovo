@@ -60,7 +60,7 @@
       position:absolute;left:16px;top:50%;transform:translateY(-50%);
       color:#6e7681;font-size:.95rem;transition:color .25s;pointer-events:none;
     }
-    .campo input[type="email"],.campo input[type="password"]{
+    .campo input[type="email"],.campo input[type="password"],.campo input[type="text"]{
       width:100%;padding:14px 44px;border-radius:12px;
       border:1px solid #30363d;background:#0d1117;color:#fff;font-size:1em;
       transition:border-color .25s,box-shadow .25s;outline:none;box-sizing:border-box;
@@ -69,10 +69,13 @@
     .campo input:focus{border-color:#a37cff;box-shadow:0 0 0 3px rgba(163,124,255,.18);}
     .mostra-psw{
       position:absolute;right:8px;top:50%;transform:translateY(-50%);
-      background:none;border:none;color:#6e7681;cursor:pointer;
-      padding:8px 10px;border-radius:8px;font-size:.95rem;transition:color .2s;z-index:2;
+      background:rgba(163,124,255,.08);border:1px solid rgba(163,124,255,.25);color:#a37cff;cursor:pointer;
+      width:34px;height:34px;display:flex;align-items:center;justify-content:center;
+      border-radius:9px;font-size:.9rem;transition:color .2s,background .2s,border-color .2s;z-index:2;
     }
-    .mostra-psw:hover{color:#fff;}
+    .mostra-psw:hover{color:#fff;background:rgba(163,124,255,.22);border-color:#a37cff;}
+    .mostra-psw:focus-visible{outline:2px solid #a37cff;outline-offset:2px;}
+    .etichetta-psw{display:block;margin-top:8px;font-size:.78rem;color:#6e7681;font-weight:600;text-align:right;}
     #btn-entra{
       margin-top:6px;padding:15px;border:none;border-radius:12px;
       background:linear-gradient(-45deg,#e81cff,#40c9ff);
@@ -87,15 +90,13 @@
     #msg-login.visible{display:block;animation:shake .4s;}
     @keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
     .avviso-riservato{
-      z-index:1;position:relative;
-      display:flex;align-items:center;gap:12px;justify-content:center;flex-wrap:wrap;
-      max-width:560px;margin:26px auto 0;
-      color:#ffb4b4;font-weight:600;font-size:.9rem;text-align:left;line-height:1.45;
+      display:flex;align-items:flex-start;gap:10px;text-align:left;
+      margin:16px 0 0;padding:13px 15px;border-radius:12px;
+      color:#ffb4b4;font-weight:600;font-size:.85rem;line-height:1.45;
       background:rgba(255,80,80,.07);
-      border:1px solid rgba(255,90,90,.4);border-radius:14px;
-      padding:14px 20px;
+      border:1px solid rgba(255,90,90,.35);
     }
-    .avviso-riservato i{font-size:1.15rem;color:#ff6b6b;}
+    .avviso-riservato i{font-size:1.05rem;color:#ff6b6b;margin-top:2px;flex-shrink:0;}
     .torna-home{
       z-index:1;display:inline-flex;align-items:center;gap:.5em;
       margin-top:26px;color:#9aa4b2;text-decoration:none;font-size:.92rem;font-weight:600;
@@ -185,19 +186,18 @@
           <div class="campo">
             <input type="password" id="password" placeholder="Password" autocomplete="current-password" required />
             <i class="fa-solid fa-key" aria-hidden="true"></i>
-            <button type="button" class="mostra-psw" id="toggle-psw" aria-label="Mostra o nascondi password" aria-pressed="false">
+            <button type="button" class="mostra-psw" id="toggle-psw" aria-label="Mostra password" aria-pressed="false" title="Mostra password">
               <i class="fa-solid fa-eye" aria-hidden="true"></i>
             </button>
           </div>
           <input type="submit" id="btn-entra" value="Entra" />
           <p id="msg-login" role="alert"></p>
+          <p class="avviso-riservato">
+            <i class="fa-solid fa-triangle-exclamation" aria-hidden="true"></i>
+            Accesso riservato esclusivamente allo staff e al personale autorizzato. Ogni tentativo di accesso non autorizzato viene registrato.
+          </p>
         </form>
       </div>
-
-      <p class="avviso-riservato">
-        <i class="fa-solid fa-triangle-exclamation" aria-hidden="true"></i>
-        Accesso riservato esclusivamente allo staff e al personale autorizzato. Ogni tentativo di accesso non autorizzato viene registrato.
-      </p>
 
       <a class="torna-home" href="index.html"><i class="fa-solid fa-arrow-left" aria-hidden="true"></i> Torna al sito</a>
     </section>
@@ -353,11 +353,17 @@
     // Mostra / nascondi password
     const toggleBtn = document.getElementById('toggle-psw');
     const pswInput = document.getElementById('password');
+    function aggiornaToggle(){
+      const mostra = pswInput.type === 'password'; // il bottone compie l'azione "mostra"
+      toggleBtn.setAttribute('aria-pressed', String(!mostra));
+      toggleBtn.setAttribute('aria-label', mostra ? 'Mostra password' : 'Nascondi password');
+      toggleBtn.title = mostra ? 'Mostra password' : 'Nascondi password';
+      toggleBtn.querySelector('i').className = mostra ? 'fa-solid fa-eye' : 'fa-solid fa-eye-slash';
+    }
     toggleBtn.addEventListener('click', () => {
-      const mostra = pswInput.type === 'password';
-      pswInput.type = mostra ? 'text' : 'password';
-      toggleBtn.setAttribute('aria-pressed', String(mostra));
-      toggleBtn.querySelector('i').className = mostra ? 'fa-solid fa-eye-slash' : 'fa-solid fa-eye';
+      pswInput.type = pswInput.type === 'password' ? 'text' : 'password';
+      aggiornaToggle();
+      pswInput.focus({ preventScroll: true });
     });
 
     const msg = document.getElementById('msg-login');
