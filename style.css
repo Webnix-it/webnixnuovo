@@ -243,25 +243,29 @@ button, input, textarea, select { font: inherit; color: inherit; }
   color: transparent; -webkit-text-fill-color: transparent;
 }
 
-/* Link Admin: scritta + icona scudo sempre visibile accanto (crossfade solo sulla parola) */
-#nav-desk > a[href="admin.html"] {
-  padding: .55em .9em;
+/* Link Admin: SOLO icona scudo al posto della scritta, sempre visibile */
+#nav-desk > a.admin-solo-icona {
+  padding: .55em .7em;
   display: inline-flex; align-items: center; justify-content: center;
-  gap: .45em;
 }
-#nav-desk > a[href="admin.html"] > i:not(.icona-nav) { font-size: 1.05rem; line-height: 1; }
-/* L'icona dedicata "admin" resta fissa: niente swap elastico al passaggio del mouse */
-#nav-desk > a[href="admin.html"] .icona-nav,
-#nav-desk > a[href="admin.html"]:hover .icona-nav,
-#nav-desk > a[href="admin.html"]:focus-visible .icona-nav,
-#nav-desk > a[href="admin.html"][attivo="si"] .icona-nav,
-#nav-desk > a[href="admin.html"][attivo="si"]:hover .icona-nav,
-#nav-desk > a[href="admin.html"][attivo="si"]:focus-visible .icona-nav {
+#nav-desk > a.admin-solo-icona .icona-nav {
   position: static; inset: auto; opacity: 1; transform: none;
+  font-size: 1.2rem; line-height: 1;
 }
-/* La scritta "Admin" non sparisce più all'hover: resta insieme all'icona */
-#nav-desk > a[href="admin.html"]:hover .etichetta-nav,
-#nav-desk > a[href="admin.html"]:focus-visible .etichetta-nav { opacity: 1; transform: none; }
+/* Niente swap elastico: l'icona resta fissa anche in hover/focus/pagina attiva */
+#nav-desk > a.admin-solo-icona:hover .icona-nav,
+#nav-desk > a.admin-solo-icona:focus-visible .icona-nav,
+#nav-desk > a.admin-solo-icona[attivo="si"] .icona-nav,
+#nav-desk > a.admin-solo-icona[attivo="si"]:hover .icona-nav,
+#nav-desk > a.admin-solo-icona[attivo="si"]:focus-visible .icona-nav {
+  opacity: 1; transform: none;
+}
+/* Icona col gradiente brand quando la pagina Admin è quella attiva */
+#nav-desk > a.admin-solo-icona[attivo="si"] .icona-nav {
+  background: linear-gradient(90deg, var(--viola), var(--ciano));
+  -webkit-background-clip: text; background-clip: text;
+  color: transparent; -webkit-text-fill-color: transparent;
+}
 /* Underline gradiente brand che cresce da centro + ZOOM 1.2 lento e visibile */
 #nav-desk > a:not(#link-bozza-nav)::after {
   content: ""; position: absolute; left: 18%; right: 18%; bottom: 6px; height: 2px;
