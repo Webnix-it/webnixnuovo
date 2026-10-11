@@ -203,6 +203,30 @@
     @media (prefers-reduced-motion:reduce){
       .pannello,.rec-card,.dash-link,.selettore-stelle button{animation:none;transition:none;}
     }
+    /* Bottone elimina animato (Uiverse.io by vinodjangid07) */
+    .btn-elimina-uiverse{
+      width:50px;height:50px;border-radius:50%;
+      background-color:rgb(20,20,20);border:none;font-weight:600;
+      display:flex;align-items:center;justify-content:center;
+      box-shadow:0 0 20px rgba(0,0,0,.164);cursor:pointer;
+      transition-duration:.3s;overflow:hidden;position:relative;flex-shrink:0;
+    }
+    .btn-elimina-uiverse .svgIcon{width:12px;transition-duration:.3s;}
+    .btn-elimina-uiverse .svgIcon path{fill:white;}
+    .btn-elimina-uiverse:hover{
+      width:140px;border-radius:50px;transition-duration:.3s;
+      background-color:rgb(255,69,69);align-items:center;
+    }
+    .btn-elimina-uiverse:hover .svgIcon{
+      width:50px;transition-duration:.3s;transform:translateY(60%);
+    }
+    .btn-elimina-uiverse::before{
+      position:absolute;top:-20px;left:0;right:0;text-align:center;
+      content:"Delete";color:white;transition-duration:.3s;font-size:2px;
+    }
+    .btn-elimina-uiverse:hover::before{
+      font-size:13px;opacity:1;transform:translateY(30px);transition-duration:.3s;
+    }
   </style>
 </head>
 
@@ -321,10 +345,6 @@
               <div class="campo-dash">
                 <i class="fa-solid fa-user ic" aria-hidden="true"></i>
                 <input type="text" id="rec-nome" placeholder="Nome del cliente *" maxlength="60" required>
-              </div>
-              <div class="campo-dash">
-                <i class="fa-solid fa-store ic" aria-hidden="true"></i>
-                <input type="text" id="rec-attivita" placeholder="Attività / azienda (facoltativo)" maxlength="80">
               </div>
               <div class="campo-dash">
                 <i class="fa-solid fa-globe ic" aria-hidden="true"></i>
@@ -489,7 +509,6 @@
     const form = document.getElementById('form-recensione');
     const inpId = document.getElementById('rec-id');
     const inpNome = document.getElementById('rec-nome');
-    const inpAtt = document.getElementById('rec-attivita');
     const inpSito = document.getElementById('rec-sito');
     const inpTesto = document.getElementById('rec-testo');
     const btnAnnullaMod = document.getElementById('btn-annulla-mod');
@@ -518,12 +537,12 @@
       if(sito === null){ mostraMsg('Sito web non valido: usa un link http/https (es. https://www.esempio.it).','err'); return; }
       if(inpId.value){
         const rec = lista.find(r=>r.id===inpId.value);
-        if(rec){ rec.nome=nome; rec.attivita=inpAtt.value.trim(); rec.sito=sito; rec.stelle=voto; rec.testo=testo; }
+        if(rec){ rec.nome=nome; rec.sito=sito; rec.stelle=voto; rec.testo=testo; }
         mostraMsg('Recensione aggiornata ✔');
       } else {
         lista.push({
           id: 'r' + Date.now() + Math.random().toString(36).slice(2,7),
-          nome, attivita: inpAtt.value.trim(), sito, stelle: voto, testo,
+          nome, sito, stelle: voto, testo,
           timestamp: Date.now()
         });
         mostraMsg('Recensione aggiunta ✔');
@@ -562,7 +581,9 @@
               <span class="rec-stelle" aria-label="${r.stelle} su 5 stelle">${stellaHTML(r.stelle)}</span>
               <div class="rec-azioni">
                 <button class="btn-mini modifica" title="Modifica recensione" aria-label="Modifica recensione di ${esc(r.nome)}"><i class="fa-solid fa-pen" aria-hidden="true"></i></button>
-                <button class="btn-mini elimina" title="Elimina recensione" aria-label="Elimina recensione di ${esc(r.nome)}"><i class="fa-solid fa-trash" aria-hidden="true"></i></button>
+                <button class="btn-elimina-uiverse" title="Elimina recensione" aria-label="Elimina recensione di ${esc(r.nome)}">
+                  <svg viewBox="0 0 448 512" class="svgIcon"><path d="M135.2 17.7L128 32H32C14.3 32 0 46.3 0 64S14.3 96 32 96H416c17.7 0 32-14.3 32-32s-14.3-32-32-32H320l-7.2-14.3C307.4 6.8 296.3 0 284.2 0H163.8c-12.1 0-23.2 6.8-28.6 17.7zM416 128H32L53.2 467c1.6 25.3 22.6 45 47.9 45H346.9c25.3 0 46.3-19.7 47.9-45L416 128z"></path></svg>
+                </button>
               </div>
             </div>
           </div>
@@ -586,7 +607,6 @@
         if(!r) return;
         inpId.value = r.id;
         inpNome.value = r.nome || '';
-        inpAtt.value = r.attivita || '';
         inpSito.value = r.sito || '';
         inpTesto.value = r.testo || '';
         voto = r.stelle || 0;
@@ -598,7 +618,7 @@
         inpNome.focus({preventScroll:true});
       }
 
-      if(e.target.closest('.elimina')){
+      if(e.target.closest('.btn-elimina-uiverse') || e.target.closest('.elimina')){
         idDaEliminare = id;
         modale.classList.add('aperta');
         document.getElementById('modale-no').focus();
