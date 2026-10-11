@@ -346,7 +346,7 @@ body.pagina-admin #nav-desk > a.admin-solo-icona .etichetta-nav {
 #nav-desk .dropdown-altro a i {
   position: static; inset: auto; opacity: 1; transform: none;
   width: 1.15em; text-align: center; font-size: 1rem; line-height: 1;
-  color: var(--ciano); -webkit-text-fill-color: initial;
+  color: #fff; -webkit-text-fill-color: initial;
   background: none; -webkit-background-clip: border-box; background-clip: border-box;
 }
 #nav-desk .dropdown-altro a:hover,
