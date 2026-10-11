@@ -243,12 +243,25 @@ button, input, textarea, select { font: inherit; color: inherit; }
   color: transparent; -webkit-text-fill-color: transparent;
 }
 
-/* Link Admin: scritta + icona scudo come gli altri link (scambio in hover) */
+/* Link Admin: scritta + icona scudo sempre visibile accanto (crossfade solo sulla parola) */
 #nav-desk > a[href="admin.html"] {
   padding: .55em .9em;
   display: inline-flex; align-items: center; justify-content: center;
+  gap: .45em;
 }
-#nav-desk > a[href="admin.html"] i { font-size: 1.05rem; line-height: 1; }
+#nav-desk > a[href="admin.html"] > i:not(.icona-nav) { font-size: 1.05rem; line-height: 1; }
+/* L'icona dedicata "admin" resta fissa: niente swap elastico al passaggio del mouse */
+#nav-desk > a[href="admin.html"] .icona-nav,
+#nav-desk > a[href="admin.html"]:hover .icona-nav,
+#nav-desk > a[href="admin.html"]:focus-visible .icona-nav,
+#nav-desk > a[href="admin.html"][attivo="si"] .icona-nav,
+#nav-desk > a[href="admin.html"][attivo="si"]:hover .icona-nav,
+#nav-desk > a[href="admin.html"][attivo="si"]:focus-visible .icona-nav {
+  position: static; inset: auto; opacity: 1; transform: none;
+}
+/* La scritta "Admin" non sparisce più all'hover: resta insieme all'icona */
+#nav-desk > a[href="admin.html"]:hover .etichetta-nav,
+#nav-desk > a[href="admin.html"]:focus-visible .etichetta-nav { opacity: 1; transform: none; }
 /* Underline gradiente brand che cresce da centro + ZOOM 1.2 lento e visibile */
 #nav-desk > a:not(#link-bozza-nav)::after {
   content: ""; position: absolute; left: 18%; right: 18%; bottom: 6px; height: 2px;
