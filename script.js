@@ -704,4 +704,29 @@
       });
     });
   }
+
+  /* ---------- DROPDOWN "ALTRO" nella nav desktop ---------- */
+  (function () {
+    var menu = document.querySelector("#nav-desk .menu-altro");
+    if (!menu) return;
+    var trigger = menu.querySelector(".trigger-altro");
+    function apri() { menu.classList.add("aperto"); trigger.setAttribute("aria-expanded", "true"); }
+    function chiudi() { menu.classList.remove("aperto"); trigger.setAttribute("aria-expanded", "false"); }
+    // hover + focus con piccolo ritardo per non chiudere quando si attraversa il gap
+    var t = null;
+    menu.addEventListener("mouseenter", function () { clearTimeout(t); apri(); });
+    menu.addEventListener("mouseleave", function () { t = setTimeout(chiudi, 120); });
+    trigger.addEventListener("focus", apri);
+    trigger.addEventListener("click", function (e) {
+      e.preventDefault();
+      menu.classList.contains("aperto") ? chiudi() : apri();
+    });
+    menu.addEventListener("focusout", function (e) {
+      if (!menu.contains(e.relatedTarget)) chiudi();
+    });
+    document.addEventListener("keydown", function (e) {
+      if (e.key === "Escape") chiudi();
+    });
+  })();
+
 })();

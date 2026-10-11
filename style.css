@@ -281,6 +281,78 @@ body.pagina-admin #nav-desk > a.admin-solo-icona .etichetta-nav {
   -webkit-background-clip: text; background-clip: text;
   color: transparent; -webkit-text-fill-color: transparent;
 }
+
+/* ---------- HOVER "ALTRO" (nav desktop): la scritta resta e appare il mini-menu sotto ---------- */
+#nav-desk .menu-altro { position: relative; display: inline-flex; z-index: 5; }
+#nav-desk .trigger-altro {
+  font: inherit; font-weight: 600; font-size: .95rem; color: #fff;
+  background: none; border: 0; cursor: pointer;
+  padding: .55em 1.05em; border-radius: 999px; min-width: 3.4em;
+  display: inline-flex; align-items: center; justify-content: center; gap: .5em;
+  white-space: nowrap; position: relative;
+  transition: all 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+#nav-desk .trigger-altro:hover,
+#nav-desk .trigger-altro:focus-visible,
+#nav-desk .menu-altro.aperto .trigger-altro { transform: scale(1.2); }
+#nav-desk .freccia-altro { font-size: .72em; opacity: .8; transition: transform .35s ease; }
+#nav-desk .menu-altro.aperto .freccia-altro { transform: rotate(180deg); }
+/* underline gradiente coerente con gli altri link */
+#nav-desk .trigger-altro::after {
+  content: ""; position: absolute; left: 18%; right: 18%; bottom: 6px; height: 2px;
+  border-radius: 2px; background: var(--gradiente-brand);
+  transform: scaleX(0); transform-origin: center; opacity: 0;
+  transition: transform 1.2s cubic-bezier(.22,1,.36,1), opacity 1.2s ease;
+}
+#nav-desk .trigger-altro:hover::after,
+#nav-desk .trigger-altro:focus-visible::after,
+#nav-desk .menu-altro.aperto .trigger-altro::after { transform: scaleX(1); opacity: 1; }
+/* il pannello parte dal trigger (padding-top copre il gap: non si chiude passando il mouse) */
+#nav-desk .dropdown-altro {
+  position: absolute; top: 100%; left: 50%; transform: translateX(-50%);
+  padding: 10px 0 6px;
+  display: flex; flex-direction: column; gap: 2px;
+  min-width: 190px;
+  background: rgba(13, 17, 23, .92);
+  backdrop-filter: blur(14px) saturate(140%);
+  -webkit-backdrop-filter: blur(14px) saturate(140%);
+  border: 1px solid rgba(255, 255, 255, .1);
+  border-radius: 16px;
+  box-shadow: 0 18px 44px rgba(0, 0, 0, .45);
+  opacity: 0; visibility: hidden; pointer-events: none;
+  transition: opacity .25s ease, visibility .25s;
+}
+#nav-desk .menu-altro.aperto .dropdown-altro {
+  opacity: 1; visibility: visible; pointer-events: auto;
+}
+#nav-desk .dropdown-altro a {
+  position: static; min-width: 0;
+  display: flex; align-items: center; gap: .65em;
+  padding: .55em 1em; margin: 0 6px; border-radius: 10px;
+  color: #fff; text-decoration: none; font-weight: 600; font-size: .92rem;
+  white-space: nowrap;
+  transition: all 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+#nav-desk .dropdown-altro a::after { display: none; }
+#nav-desk .dropdown-altro a i.icona-nav,
+#nav-desk .dropdown-altro a i {
+  position: static; inset: auto; opacity: 1; transform: none;
+  width: 1.15em; text-align: center; font-size: 1rem; line-height: 1;
+  color: var(--ciano); -webkit-text-fill-color: initial;
+  background: none; -webkit-background-clip: border-box; background-clip: border-box;
+}
+#nav-desk .dropdown-altro a:hover,
+#nav-desk .dropdown-altro a:focus-visible {
+  background: rgba(64, 201, 255, .12); transform: scale(1.06);
+}
+#nav-desk .dropdown-altro a[attivo="si"] { background: rgba(64, 201, 255, .1); }
+#nav-desk .dropdown-altro a[attivo="si"],
+#nav-desk .dropdown-altro a[attivo="si"] i {
+  background: linear-gradient(90deg, var(--viola), var(--ciano));
+  -webkit-background-clip: text; background-clip: text;
+  color: transparent; -webkit-text-fill-color: transparent;
+}
+
 /* Underline gradiente brand che cresce da centro + ZOOM 1.2 lento e visibile */
 #nav-desk > a:not(#link-bozza-nav)::after {
   content: ""; position: absolute; left: 18%; right: 18%; bottom: 6px; height: 2px;
