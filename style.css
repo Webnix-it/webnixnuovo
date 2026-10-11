@@ -311,6 +311,7 @@ body.pagina-admin #nav-desk > a.admin-solo-icona .etichetta-nav {
 #nav-desk .trigger-altro:focus-visible::after,
 #nav-desk .menu-altro.aperto .trigger-altro::after { transform: scaleX(1); opacity: 1; }
 /* il pannello e' fixed + ancorato via JS al trigger (padding-top copre il gap: non si chiude passando il mouse) */
+#nav-desk .dropdown-altro[hidden] { display: none; } /* il pannello parte nascosto anche senza JS */
 #nav-desk .dropdown-altro {
   position: fixed; top: 0; left: 0; right: auto; bottom: auto;
   z-index: 130;                        /* sopra l'header (110): niente menu nascosto/ritagliato */

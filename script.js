@@ -594,12 +594,74 @@
     });
   }
 
+  /* ---------- DROPDOWN "ALTRO" nella nav desktop ---------- */
+  function inizializzaAltro() {
+    var menu = document.querySelector("#nav-desk .menu-altro");
+    if (!menu) return;
+    var trigger = menu.querySelector(".trigger-altro");
+    var pannello = menu.querySelector(".dropdown-altro");
+    if (!trigger || !pannello) return;
+
+    // Il pannello e' position:fixed: lo ancoriamo sotto al trigger (centrato, senza uscire dallo schermo)
+    function posiziona() {
+      var r = trigger.getBoundingClientRect();
+      var larg = pannello.offsetWidth || 190;
+      var sx = r.left + r.width / 2 - larg / 2;
+      sx = Math.max(10, Math.min(sx, window.innerWidth - larg - 10));
+      pannello.style.left = sx + "px";
+      pannello.style.top = r.bottom + 8 + "px";
+    }
+
+    var apertoPerClick = false;
+    function apri() { pannello.hidden = false; posiziona(); menu.classList.add("aperto"); trigger.setAttribute("aria-expanded", "true"); }
+    function chiudi() { menu.classList.remove("aperto"); trigger.setAttribute("aria-expanded", "false"); apertoPerClick = false; }
+    function chiuso() { return !menu.classList.contains("aperto"); }
+
+    // hover: apertura immediata, chiusura con ritardo (attraversando il gap non si chiude)
+    var tHover = null;
+    menu.addEventListener("mouseenter", function () { clearTimeout(tHover); apri(); });
+    menu.addEventListener("mouseleave", function () {
+      if (apertoPerClick) return;
+      tHover = setTimeout(chiudi, 250);
+    });
+
+    // click/tap: toggle affidabile (funziona anche su touch dove il mouseenter non c'e')
+    trigger.addEventListener("click", function (e) {
+      e.preventDefault(); e.stopPropagation();
+      if (chiuso()) { apri(); apertoPerClick = true; }
+      else { apertoPerClick = false; chiudi(); }
+    });
+
+    // tocco diretto sul pannello (es. tap su mobile/tablet): mostra comunque il menu
+    pannello.addEventListener("touchstart", function () { if (chiuso()) apri(); }, { passive: true });
+
+    // tastiera: Enter/spazio aprono gia' col click; Escape e tab-out chiudono
+    trigger.addEventListener("focus", function () { if (chiuso()) apri(); });
+    menu.addEventListener("focusout", function (e) {
+      if (e.relatedTarget && !menu.contains(e.relatedTarget)) chiudi();
+    });
+    document.addEventListener("keydown", function (e) {
+      if (e.key === "Escape") chiudi();
+    });
+
+    // click fuori dal menu -> chiude (catturando l'evento in fase di capture evitiamo
+    // che altri handler blocchino la chiusura; qui sotto NON usiamo stopPropagation)
+    document.addEventListener("pointerdown", function (e) {
+      if (!menu.contains(e.target)) chiudi();
+    }, true);
+
+    // riancoraggio del pannello fisso durante scroll/resize
+    window.addEventListener("scroll", function () { if (!chiuso()) posiziona(); }, { passive: true });
+    window.addEventListener("resize", function () { if (!chiuso()) posiziona(); });
+  }
+
   /* ---------- AVVIO ---------- */
   document.addEventListener("DOMContentLoaded", function () {
     avviaLoader();
     inizializzaHeaderScroll();
     inizializzaMenu();
     inizializzaScrollFluido();
+    inizializzaAltro();
     renderServizi();
     renderPortfolio();
     inizializzaFiltri();
@@ -646,52 +708,5 @@
       });
     });
   }
-
-  /* ---------- DROPDOWN "ALTRO" nella nav desktop ---------- */
-  (function () {
-    var menu = document.querySelector("#nav-desk .menu-altro");
-    if (!menu) return;
-    var trigger = menu.querySelector(".trigger-altro");
-    var pannello = menu.querySelector(".dropdown-altro");
-
-    // Il pannello e' position:fixed: lo ancoriamo sotto al trigger (centrato, senza uscire dallo schermo)
-    function posiziona() {
-      var r = trigger.getBoundingClientRect();
-      var larg = pannello.offsetWidth || 190;
-      var sx = r.left + r.width / 2 - larg / 2;
-      sx = Math.max(10, Math.min(sx, window.innerWidth - larg - 10));
-      pannello.style.left = sx + "px";
-      pannello.style.top = r.bottom + "px";
-    }
-
-    var apertoPerClick = false;
-    function apri() { posiziona(); menu.classList.add("aperto"); trigger.setAttribute("aria-expanded", "true"); }
-    function chiudi() { menu.classList.remove("aperto"); trigger.setAttribute("aria-expanded", "false"); apertoPerClick = false; }
-
-    // hover + focus con piccolo ritardo per non chiudere quando si attraversa il gap
-    var t = null;
-    menu.addEventListener("mouseenter", function () { clearTimeout(t); apri(); });
-    menu.addEventListener("mouseleave", function () {
-      if (apertoPerClick) return;               // se aperto col click, resta aperto finche' richiudi
-      t = setTimeout(chiudi, 120);
-    });
-    trigger.addEventListener("focus", apri);
-    trigger.addEventListener("click", function (e) {
-      e.preventDefault(); e.stopPropagation();
-      if (menu.classList.contains("aperto")) { chiudi(); }
-      else { apri(); apertoPerClick = true; }
-    });
-    menu.addEventListener("focusout", function (e) {
-      if (!menu.contains(e.relatedTarget)) chiudi();
-    });
-    document.addEventListener("keydown", function (e) {
-      if (e.key === "Escape") chiudi();
-    });
-    document.addEventListener("click", function (e) {
-      if (!menu.contains(e.target)) chiudi();   // click fuori dal menu -> chiude
-    });
-    window.addEventListener("scroll", function () { if (menu.classList.contains("aperto")) posiziona(); }, { passive: true });
-    window.addEventListener("resize", function () { if (menu.classList.contains("aperto")) posiziona(); });
-  })();
 
 })();
