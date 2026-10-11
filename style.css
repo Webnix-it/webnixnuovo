@@ -282,8 +282,11 @@ body.pagina-admin #nav-desk > a.admin-solo-icona .etichetta-nav {
   color: transparent; -webkit-text-fill-color: transparent;
 }
 
-/* ---------- HOVER "ALTRO" (nav desktop): la scritta resta e appare il mini-menu sotto ---------- */
-#nav-desk .menu-altro { position: relative; display: inline-flex; z-index: 5; }
+/* ---------- HOVER/CLICK "ALTRO" (nav desktop): la scritta resta e appare il mini-menu sotto ---------- */
+/* Il pannello e' FIXED (ancorato via JS al trigger) cosi' non viene tagliato ne' nascosto
+   da backdrop-filter/overflow del pill della navbar: prima, cliccando "Altro", il menu
+   restava invisibile dietro l'header. */
+#nav-desk .menu-altro { position: relative; display: inline-flex; z-index: 60; }
 #nav-desk .trigger-altro {
   font: inherit; font-weight: 600; font-size: .95rem; color: #fff;
   background: none; border: 0; cursor: pointer;
@@ -307,12 +310,14 @@ body.pagina-admin #nav-desk > a.admin-solo-icona .etichetta-nav {
 #nav-desk .trigger-altro:hover::after,
 #nav-desk .trigger-altro:focus-visible::after,
 #nav-desk .menu-altro.aperto .trigger-altro::after { transform: scaleX(1); opacity: 1; }
-/* il pannello parte dal trigger (padding-top copre il gap: non si chiude passando il mouse) */
+/* il pannello e' fixed + ancorato via JS al trigger (padding-top copre il gap: non si chiude passando il mouse) */
 #nav-desk .dropdown-altro {
-  position: absolute; top: 100%; left: 50%; transform: translateX(-50%);
+  position: fixed; top: 0; left: 0; right: auto; bottom: auto;
+  z-index: 130;                        /* sopra l'header (110): niente menu nascosto/ritagliato */
+  margin: 0;
   padding: 10px 0 6px;
   display: flex; flex-direction: column; gap: 2px;
-  min-width: 190px;
+  min-width: 190px; width: max-content;
   background: rgba(13, 17, 23, .92);
   backdrop-filter: blur(14px) saturate(140%);
   -webkit-backdrop-filter: blur(14px) saturate(140%);
@@ -320,10 +325,12 @@ body.pagina-admin #nav-desk > a.admin-solo-icona .etichetta-nav {
   border-radius: 16px;
   box-shadow: 0 18px 44px rgba(0, 0, 0, .45);
   opacity: 0; visibility: hidden; pointer-events: none;
-  transition: opacity .25s ease, visibility .25s;
+  transform: translateY(-6px);
+  transition: opacity .25s ease, visibility .25s, transform .25s ease;
 }
 #nav-desk .menu-altro.aperto .dropdown-altro {
   opacity: 1; visibility: visible; pointer-events: auto;
+  transform: translateY(0);
 }
 #nav-desk .dropdown-altro a {
   position: static; min-width: 0;

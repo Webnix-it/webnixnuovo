@@ -710,16 +710,34 @@
     var menu = document.querySelector("#nav-desk .menu-altro");
     if (!menu) return;
     var trigger = menu.querySelector(".trigger-altro");
-    function apri() { menu.classList.add("aperto"); trigger.setAttribute("aria-expanded", "true"); }
-    function chiudi() { menu.classList.remove("aperto"); trigger.setAttribute("aria-expanded", "false"); }
+    var pannello = menu.querySelector(".dropdown-altro");
+
+    // Il pannello e' position:fixed: lo ancoriamo sotto al trigger (centrato, senza uscire dallo schermo)
+    function posiziona() {
+      var r = trigger.getBoundingClientRect();
+      var larg = pannello.offsetWidth || 190;
+      var sx = r.left + r.width / 2 - larg / 2;
+      sx = Math.max(10, Math.min(sx, window.innerWidth - larg - 10));
+      pannello.style.left = sx + "px";
+      pannello.style.top = r.bottom + "px";
+    }
+
+    var apertoPerClick = false;
+    function apri() { posiziona(); menu.classList.add("aperto"); trigger.setAttribute("aria-expanded", "true"); }
+    function chiudi() { menu.classList.remove("aperto"); trigger.setAttribute("aria-expanded", "false"); apertoPerClick = false; }
+
     // hover + focus con piccolo ritardo per non chiudere quando si attraversa il gap
     var t = null;
     menu.addEventListener("mouseenter", function () { clearTimeout(t); apri(); });
-    menu.addEventListener("mouseleave", function () { t = setTimeout(chiudi, 120); });
+    menu.addEventListener("mouseleave", function () {
+      if (apertoPerClick) return;               // se aperto col click, resta aperto finche' richiudi
+      t = setTimeout(chiudi, 120);
+    });
     trigger.addEventListener("focus", apri);
     trigger.addEventListener("click", function (e) {
-      e.preventDefault();
-      menu.classList.contains("aperto") ? chiudi() : apri();
+      e.preventDefault(); e.stopPropagation();
+      if (menu.classList.contains("aperto")) { chiudi(); }
+      else { apri(); apertoPerClick = true; }
     });
     menu.addEventListener("focusout", function (e) {
       if (!menu.contains(e.relatedTarget)) chiudi();
@@ -727,6 +745,11 @@
     document.addEventListener("keydown", function (e) {
       if (e.key === "Escape") chiudi();
     });
+    document.addEventListener("click", function (e) {
+      if (!menu.contains(e.target)) chiudi();   // click fuori dal menu -> chiude
+    });
+    window.addEventListener("scroll", function () { if (menu.classList.contains("aperto")) posiziona(); }, { passive: true });
+    window.addEventListener("resize", function () { if (menu.classList.contains("aperto")) posiziona(); });
   })();
 
 })();
