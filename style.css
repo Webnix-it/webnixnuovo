@@ -243,16 +243,25 @@ button, input, textarea, select { font: inherit; color: inherit; }
   color: transparent; -webkit-text-fill-color: transparent;
 }
 
-/* Link Admin: SOLO icona scudo al posto della scritta, sempre visibile */
+/* Link Admin: SOLO icona scudo; all'hover/navigazione da admin appare la scritta "Admin" */
 #nav-desk > a.admin-solo-icona {
-  padding: .55em .7em;
+  gap: .45em;
+  padding: .55em .8em;
   display: inline-flex; align-items: center; justify-content: center;
 }
 #nav-desk > a.admin-solo-icona .icona-nav {
   position: static; inset: auto; opacity: 1; transform: none;
   font-size: 1.2rem; line-height: 1;
 }
-/* Niente swap elastico: l'icona resta fissa anche in hover/focus/pagina attiva */
+/* La scritta "Admin" è nascosta di default (come negli altri link) */
+#nav-desk > a.admin-solo-icona .etichetta-nav { opacity: 0; transform: scale(.7); }
+/* Hover/focus: la scritta "Admin" compare DI ACCANTO allo scudo (che resta fisso) */
+#nav-desk > a.admin-solo-icona:hover .etichetta-nav,
+#nav-desk > a.admin-solo-icona:focus-visible .etichetta-nav,
+body.pagina-admin #nav-desk > a.admin-solo-icona .etichetta-nav {
+  opacity: 1; transform: scale(1);
+}
+/* Lo scudo non svanisce mai, nemmeno in hover o sulla pagina attiva */
 #nav-desk > a.admin-solo-icona:hover .icona-nav,
 #nav-desk > a.admin-solo-icona:focus-visible .icona-nav,
 #nav-desk > a.admin-solo-icona[attivo="si"] .icona-nav,
@@ -262,6 +271,12 @@ button, input, textarea, select { font: inherit; color: inherit; }
 }
 /* Icona col gradiente brand quando la pagina Admin è quella attiva */
 #nav-desk > a.admin-solo-icona[attivo="si"] .icona-nav {
+  background: linear-gradient(90deg, var(--viola), var(--ciano));
+  -webkit-background-clip: text; background-clip: text;
+  color: transparent; -webkit-text-fill-color: transparent;
+}
+/* Sulla pagina Admin: scritta "Admin" sempre visibile accanto all'icona gradientata */
+body.pagina-admin #nav-desk > a.admin-solo-icona .etichetta-nav {
   background: linear-gradient(90deg, var(--viola), var(--ciano));
   -webkit-background-clip: text; background-clip: text;
   color: transparent; -webkit-text-fill-color: transparent;
