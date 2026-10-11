@@ -133,6 +133,8 @@
     }
     .rec-nome{color:#fff;font-weight:700;font-size:.98rem;}
     .rec-att{color:#9aa4b2;font-size:.8rem;}
+    .rec-sito{display:inline-flex;align-items:center;gap:6px;color:#7dd3fc;font-size:.78rem;text-decoration:none;margin-top:2px;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+    .rec-sito:hover{color:#a5f3fc;text-decoration:underline;}
     .rec-stelle{color:#ffc53d;font-size:.85rem;letter-spacing:.08em;}
     .rec-testo{color:#c9d1d9;font-size:.92rem;line-height:1.55;margin:12px 0 0;white-space:pre-wrap;word-break:break-word;}
     .rec-data{color:#6e7681;font-size:.75rem;margin-top:10px;}
@@ -324,6 +326,10 @@
                 <i class="fa-solid fa-store ic" aria-hidden="true"></i>
                 <input type="text" id="rec-attivita" placeholder="Attività / azienda (facoltativo)" maxlength="80">
               </div>
+              <div class="campo-dash">
+                <i class="fa-solid fa-globe ic" aria-hidden="true"></i>
+                <input type="url" id="rec-sito" placeholder="Sito web attività (facoltativo) — es. https://www.esempio.it" maxlength="200">
+              </div>
               <label class="stelle-lbl">Valutazione *</label>
               <div class="selettore-stelle" id="stelle-input" role="radiogroup" aria-label="Numero di stelle">
                 <button type="button" data-val="1" role="radio" aria-checked="false" aria-label="1 stella"><i class="fa-solid fa-star"></i></button>
@@ -467,11 +473,24 @@
     });
     document.getElementById('stelle-input').addEventListener('mouseleave', ()=>dipingiStelle(voto));
 
+    // -- Normalizza URL sito web (aggiunge https:// se mancante; null se non valido) --
+    function normalizzaURL(v){
+      if(!v) return '';
+      let url = v.trim();
+      if(!/^https?:\/\//i.test(url)) url = 'https://' + url;
+      try{
+        const u = new URL(url);
+        if(!u.hostname || !u.hostname.includes('.')) return null;
+        return u.href;
+      }catch(e){ return null; }
+    }
+
     // -- Form: salva / aggiorna --
     const form = document.getElementById('form-recensione');
     const inpId = document.getElementById('rec-id');
     const inpNome = document.getElementById('rec-nome');
     const inpAtt = document.getElementById('rec-attivita');
+    const inpSito = document.getElementById('rec-sito');
     const inpTesto = document.getElementById('rec-testo');
     const btnAnnullaMod = document.getElementById('btn-annulla-mod');
     const txtTitoloForm = document.getElementById('txt-titolo-form');
@@ -495,14 +514,16 @@
       if(voto < 1){ mostraMsg('Seleziona da 1 a 5 stelle.','err'); return; }
 
       const lista = leggiRecensioni();
+      const sito = normalizzaURL(inpSito.value.trim());
+      if(sito === null){ mostraMsg('Sito web non valido: usa un link http/https (es. https://www.esempio.it).','err'); return; }
       if(inpId.value){
         const rec = lista.find(r=>r.id===inpId.value);
-        if(rec){ rec.nome=nome; rec.attivita=inpAtt.value.trim(); rec.stelle=voto; rec.testo=testo; }
+        if(rec){ rec.nome=nome; rec.attivita=inpAtt.value.trim(); rec.sito=sito; rec.stelle=voto; rec.testo=testo; }
         mostraMsg('Recensione aggiornata ✔');
       } else {
         lista.push({
           id: 'r' + Date.now() + Math.random().toString(36).slice(2,7),
-          nome, attivita: inpAtt.value.trim(), stelle: voto, testo,
+          nome, attivita: inpAtt.value.trim(), sito, stelle: voto, testo,
           timestamp: Date.now()
         });
         mostraMsg('Recensione aggiunta ✔');
@@ -534,6 +555,7 @@
               <div>
                 <div class="rec-nome">${esc(r.nome)}</div>
                 ${r.attivita ? `<div class="rec-att">${esc(r.attivita)}</div>` : ''}
+                ${r.sito ? `<a class="rec-sito" href="${esc(r.sito)}" target="_blank" rel="noopener noreferrer"><i class="fa-solid fa-globe" aria-hidden="true"></i> ${esc(r.sito.replace(/^https?:\/\//i,''))}</a>` : ''}
               </div>
             </div>
             <div style="display:flex;align-items:center;gap:12px;">
@@ -565,6 +587,7 @@
         inpId.value = r.id;
         inpNome.value = r.nome || '';
         inpAtt.value = r.attivita || '';
+        inpSito.value = r.sito || '';
         inpTesto.value = r.testo || '';
         voto = r.stelle || 0;
         dipingiStelle(voto);
