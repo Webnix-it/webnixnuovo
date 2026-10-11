@@ -1,0 +1,625 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard — Webnix Admin</title>
+  <meta name="description" content="Pannello di gestione Webnix: recensioni staff.">
+  <meta name="theme-color" content="#0d1117">
+  <meta name="robots" content="noindex, nofollow">
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+  <link rel="stylesheet" href="style.css">
+  <style>
+    /* ===== DASHBOARD (autocontenuta) ===== */
+    body{background:#0d1117;}
+    #dash-root{display:flex;min-height:calc(100vh - 90px);}
+
+    /* ---- Sidebar sinistra ---- */
+    #dash-menu{
+      width:250px;flex-shrink:0;
+      background:rgba(22,27,34,.85);
+      border-right:1px solid rgba(255,255,255,.08);
+      padding:26px 16px;
+      display:flex;flex-direction:column;gap:8px;
+      position:sticky;top:90px;height:calc(100vh - 90px);box-sizing:border-box;
+    }
+    .dash-titolo{
+      font-size:.7rem;font-weight:800;letter-spacing:.16em;text-transform:uppercase;
+      color:#a37cff;padding:0 12px 14px;
+      border-bottom:1px solid rgba(255,255,255,.07);margin-bottom:10px;
+      display:flex;align-items:center;gap:.6em;
+    }
+    .dash-link{
+      display:flex;align-items:center;gap:.8em;
+      padding:13px 14px;border-radius:12px;
+      color:#c9d1d9;text-decoration:none;font-weight:600;font-size:.95rem;
+      border:1px solid transparent;
+      transition:background .25s,color .25s,border-color .25s,transform .25s;
+      cursor:pointer;background:none;text-align:left;width:100%;font-family:inherit;
+    }
+    .dash-link i{width:20px;text-align:center;font-size:1rem;color:#8b949e;transition:color .25s;}
+    .dash-link:hover{background:rgba(163,124,255,.1);color:#fff;transform:translateX(3px);}
+    .dash-link:hover i{color:#a37cff;}
+    .dash-link.attivo{
+      background:linear-gradient(-45deg,rgba(232,28,255,.16),rgba(64,201,255,.12));
+      border-color:rgba(163,124,255,.4);color:#fff;
+    }
+    .dash-link.attivo i{color:#a37cff;}
+    .dash-sep{flex:1;}
+    #btn-logout{border-color:rgba(255,90,90,.3);color:#ff8f8f;}
+    #btn-logout i{color:#ff8f8f;}
+    #btn-logout:hover{background:rgba(255,80,80,.12);color:#fff;border-color:rgba(255,90,90,.6);}
+    #btn-logout:hover i{color:#fff;}
+
+    /* ---- Contenuto ---- */
+    #dash-contenuto{flex:1;padding:clamp(24px,4vw,44px);min-width:0;}
+    .pannello{display:none;animation:panna-in .45s cubic-bezier(.22,1,.36,1) both;}
+    .pannello.visible{display:block;}
+    @keyframes panna-in{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+    .pannello h2{color:#fff;margin:0 0 6px;font-size:1.5rem;font-weight:800;display:flex;align-items:center;gap:.55em;}
+    .pannello h2 i{background:linear-gradient(-45deg,#e81cff,#40c9ff);-webkit-background-clip:text;background-clip:text;color:transparent;}
+    .pannello .sub{color:#9aa4b2;margin:0 0 26px;font-size:.95rem;line-height:1.5;}
+
+    .card-glass{
+      background:rgba(22,27,34,.78);
+      backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+      border:1px solid rgba(255,255,255,.09);
+      border-radius:20px;padding:26px 28px;
+      box-shadow:0 14px 40px rgba(0,0,0,.45);
+      margin-bottom:26px;
+    }
+
+    /* Stat home */
+    .stat-griglia{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:16px;margin-top:20px;}
+    .statino{
+      background:rgba(22,27,34,.78);border:1px solid rgba(255,255,255,.09);
+      border-radius:16px;padding:20px;display:flex;align-items:center;gap:14px;
+    }
+    .statino i{font-size:1.4rem;width:46px;height:46px;border-radius:12px;display:flex;align-items:center;justify-content:center;
+      background:linear-gradient(-45deg,rgba(232,28,255,.2),rgba(64,201,255,.15));color:#a37cff;}
+    .statino .num{font-size:1.5rem;font-weight:800;color:#fff;line-height:1;}
+    .statino .lab{font-size:.78rem;color:#9aa4b2;font-weight:600;margin-top:3px;}
+
+    /* Form recensione */
+    .campo-dash{position:relative;margin-bottom:14px;}
+    .campo-dash input,.campo-dash textarea{
+      width:100%;padding:13px 14px 13px 42px;border-radius:12px;
+      border:1px solid #30363d;background:#0d1117;color:#fff;font-size:.95rem;
+      transition:border-color .25s,box-shadow .25s;outline:none;box-sizing:border-box;
+      font-family:inherit;resize:vertical;
+    }
+    .campo-dash textarea{min-height:90px;}
+    .campo-dash > i.ic{position:absolute;left:15px;top:16px;color:#6e7681;font-size:.9rem;pointer-events:none;}
+    .campo-dash input:focus,.campo-dash textarea:focus{border-color:#a37cff;box-shadow:0 0 0 3px rgba(163,124,255,.18);}
+
+    .stelle-lbl{color:#c9d1d9;font-weight:700;font-size:.9rem;margin:6px 0 8px;display:block;}
+    .selettore-stelle{display:flex;gap:6px;margin-bottom:18px;}
+    .selettore-stelle button{
+      background:none;border:none;cursor:pointer;padding:4px;font-size:1.7rem;line-height:1;
+      color:#30363d;transition:color .2s,transform .2s;
+    }
+    .selettore-stelle button:hover{transform:scale(1.15);}
+    .selettore-stelle button.accesa{color:#ffc53d;}
+    .selettore-stelle button.pulse{animation:stella-pop .3s;}
+    @keyframes stella-pop{50%{transform:scale(1.35) rotate(8deg)}}
+
+    .btn-gradiente{
+      padding:13px 26px;border:none;border-radius:12px;
+      background:linear-gradient(-45deg,#e81cff,#40c9ff);
+      color:#fff;font-weight:800;font-size:.98rem;cursor:pointer;letter-spacing:.02em;
+      box-shadow:0 8px 22px rgba(232,28,255,.25);
+      transition:transform .25s,box-shadow .25s,filter .25s;
+      display:inline-flex;align-items:center;gap:.6em;font-family:inherit;
+    }
+    .btn-gradiente:hover{transform:translateY(-2px);box-shadow:0 12px 28px rgba(232,28,255,.4);filter:brightness(1.08);}
+    .btn-gradiente:active{transform:translateY(0) scale(.98);}
+    .btn-gradiente[disabled]{opacity:.6;cursor:wait;}
+
+    /* Lista recensioni */
+    .rec-card{
+      background:rgba(13,17,23,.7);border:1px solid rgba(255,255,255,.08);
+      border-radius:16px;padding:18px 20px;margin-bottom:14px;
+      transition:border-color .25s,transform .25s;
+    }
+    .rec-card:hover{border-color:rgba(163,124,255,.35);transform:translateY(-2px);}
+    .rec-top{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;}
+    .rec-chi{display:flex;align-items:center;gap:12px;min-width:0;}
+    .rec-avatar{
+      width:42px;height:42px;border-radius:50%;flex-shrink:0;
+      background:linear-gradient(-45deg,#e81cff,#40c9ff);
+      display:flex;align-items:center;justify-content:center;
+      color:#fff;font-weight:800;font-size:1rem;
+    }
+    .rec-nome{color:#fff;font-weight:700;font-size:.98rem;}
+    .rec-att{color:#9aa4b2;font-size:.8rem;}
+    .rec-stelle{color:#ffc53d;font-size:.85rem;letter-spacing:.08em;}
+    .rec-testo{color:#c9d1d9;font-size:.92rem;line-height:1.55;margin:12px 0 0;white-space:pre-wrap;word-break:break-word;}
+    .rec-data{color:#6e7681;font-size:.75rem;margin-top:10px;}
+    .rec-azioni{display:flex;gap:8px;}
+    .btn-mini{
+      background:rgba(163,124,255,.08);border:1px solid rgba(163,124,255,.3);color:#a37cff;
+      width:36px;height:36px;border-radius:10px;cursor:pointer;font-size:.85rem;
+      display:flex;align-items:center;justify-content:center;
+      transition:background .2s,color .2s,transform .2s;
+    }
+    .btn-mini:hover{background:rgba(163,124,255,.25);color:#fff;transform:scale(1.08);}
+    .btn-mini.elimina{border-color:rgba(255,90,90,.35);color:#ff8f8f;background:rgba(255,80,80,.07);}
+    .btn-mini.elimina:hover{background:rgba(255,80,80,.22);color:#fff;}
+
+    .vuoto{
+      text-align:center;padding:40px 20px;color:#6e7681;
+      border:1px dashed rgba(255,255,255,.15);border-radius:16px;
+    }
+    .vuoto i{font-size:2rem;color:#30363d;display:block;margin-bottom:12px;}
+
+    #dash-msg{
+      position:fixed;bottom:26px;left:50%;transform:translateX(-50%) translateY(80px);
+      background:rgba(22,27,34,.95);border:1px solid rgba(163,124,255,.5);
+      color:#fff;padding:13px 22px;border-radius:14px;font-weight:700;font-size:.9rem;
+      box-shadow:0 12px 34px rgba(0,0,0,.5);z-index:9999;opacity:0;
+      transition:transform .35s cubic-bezier(.22,1,.36,1),opacity .35s;
+      display:flex;align-items:center;gap:.6em;pointer-events:none;
+    }
+    #dash-msg.show{transform:translateX(-50%) translateY(0);opacity:1;}
+    #dash-msg.ok i{color:#3fd97b;}
+    #dash-msg.err i{color:#ff6b6b;}
+
+    /* Modale conferma eliminazione */
+    #modale-conferma{
+      position:fixed;inset:0;z-index:10000;display:none;
+      align-items:center;justify-content:center;
+      background:rgba(0,0,0,.6);backdrop-filter:blur(6px);
+      padding:20px;
+    }
+    #modale-conferma.aperta{display:flex;animation:panna-in .3s both;}
+    .modale-box{
+      background:#161b22;border:1px solid rgba(255,255,255,.12);border-radius:20px;
+      padding:30px;max-width:380px;width:100%;text-align:center;
+      box-shadow:0 20px 60px rgba(0,0,0,.6);
+    }
+    .modale-box i.grande{font-size:2.2rem;color:#ff6b6b;margin-bottom:14px;}
+    .modale-box p{color:#c9d1d9;margin:0 0 22px;line-height:1.5;}
+    .modale-azioni{display:flex;gap:12px;justify-content:center;}
+    .btn-elimina{background:linear-gradient(-45deg,#ff4d4d,#ff8040);box-shadow:0 8px 22px rgba(255,77,77,.3);}
+    .btn-annulla{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.15);color:#c9d1d9;box-shadow:none;}
+    .btn-annulla:hover{background:rgba(255,255,255,.12);color:#fff;filter:none;}
+
+    @media (max-width:860px){
+      #dash-root{flex-direction:column;}
+      #dash-menu{
+        width:100%;position:static;height:auto;
+        flex-direction:row;flex-wrap:wrap;gap:8px;
+        border-right:none;border-bottom:1px solid rgba(255,255,255,.08);
+        padding:14px;
+      }
+      .dash-titolo{width:100%;border-bottom:none;padding-bottom:4px;margin-bottom:2px;}
+      .dash-link{width:auto;flex:1 1 auto;justify-content:center;padding:10px 14px;}
+      .dash-sep{display:none;}
+      .card-glass{padding:20px;}
+    }
+    @media (prefers-reduced-motion:reduce){
+      .pannello,.rec-card,.dash-link,.selettore-stelle button{animation:none;transition:none;}
+    }
+  </style>
+</head>
+
+<body class="pagina-admin">
+  <main id="corpo-pagina">
+
+    <!-- ============ HEADER + NAV ============ -->
+    <header id="header">
+      <a id="logo-link" href="index.html" aria-label="Webnix home">
+        <img id="logo-header" src="loghi/WEBNIX.png" alt="Webnix — Digital Agency">
+      </a>
+      <nav id="nav-desk" aria-label="Navigazione principale">
+        <a href="index.html" aria-label="Home"><span class="etichetta-nav">Home</span><i class="fa-solid fa-house icona-nav" aria-hidden="true"></i></a>
+        <a href="servizi.html" aria-label="Servizi"><span class="etichetta-nav">Servizi</span><i class="fa-solid fa-briefcase icona-nav" aria-hidden="true"></i></a>
+        <a href="faq.html" aria-label="FAQ"><span class="etichetta-nav">FAQ</span><i class="fa-solid fa-circle-question icona-nav" aria-hidden="true"></i></a>
+        <div class="menu-altro">
+          <button type="button" class="trigger-altro" aria-haspopup="true" aria-expanded="false"><span>Altro</span><i class="fa-solid fa-chevron-down freccia-altro" aria-hidden="true"></i></button>
+          <div class="dropdown-altro" role="menu" aria-label="Altre pagine" hidden>
+            <a href="assistenza.html" role="menuitem"><i class="fa-solid fa-screwdriver-wrench" aria-hidden="true"></i>Assistenza</a>
+            <a href="chi-siamo.html" role="menuitem"><i class="fa-solid fa-users" aria-hidden="true"></i>Chi Siamo</a>
+            <a href="chi-siamo.html#infoContactsSection" role="menuitem"><i class="fa-solid fa-envelope" aria-hidden="true"></i>Contatti</a>
+            <a href="admin.html" class="admin-solo-icona" role="menuitem" attivo="si" title="Area Admin"><i class="fa-solid fa-user-shield" aria-hidden="true"></i>Admin</a>
+          </div>
+        </div>
+        <a id="link-bozza-nav" href="index.html#contatti"><span id="bozza-norme">Bozza Gratuita</span><span id="bozza-hover">In 48h, gratis →</span></a>
+      </nav>
+      <button id="hamburger" type="button" aria-label="Apri menu" aria-expanded="false">
+        <i class="fa-solid fa-bars" aria-hidden="true"></i>
+      </button>
+    </header>
+
+    <div id="overlay-mobile"></div>
+    <aside id="drawer-mobile" aria-label="Menu mobile">
+      <button id="chiusura-drawer" type="button" aria-label="Chiudi menu">
+        <i class="fa-solid fa-xmark" aria-hidden="true"></i>
+      </button>
+      <nav id="nav-mobile">
+        <a href="index.html"><i class="fa-solid fa-house" aria-hidden="true"></i>Home</a>
+        <a href="servizi.html"><i class="fa-solid fa-briefcase" aria-hidden="true"></i>Servizi</a>
+        <a href="faq.html"><i class="fa-solid fa-circle-question" aria-hidden="true"></i>FAQ</a>
+        <a href="assistenza.html"><i class="fa-solid fa-screwdriver-wrench" aria-hidden="true"></i>Assistenza</a>
+        <a href="chi-siamo.html"><i class="fa-solid fa-users" aria-hidden="true"></i>Chi Siamo</a>
+        <a href="chi-siamo.html#infoContactsSection"><i class="fa-solid fa-envelope" aria-hidden="true"></i>Contatti</a>
+        <a href="admin.html"><i class="fa-solid fa-user-shield" aria-hidden="true"></i>Admin</a>
+      </nav>
+    </aside>
+
+    <!-- ============ DASHBOARD ============ -->
+    <div id="dash-root">
+
+      <!-- Menu laterale -->
+      <aside id="dash-menu" aria-label="Menu dashboard">
+        <span class="dash-titolo"><i class="fa-solid fa-user-shield" aria-hidden="true"></i> Webnix Admin</span>
+        <a class="dash-link attivo" href="#" data-pannello="home" id="lnk-home">
+          <i class="fa-solid fa-house" aria-hidden="true"></i> Home
+        </a>
+        <a class="dash-link" href="#" data-pannello="recensioni" id="lnk-recensioni">
+          <i class="fa-solid fa-star" aria-hidden="true"></i> Gestione Recensioni
+        </a>
+        <span class="dash-sep"></span>
+        <button class="dash-link" id="btn-logout" type="button">
+          <i class="fa-solid fa-right-from-bracket" aria-hidden="true"></i> Esci (Logout)
+        </button>
+      </aside>
+
+      <!-- Contenuto -->
+      <section id="dash-contenuto">
+
+        <!-- HOME -->
+        <div class="pannello visible" id="pan-home">
+          <h2><i class="fa-solid fa-gauge-high" aria-hidden="true"></i> Dashboard</h2>
+          <p class="sub">Benvenuto nell'area riservata Webnix. Gestisci qui le recensioni dei clienti.</p>
+          <div class="card-glass">
+            <div style="display:flex;align-items:center;gap:16px;">
+              <div style="width:56px;height:56px;border-radius:16px;background:linear-gradient(-45deg,#e81cff,#40c9ff);display:flex;align-items:center;justify-content:center;color:#fff;font-size:1.4rem;flex-shrink:0;">
+                <i class="fa-solid fa-feather-pointed" aria-hidden="true"></i>
+              </div>
+              <div>
+                <strong style="color:#fff;font-size:1.05rem;">Gestione rapida recensioni</strong>
+                <p style="color:#9aa4b2;font-size:.88rem;margin:5px 0 0;line-height:1.5;">Aggiungi, modifica o elimina le recensioni mostrate sul sito. Le modifiche sono immediate.</p>
+              </div>
+            </div>
+            <div class="stat-griglia">
+              <div class="statino">
+                <i class="fa-solid fa-star" aria-hidden="true"></i>
+                <div><div class="num" id="stat-totale">0</div><div class="lab">Recensioni totali</div></div>
+              </div>
+              <div class="statino">
+                <i class="fa-solid fa-face-smile" aria-hidden="true"></i>
+                <div><div class="num" id="stat-media">—</div><div class="lab">Media stelle</div></div>
+              </div>
+              <div class="statino">
+                <i class="fa-solid fa-clock-rotate-left" aria-hidden="true"></i>
+                <div><div class="num" id="stat-ultima" style="font-size:.95rem;">—</div><div class="lab">Ultima recensione</div></div>
+              </div>
+            </div>
+            <p style="margin-top:22px;">
+              <button class="btn-gradiente" type="button" data-vai="recensioni">
+                <i class="fa-solid fa-star" aria-hidden="true"></i> Vai a Gestione Recensioni
+              </button>
+            </p>
+          </div>
+        </div>
+
+        <!-- GESTIONE RECENSIONI -->
+        <div class="pannello" id="pan-recensioni">
+          <h2><i class="fa-solid fa-star" aria-hidden="true"></i> Gestione Recensioni</h2>
+          <p class="sub">Lascia una nuova recensione (da 1 a 5 stelle), oppure modifica ed elimina quelle esistenti.</p>
+
+          <!-- Form aggiungi / modifica -->
+          <div class="card-glass" id="box-form">
+            <h3 style="color:#fff;margin:0 0 18px;font-size:1.1rem;" id="titolo-form">
+              <i class="fa-solid fa-plus" style="color:#a37cff;" aria-hidden="true"></i> <span id="txt-titolo-form">Lascia una recensione</span>
+            </h3>
+            <form id="form-recensione" autocomplete="off">
+              <div class="campo-dash">
+                <i class="fa-solid fa-user ic" aria-hidden="true"></i>
+                <input type="text" id="rec-nome" placeholder="Nome del cliente *" maxlength="60" required>
+              </div>
+              <div class="campo-dash">
+                <i class="fa-solid fa-store ic" aria-hidden="true"></i>
+                <input type="text" id="rec-attivita" placeholder="Attività / azienda (facoltativo)" maxlength="80">
+              </div>
+              <label class="stelle-lbl">Valutazione *</label>
+              <div class="selettore-stelle" id="stelle-input" role="radiogroup" aria-label="Numero di stelle">
+                <button type="button" data-val="1" role="radio" aria-checked="false" aria-label="1 stella"><i class="fa-solid fa-star"></i></button>
+                <button type="button" data-val="2" role="radio" aria-checked="false" aria-label="2 stelle"><i class="fa-solid fa-star"></i></button>
+                <button type="button" data-val="3" role="radio" aria-checked="false" aria-label="3 stelle"><i class="fa-solid fa-star"></i></button>
+                <button type="button" data-val="4" role="radio" aria-checked="false" aria-label="4 stelle"><i class="fa-solid fa-star"></i></button>
+                <button type="button" data-val="5" role="radio" aria-checked="false" aria-label="5 stelle"><i class="fa-solid fa-star"></i></button>
+              </div>
+              <div class="campo-dash">
+                <i class="fa-solid fa-comment ic" aria-hidden="true" style="top:16px;"></i>
+                <textarea id="rec-testo" placeholder="Testo della recensione *" maxlength="600" required style="padding-left:42px;"></textarea>
+              </div>
+              <div style="display:flex;gap:12px;flex-wrap:wrap;">
+                <button type="submit" class="btn-gradiente" id="btn-salva-rec">
+                  <i class="fa-solid fa-floppy-disk" aria-hidden="true"></i> <span id="txt-btn-salva">Salva recensione</span>
+                </button>
+                <button type="button" class="btn-gradiente btn-annulla" id="btn-annulla-mod" style="display:none;">
+                  <i class="fa-solid fa-xmark" aria-hidden="true"></i> Annulla modifica
+                </button>
+              </div>
+              <input type="hidden" id="rec-id" value="">
+            </form>
+          </div>
+
+          <!-- Elenco -->
+          <h3 style="color:#fff;margin:30px 0 16px;font-size:1.05rem;">
+            <i class="fa-solid fa-list" style="color:#a37cff;" aria-hidden="true"></i> Recensioni presenti <span id="contatore-lista" style="color:#6e7681;font-weight:600;"></span>
+          </h3>
+          <div id="lista-recensioni"></div>
+        </div>
+
+      </section>
+    </div>
+
+    <!-- Toast -->
+    <div id="dash-msg" role="status" aria-live="polite"><i class="fa-solid fa-circle-check"></i><span id="dash-msg-txt"></span></div>
+
+    <!-- Modale conferma eliminazione -->
+    <div id="modale-conferma" role="dialog" aria-modal="true" aria-labelledby="modale-txt">
+      <div class="modale-box">
+        <i class="fa-solid fa-triangle-exclamation grande" aria-hidden="true"></i>
+        <p id="modale-txt">Eliminare definitivamente questa recensione?</p>
+        <div class="modale-azioni">
+          <button class="btn-gradiente btn-annulla" type="button" id="modale-no">Annulla</button>
+          <button class="btn-gradiente btn-elimina" type="button" id="modale-si"><i class="fa-solid fa-trash" aria-hidden="true"></i> Elimina</button>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <script src="script.js"></script>
+
+  <!-- Firebase Auth (per logout) + logica dashboard -->
+  <script type="module">
+    import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js';
+    import { getAuth, signOut, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js';
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyCVJ9M5tsuL06Lew9xPvn8beJIlar1Ee0w",
+      authDomain: "recensioni-a1b26.firebaseapp.com",
+      databaseURL: "https://recensioni-a1b26-default-rtdb.europe-west1.firebasedatabase.app",
+      projectId: "recensioni-a1b26",
+      storageBucket: "recensioni-a1b26.firebasestorage.app",
+      messagingSenderId: "699758703249",
+      appId: "1:699758703249:web:c73a6041000cd313720530"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+
+    // ---- Protezione: se non è loggato, torna alla pagina admin ----
+    onAuthStateChanged(auth, (user) => {
+      if (!user) window.location.replace('admin.html');
+    });
+
+    // ================= LOGICA DASHBOARD =================
+    const CHIAVE_LS = 'webnix_recensioni_dash';
+
+    function leggiRecensioni(){
+      try{ return JSON.parse(localStorage.getItem(CHIAVE_LS)) || []; }
+      catch(e){ return []; }
+    }
+    function salvaRecensioni(lista){
+      localStorage.setItem(CHIAVE_LS, JSON.stringify(lista));
+    }
+    function esc(s){
+      const d = document.createElement('div');
+      d.textContent = String(s ?? '');
+      return d.innerHTML;
+    }
+    function stellaHTML(n){
+      let h = '';
+      for(let i=1;i<=5;i++) h += `<i class="fa-${i<=n?'solid':'regular'} fa-star" aria-hidden="true"></i>`;
+      return h;
+    }
+    function formattaData(ts){
+      try{
+        return new Date(ts).toLocaleDateString('it-IT',{day:'numeric',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'});
+      }catch(e){ return ''; }
+    }
+
+    // -- Navigazione pannelli --
+    const links = document.querySelectorAll('.dash-link[data-pannello]');
+    function apriPannello(nome){
+      document.querySelectorAll('.pannello').forEach(p=>p.classList.remove('visible'));
+      const pan = document.getElementById('pan-'+nome);
+      if(pan) pan.classList.add('visible');
+      links.forEach(l=>l.classList.toggle('attivo', l.dataset.pannello===nome));
+      aggiornaStat();
+    }
+    links.forEach(l => l.addEventListener('click', (e)=>{ e.preventDefault(); apriPannello(l.dataset.pannello); }));
+    document.querySelectorAll('[data-vai]').forEach(b => b.addEventListener('click', ()=>apriPannello(b.dataset.vai)));
+
+    // -- Toast --
+    const toast = document.getElementById('dash-msg');
+    const toastTxt = document.getElementById('dash-msg-txt');
+    let toastTimer;
+    function mostraMsg(testo, tipo='ok'){
+      toastTxt.textContent = testo;
+      toast.className = 'show ' + tipo;
+      toast.querySelector('i').className = tipo==='ok' ? 'fa-solid fa-circle-check' : 'fa-solid fa-circle-exclamation';
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(()=>toast.classList.remove('show'), 2800);
+    }
+
+    // -- Selettore stelle --
+    let voto = 0;
+    const btnStelle = [...document.querySelectorAll('#stelle-input button')];
+    function dipingiStelle(n, pulse=false){
+      btnStelle.forEach(b=>{
+        const v = +b.dataset.val;
+        b.classList.toggle('accesa', v<=n);
+        b.setAttribute('aria-checked', String(v===n));
+        if(pulse && v===n){ b.classList.remove('pulse'); void b.offsetWidth; b.classList.add('pulse'); }
+      });
+    }
+    btnStelle.forEach(b=>{
+      b.addEventListener('mouseenter', ()=>dipingiStelle(+b.dataset.val));
+      b.addEventListener('click', ()=>{ voto = +b.dataset.val; dipingiStelle(voto,true); });
+    });
+    document.getElementById('stelle-input').addEventListener('mouseleave', ()=>dipingiStelle(voto));
+
+    // -- Form: salva / aggiorna --
+    const form = document.getElementById('form-recensione');
+    const inpId = document.getElementById('rec-id');
+    const inpNome = document.getElementById('rec-nome');
+    const inpAtt = document.getElementById('rec-attivita');
+    const inpTesto = document.getElementById('rec-testo');
+    const btnAnnullaMod = document.getElementById('btn-annulla-mod');
+    const txtTitoloForm = document.getElementById('txt-titolo-form');
+    const txtBtnSalva = document.getElementById('txt-btn-salva');
+
+    function resetForm(){
+      form.reset();
+      inpId.value = '';
+      voto = 0;
+      dipingiStelle(0);
+      txtTitoloForm.textContent = 'Lascia una recensione';
+      txtBtnSalva.textContent = 'Salva recensione';
+      btnAnnullaMod.style.display = 'none';
+    }
+
+    form.addEventListener('submit', (e)=>{
+      e.preventDefault();
+      const nome = inpNome.value.trim();
+      const testo = inpTesto.value.trim();
+      if(!nome || !testo){ mostraMsg('Compila nome e testo della recensione.','err'); return; }
+      if(voto < 1){ mostraMsg('Seleziona da 1 a 5 stelle.','err'); return; }
+
+      const lista = leggiRecensioni();
+      if(inpId.value){
+        const rec = lista.find(r=>r.id===inpId.value);
+        if(rec){ rec.nome=nome; rec.attivita=inpAtt.value.trim(); rec.stelle=voto; rec.testo=testo; }
+        mostraMsg('Recensione aggiornata ✔');
+      } else {
+        lista.push({
+          id: 'r' + Date.now() + Math.random().toString(36).slice(2,7),
+          nome, attivita: inpAtt.value.trim(), stelle: voto, testo,
+          timestamp: Date.now()
+        });
+        mostraMsg('Recensione aggiunta ✔');
+      }
+      salvaRecensioni(lista);
+      resetForm();
+      dipingiLista();
+    });
+
+    btnAnnullaMod.addEventListener('click', resetForm);
+
+    // -- Lista --
+    const contenitore = document.getElementById('lista-recensioni');
+    const contatore = document.getElementById('contatore-lista');
+
+    function dipingiLista(){
+      const lista = leggiRecensioni().sort((a,b)=>(b.timestamp||0)-(a.timestamp||0));
+      contatore.textContent = lista.length ? `(${lista.length})` : '';
+      if(!lista.length){
+        contenitore.innerHTML = `<div class="vuoto"><i class="fa-regular fa-star"></i>Nessuna recensione ancora.<br>Usa il modulo qui sopra per aggiungere la prima.</div>`;
+        aggiornaStat();
+        return;
+      }
+      contenitore.innerHTML = lista.map(r=>`
+        <article class="rec-card" data-id="${esc(r.id)}">
+          <div class="rec-top">
+            <div class="rec-chi">
+              <span class="rec-avatar">${esc((r.nome||'?').trim().charAt(0).toUpperCase())}</span>
+              <div>
+                <div class="rec-nome">${esc(r.nome)}</div>
+                ${r.attivita ? `<div class="rec-att">${esc(r.attivita)}</div>` : ''}
+              </div>
+            </div>
+            <div style="display:flex;align-items:center;gap:12px;">
+              <span class="rec-stelle" aria-label="${r.stelle} su 5 stelle">${stellaHTML(r.stelle)}</span>
+              <div class="rec-azioni">
+                <button class="btn-mini modifica" title="Modifica recensione" aria-label="Modifica recensione di ${esc(r.nome)}"><i class="fa-solid fa-pen" aria-hidden="true"></i></button>
+                <button class="btn-mini elimina" title="Elimina recensione" aria-label="Elimina recensione di ${esc(r.nome)}"><i class="fa-solid fa-trash" aria-hidden="true"></i></button>
+              </div>
+            </div>
+          </div>
+          <p class="rec-testo">${esc(r.testo)}</p>
+          <div class="rec-data"><i class="fa-regular fa-calendar" aria-hidden="true"></i> ${formattaData(r.timestamp)}</div>
+        </article>`).join('');
+      aggiornaStat();
+    }
+
+    // Delega eventi: modifica / elimina
+    let idDaEliminare = null;
+    const modale = document.getElementById('modale-conferma');
+
+    contenitore.addEventListener('click', (e)=>{
+      const card = e.target.closest('.rec-card');
+      if(!card) return;
+      const id = card.dataset.id;
+
+      if(e.target.closest('.modifica')){
+        const r = leggiRecensioni().find(x=>x.id===id);
+        if(!r) return;
+        inpId.value = r.id;
+        inpNome.value = r.nome || '';
+        inpAtt.value = r.attivita || '';
+        inpTesto.value = r.testo || '';
+        voto = r.stelle || 0;
+        dipingiStelle(voto);
+        txtTitoloForm.textContent = 'Modifica recensione';
+        txtBtnSalva.textContent = 'Aggiorna recensione';
+        btnAnnullaMod.style.display = 'inline-flex';
+        document.getElementById('box-form').scrollIntoView({behavior:'smooth',block:'start'});
+        inpNome.focus({preventScroll:true});
+      }
+
+      if(e.target.closest('.elimina')){
+        idDaEliminare = id;
+        modale.classList.add('aperta');
+        document.getElementById('modale-no').focus();
+      }
+    });
+
+    document.getElementById('modale-si').addEventListener('click', ()=>{
+      if(idDaEliminare){
+        salvaRecensioni(leggiRecensioni().filter(r=>r.id!==idDaEliminare));
+        if(inpId.value === idDaEliminare) resetForm();
+        dipingiLista();
+        mostraMsg('Recensione eliminata');
+      }
+      chiudiModale();
+    });
+    document.getElementById('modale-no').addEventListener('click', chiudiModale);
+    modale.addEventListener('click', (e)=>{ if(e.target===modale) chiudiModale(); });
+    document.addEventListener('keydown', (e)=>{ if(e.key==='Escape' && modale.classList.contains('aperta')) chiudiModale(); });
+    function chiudiModale(){ modale.classList.remove('aperta'); idDaEliminare=null; }
+
+    // -- Stat home --
+    function aggiornaStat(){
+      const lista = leggiRecensioni();
+      document.getElementById('stat-totale').textContent = lista.length;
+      if(lista.length){
+        const media = (lista.reduce((s,r)=>s+(+r.stelle||0),0)/lista.length).toFixed(1).replace('.',',');
+        document.getElementById('stat-media').textContent = media + ' ★';
+        const ultima = lista.slice().sort((a,b)=>(b.timestamp||0)-(a.timestamp||0))[0];
+        document.getElementById('stat-ultima').textContent = formattaData(ultima.timestamp).split(',')[0] || '—';
+      } else {
+        document.getElementById('stat-media').textContent = '—';
+        document.getElementById('stat-ultima').textContent = '—';
+      }
+    }
+
+    // -- Logout --
+    document.getElementById('btn-logout').addEventListener('click', async ()=>{
+      try{ await signOut(auth); }catch(e){}
+      window.location.href = 'admin.html';
+    });
+
+    // Avvio
+    dipingiLista();
+    apriPannello('home');
+  </script>
+</body>
+</html>

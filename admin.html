@@ -393,7 +393,7 @@
       msg.classList.remove('visible');
 
       signInWithEmailAndPassword(auth, email, password)
-        .then(() => { window.location.href = 'gestione-recensioni.html'; })
+        .then(() => { window.location.href = 'dashboard.html'; })
         .catch((error) => {
           let t = error.message || '';
           if(t.includes('auth/invalid-credential') || t.includes('auth/wrong-password') || t.includes('auth/user-not-found'))
