@@ -10,6 +10,8 @@
 <style>
   /* L'anteprima statica mostra i contenuti reveal già visibili (niente JS) */
   [reveal] { opacity: 1 !important; transform: none !important; }
+  /* Anche la linea step-by-step del processo è visibile da subito */
+  .timeline-step:not(:last-child)::after { transform: scaleX(1) !important; }
   #global-loader2 { display: none !important; }
   #nota-anteprima {
     text-align:center; padding:10px 16px; font-size:.85rem; letter-spacing:1px;
