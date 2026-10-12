@@ -901,7 +901,7 @@ details.domanda summary:hover {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
-  gap: 14px;
+  gap: 20px;
 }
 .scheda-uiverse {
   position: relative;
