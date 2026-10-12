@@ -1332,69 +1332,6 @@ details.domanda[open] summary { color: var(--ciano); }
   margin-bottom: 16px;
 }
 
-/* --- SLIDER IMMAGINI --- */
-#slider-immagini {
-  position: relative;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  margin-bottom: 16px;
-}
-
-#contenitore-slider {
-  position: relative;
-  flex: 1;
-  aspect-ratio: 16 / 10;
-  background: #0b0d13;
-  border: 1px solid rgba(255, 255, 255, .08);
-  border-radius: 12px;
-  overflow: hidden;
-}
-
-#contenitore-slider [slide] {
-  position: absolute;
-  inset: 0;
-  opacity: 0;
-  visibility: hidden;
-  transition: opacity .5s ease;
-}
-
-#contenitore-slider [slide="attivo"] {
-  opacity: 1;
-  visibility: visible;
-}
-
-#contenitore-slider img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  display: block;
-}
-
-#freccia-sinistra, #freccia-destra {
-  flex: 0 0 auto;
-  width: 38px;
-  height: 38px;
-  border-radius: 50%;
-  border: 1px solid rgba(255, 255, 255, .15);
-  background: rgba(13, 17, 23, .8);
-  color: #fff;
-  font-size: 1.4rem;
-  line-height: 1;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: all .6s cubic-bezier(.23, 1, .32, 1);
-}
-
-#freccia-sinistra:hover, #freccia-destra:hover {
-  transform: scale(1.2);
-  border-color: #e81cff;
-  color: #e81cff;
-  box-shadow: 0 0 14px rgba(232, 28, 255, .45);
-}
-
 /* --- CONSEGNA --- */
 #consegna-info {
   background: rgba(64, 201, 255, .08);
@@ -1517,7 +1454,6 @@ details.domanda[open] summary { color: var(--ciano); }
 
 @media (max-width: 560px) {
   #griglia-prodotti { grid-template-columns: 1fr; padding: 10px 14px 30px; }
-  #freccia-sinistra, #freccia-destra { width: 34px; height: 34px; }
 }
 
 /* ============ SEZIONE SUPPORTO CLIENTI E GARANZIE ============ */
