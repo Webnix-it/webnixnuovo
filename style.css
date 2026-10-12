@@ -1042,24 +1042,9 @@ details.domanda summary:hover {
 .avviso-js-necessario { display: none; }
 
 /* ============================================================
-   SEZIONE "COME FUNZIONA" — fondo BIANCO, testo scuro
+   SEZIONE "COME FUNZIONA" — stile identico alla pagina servizi
+   (sfondo scuro del sito, titolo bianco, testo chiaro)
    ============================================================ */
-#sezione-processo {
-  background: #ffffff;
-}
-#sezione-processo #titoloprocesso {
-  color: #0e0e1a;
-  text-shadow: none;
-}
-#sezione-processo #fraseprocesso {
-  color: #4a4a5a;
-}
-#sezione-processo .step-icon-wrapper {
-  background: linear-gradient(-45deg, #e81cff 0%, #40c9ff 100%);
-  box-shadow: 0 6px 18px rgba(232, 28, 255, .35);
-}
-#sezione-processo .step-title { color: #0e0e1a; }
-#sezione-processo .step-description { color: #4a4a5a; }
 
 /* --- Transizione uniforme richiesta: cubic-bezier(.23, 1, .32, 1) su 1.2s per tutti gli stati hover --- */
 *, *::before, *::after { transition-timing-function: cubic-bezier(.23, 1, .32, 1); }
