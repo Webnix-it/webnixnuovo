@@ -10,6 +10,12 @@
 
   var CFG = window.WEBNIX_CONFIG || null;
 
+  /* Link WhatsApp: definito QUI (prima mancava -> errore JS che bloccava tutto lo script) */
+  function waLink(testo) {
+    var num = (CFG && CFG.contact && CFG.contact.whatsapp) || "14132259397";
+    return "https://wa.me/" + num + (testo ? "?text=" + encodeURIComponent(testo) : "");
+  }
+
   /* ---------- LOADER GLOBALE (#global-loader2) con barra REALMENTE funzionante ----------
      La percentuale NON è simulata: viene misurata davvero su:
      - risorse della pagina (immagini, CSS, JS, font) tramite performance API
@@ -245,9 +251,37 @@
   }
 
   /* ---------- RENDER SERVIZI (da config.js) ---------- */
+  /* Dati pacchetti integrati nel JS: garantiscono il rendering anche se config.js non e' caricato */
+  var SERVIZI_FALLBACK = [
+    { id:"sito-web", eyebrow:"Sito Web", name:"Base", icon:"fa-solid fa-globe", badge:"Icona Sito Web", price:"-",
+      description:"Un sito elegante e funzionale, perfetto da condividere nella bio di Instagram, Facebook e altri social.",
+      detailsTitle:"Dettagli Pacchetto",
+      includes:["1 Pagina con design moderno e personalizzato.","Sito responsive: perfetto su smartphone, tablet e desktop.","Sviluppo con HTML, CSS e JavaScript.","Hosting gratuito e permanente su GitHub Pages o Netlify (entrambi veloci e affidabili). Possibilita\u00e0 di usare un altro hosting su richiesta.","Integrazione con i tuoi profili social (Instagram, Facebook, LinkedIn, ecc.).","CookieBot gratuito per la gestione dei cookie (conformit\u00e0 GDPR di base).","Modulo di contatto funzionante.","Pagine legali di base (generate con IA): Privacy Policy, Termini e Condizioni, Cookie Policy. \u26a0\ufe0f generate automaticamente, non sostituiscono una consulenza legale.","30 giorni di assistenza gratuita dopo la consegna: fino a 3 modifiche gratuite.","Consegna in 5-12 giorni lavorativi."],
+      excludes:["SEO: il sito \u00e8 pensato per essere condiviso via link diretto (bio Instagram, WhatsApp), non per apparire su Google.","Dominio personalizzato: la registrazione del dominio non \u00e8 inclusa.","Servizi di terze parti: Iubenda, PayPal, Stripe o newsletter non sono inclusi.","Manutenzione post-consegna: aggiornamenti successivi non inclusi."],
+      faqDomanda:"Quali sono i costi futuri per mantenere il sito web attivo?", faqRisposta:"Nessun costo", cta:"Seleziona" },
+    { id:"brand-identity", eyebrow:"Creazione", name:"Brand Identity", icon:"fa-solid fa-pen-nib", badge:"Icona Logo", price:"-",
+      description:"Rendi unico il tuo brand con un logo professionale.", detailsTitle:"Dettagli Pacchetto",
+      includes:["Logo personalizzato","Favicon (per web)","Palette colori personalizzata.","Selezione tipografica (font per titoli, testi e accenti).","Creazione di pattern o texture uniche per il brand.","Set di icone o simboli coordinati allo stile del logo.","Definizione dello stile fotografico (moodboard e guida visiva).","Anteprima del logo su prodotti (t-shirt, tazze, badge, ecc.)","Linee guida di composizione e uso del logo su sfondi chiari/scuri.","Tone of Voice (voce del brand).","Mini Brand Book in PDF.","Consegna in 5\u20138 giorni lavorativi."],
+      excludes:["Naming (creazione del nome del brand).","Copywriting o slogan pubblicitario.","Materiali stampati (biglietti, brochure, packaging).","Stampa fisica (solo file digitale pronto per la stampa).","Template social (opzionale +20\u20ac)."], cta:"Seleziona" },
+    { id:"creazione-grafica", eyebrow:"Creazione", name:"Grafica", icon:"fa-solid fa-image", badge:"Icona Locandina", price:"-",
+      description:"Dai visibilit\u00e0 ai tuoi eventi, prodotti o promozioni con locandine dal design professionale e d'impatto.", detailsTitle:"Dettagli Pacchetto",
+      includes:["1 Grafica personalizzata","2 proposte di design per scegliere lo stile che preferisci","Formati file (PNG, JPG ecc..)","Formato per social o stampa","1 revisione inclusa","Copywriting o slogan pubblicitario.","Consegna in 1-3 giorni lavorativi (spesso entro 24 ore)"],
+      excludes:["Stampa fisica (forniamo solo il file digitale pronto per la stampa)."], cta:"Seleziona" },
+    { id:"rebranding-social", eyebrow:"", name:"Rebranding Social", icon:"fa-solid fa-share-nodes", badge:"Icona Social", price:"-",
+      description:"Dai un nuovo look ai tuoi profili social e migliora la tua presenza online.", detailsTitle:"Dettagli Pacchetto Social",
+      includes:["Rebranding dei post e profilo (colori, layout e stile)","Aggiornamento della biografia e delle informazioni profilo","Consigli per un impatto visivo pi\u00f9 forte","Strategie per rendere il tuo profilo pi\u00f9 professionale e coerente","Mini guida step by step: \u201cCome andare virale in 30 giorni\u201d","Consigli per aumentare l\u2019engagement organico","Strategia settimanale: cosa postare, quando e perch\u00e9","5+ prompt pronti per ChatGPT per generare idee, testi e caption","Template per contenuti virali (reels e post)","Creazione logo (se necessario).","Consegna completa entro 24-48 ore"],
+      excludes:[], cta:"Seleziona" },
+    { id:"restyling-sito-web", eyebrow:"", name:"Restyling Sito Web", icon:"fa-solid fa-arrows-rotate", badge:"Icona Copywriting", price:"-",
+      description:"Rinnova il tuo sito esistente con un design moderno, responsive e pi\u00f9 efficace.", detailsTitle:"Dettagli Pacchetto Restyling",
+      includes:["Nuovo design moderno e professionale, coerente con il tuo brand","Versione completamente responsive (adatta a smartphone, tablet e desktop)","Miglioramento dell'usabilit\u00e0 e della navigazione","Aggiornamento di testi e immagini (se forniti)","Logo personalizzato creato da zero (se necessario)","Consegna in 3-6 giorni lavorativi"],
+      excludes:["Modulo di contatto.","Integrazione con servizi esterni (es. Calendly, EmailJS, newsletter).","Funzionalit\u00e0 dinamiche (form, login, carrello).","Creazione di nuove pagine o contenuti non forniti.","Trasferimento o gestione del dominio.","Manutenzione o aggiornamenti futuri.","Pagine legali."], cta:"Seleziona" }
+  ];
+
   function renderServizi() {
     var griglia = document.getElementById("griglia-servizi");
-    if (!griglia || !CFG) return;
+    if (!griglia) return;
+    if (!CFG) { CFG = { services: SERVIZI_FALLBACK, portfolio: [], reviews: { demo: [] }, social: {}, contact: {} }; }
+    if (!CFG.services) return;
     CFG.services.forEach(function (s, i) {
       var card = document.createElement("article");
       card.className = "card-servizio"; // marker layout (non classe di stile custom semantica)
@@ -526,7 +560,7 @@
 
   /* ---------- LINK DINAMICI DA CONFIG (social, mail, wa) ---------- */
   function applicaConfigLink() {
-    if (!CFG) return;
+    if (!CFG || !CFG.social) return;
     var map = {
       "link-instagram": CFG.social.instagram,
       "link-facebook": CFG.social.facebook,
@@ -655,6 +689,40 @@
     window.addEventListener("resize", function () { if (!chiuso()) posiziona(); });
   }
 
+  /* ---------- CARD UIVERSE (sezione Servizi home): click = apri/chiudi dettagli ---------- */
+  function inizializzaCardUiverse() {
+    var card = document.querySelectorAll(".scheda-uiverse");
+    if (!card.length) return;
+    function chiudi(tutte_tranne) {
+      card.forEach(function (c) {
+        if (c === tutte_tranne) return;
+        c.classList.remove("aperta");
+        c.setAttribute("aria-expanded", "false");
+      });
+    }
+    card.forEach(function (c) {
+      c.addEventListener("click", function (e) {
+        /* se il click e' su un link dentro i dettagli, non chiudere la card */
+        if (e.target.closest("a")) return;
+        var aperta = c.classList.contains("aperta");
+        if (aperta) { c.classList.remove("aperta"); c.setAttribute("aria-expanded", "false"); }
+        else { chiudi(c); c.classList.add("aperta"); c.setAttribute("aria-expanded", "true"); }
+      });
+      c.addEventListener("keydown", function (e) {
+        if (e.key === "Enter" || e.key === " ") {
+          if (e.target !== c) return;
+          e.preventDefault();
+          c.click();
+        }
+        if (e.key === "Escape") { c.classList.remove("aperta"); c.setAttribute("aria-expanded", "false"); }
+      });
+    });
+    /* click fuori da tutte le card -> chiudi */
+    document.addEventListener("pointerdown", function (e) {
+      if (!e.target.closest(".scheda-uiverse")) chiudi(null);
+    }, true);
+  }
+
   /* ---------- AVVIO ---------- */
   document.addEventListener("DOMContentLoaded", function () {
     avviaLoader();
@@ -669,6 +737,7 @@
     inizializzaBottoneTouch();
     applicaConfigLink();
     inizializzaPacchetti();
+    inizializzaCardUiverse();
     inizializzaReveal();
   });
 })();
