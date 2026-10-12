@@ -631,6 +631,41 @@
     });
   }
 
+  /* ---------- POPUP MODAL "Scopri di più" Calendario Prenotazione ---------- */
+  function inizializzaModalCalendario() {
+    var URL_DEMO = "https://b00kingpro.netlify.app/?utm_source=ig&utm_medium=social&utm_content=link_in_bio";
+    var btnApri = document.getElementById("bottone-scopri-modal");
+    var overlay = document.getElementById("overlay-calendario");
+    var btnChiudi = document.getElementById("chiudi-modal-calendario");
+    var frame = document.getElementById("frame-calendario");
+    if (!btnApri || !overlay || !btnChiudi || !frame) return;
+
+    function apri() {
+      if (frame.getAttribute("src") === "about:blank") frame.setAttribute("src", URL_DEMO);
+      overlay.classList.remove("uscita");
+      overlay.classList.add("aperto");
+      overlay.setAttribute("aria-hidden", "false");
+      document.body.style.overflow = "hidden";
+    }
+    function chiudi() {
+      overlay.classList.add("uscita");
+      setTimeout(function () {
+        overlay.classList.remove("aperto", "uscita");
+        overlay.setAttribute("aria-hidden", "true");
+        document.body.style.overflow = "";
+      }, 450);
+    }
+
+    btnApri.addEventListener("click", apri);
+    btnChiudi.addEventListener("click", chiudi);
+    overlay.addEventListener("click", function (e) {
+      if (e.target === overlay) chiudi();
+    });
+    document.addEventListener("keydown", function (e) {
+      if (e.key === "Escape" && overlay.classList.contains("aperto")) chiudi();
+    });
+  }
+
   /* ---------- DROPDOWN "ALTRO" nella nav desktop ---------- */
   function inizializzaAltro() {
     var menu = document.querySelector("#nav-desk .menu-altro");
@@ -740,6 +775,7 @@
     inizializzaBottoneTouch();
     applicaConfigLink();
     inizializzaPacchetti();
+    inizializzaModalCalendario();
     inizializzaCardUiverse();
     inizializzaReveal();
   });

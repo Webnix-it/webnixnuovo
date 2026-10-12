@@ -2120,3 +2120,170 @@ body:has(#sezione-faq) { background: #ffffff; }
 #card-login-admin input.zoom-button:active {
   transform: scale(0.95);
 }
+
+/* ============ POPUP MODAL CALENDARIO PRENOTAZIONE (pagina Servizi) ============ */
+#bottone-scopri-modal {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 170px;
+  height: 46px;
+  margin-top: 18px;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  background: linear-gradient(-45deg, #e81cff, #40c9ff);
+  color: #fff;
+  font-family: inherit;
+  font-size: .95rem;
+  font-weight: 700;
+  overflow: hidden;
+  transition: transform .3s ease, box-shadow .3s ease;
+}
+#bottone-scopri-modal:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 0 24px rgba(232, 28, 255, .55);
+}
+/* Crossfade elastico testo -> icona freccia (come hover nav) */
+#bottone-scopri-modal .etichetta-scopri,
+#bottone-scopri-modal .icona-scopri {
+  transition: opacity .6s cubic-bezier(.23, 1, .32, 1), transform .6s cubic-bezier(.23, 1, .32, 1);
+}
+#bottone-scopri-modal .icona-scopri {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transform: scale(.4) rotate(-25deg);
+  pointer-events: none;
+}
+#bottone-scopri-modal .icona-scopri svg { width: 22px; height: 22px; }
+#bottone-scopri-modal:hover .etichetta-scopri,
+#bottone-scopri-modal:focus-visible .etichetta-scopri { opacity: 0; transform: scale(.7); }
+#bottone-scopri-modal:hover .icona-scopri,
+#bottone-scopri-modal:focus-visible .icona-scopri { opacity: 1; transform: scale(1) rotate(0deg); }
+
+/* Overlay + modal */
+#overlay-calendario {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  background: rgba(5, 5, 12, .82);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity .45s cubic-bezier(.23, 1, .32, 1), visibility .45s;
+}
+#overlay-calendario.aperto {
+  opacity: 1;
+  visibility: visible;
+}
+#modal-calendario {
+  position: relative;
+  width: min(1100px, 96vw);
+  height: min(82vh, 780px);
+  display: flex;
+  flex-direction: column;
+  background: #0d0d16;
+  border: 1px solid rgba(232, 28, 255, .35);
+  border-radius: 18px;
+  box-shadow: 0 0 60px rgba(232, 28, 255, .35), 0 0 100px rgba(64, 201, 255, .15);
+  transform: scale(.75) translateY(40px);
+  opacity: 0;
+  transition: transform .5s cubic-bezier(.23, 1, .32, 1), opacity .5s cubic-bezier(.23, 1, .32, 1);
+}
+#overlay-calendario.aperto #modal-calendario {
+  transform: scale(1) translateY(0);
+  opacity: 1;
+}
+/* Chiusura con animazione di uscita */
+#overlay-calendario.uscita #modal-calendario {
+  transform: scale(.8) translateY(30px);
+  opacity: 0;
+}
+#overlay-calendario.uscita {
+  opacity: 0;
+}
+#frame-calendario {
+  flex: 1;
+  width: 100%;
+  border: none;
+  border-radius: 18px 18px 0 0;
+  background: #fff;
+}
+#nota-modal-calendario {
+  margin: 0;
+  padding: 10px 16px;
+  text-align: center;
+  font-size: .85rem;
+  color: #adadad;
+  border-top: 1px solid rgba(255, 255, 255, .08);
+}
+#nota-modal-calendario a {
+  color: #40c9ff;
+  text-decoration: none;
+  font-weight: 700;
+}
+#nota-modal-calendario a:hover { text-decoration: underline; }
+
+/* X in alto a destra: crossfade "Chiudi" -> X con zoom (stile nav) */
+#chiudi-modal-calendario {
+  position: absolute;
+  top: -18px;
+  right: -12px;
+  z-index: 2;
+  width: 52px;
+  height: 52px;
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  background: linear-gradient(-45deg, #e81cff, #40c9ff);
+  color: #fff;
+  box-shadow: 0 0 18px rgba(232, 28, 255, .6);
+  overflow: hidden;
+}
+#chiudi-modal-calendario .etichetta-chiusura,
+#chiudi-modal-calendario .icona-chiusura {
+  transition: opacity .6s cubic-bezier(.23, 1, .32, 1), transform .6s cubic-bezier(.23, 1, .32, 1);
+}
+#chiudi-modal-calendario .etichetta-chiusura {
+  font-family: inherit;
+  font-size: .68rem;
+  font-weight: 700;
+  letter-spacing: .02em;
+}
+#chiudi-modal-calendario .icona-chiusura {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transform: scale(.4) rotate(-25deg);
+  pointer-events: none;
+}
+#chiudi-modal-calendario .icona-chiusura svg { width: 26px; height: 26px; }
+#chiudi-modal-calendario:hover .etichetta-chiusura,
+#chiudi-modal-calendario:focus-visible .etichetta-chiusura { opacity: 0; transform: scale(.7); }
+#chiudi-modal-calendario:hover .icona-chiusura,
+#chiudi-modal-calendario:focus-visible .icona-chiusura { opacity: 1; transform: scale(1) rotate(0deg); }
+#chiudi-modal-calendario:hover {
+  animation: puls-x .9s ease-in-out infinite alternate;
+}
+@keyframes puls-x {
+  from { box-shadow: 0 0 18px rgba(232, 28, 255, .6); }
+  to   { box-shadow: 0 0 34px rgba(64, 201, 255, .9); }
+}
+
+@media (max-width: 600px) {
+  #modal-calendario { height: 78vh; }
+  #chiudi-modal-calendario { top: -14px; right: -6px; width: 46px; height: 46px; }
+}
