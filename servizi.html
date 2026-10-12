@@ -8,7 +8,7 @@
   <meta name="theme-color" content="#0d1117">
   <link rel="icon" type="image/svg+xml" href="favicon.svg">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
-  <link rel="stylesheet" href="style.css?v=14">
+  <link rel="stylesheet" href="style.css?v=15">
 </head>
 <body>
   <main id="corpo-pagina">
@@ -74,6 +74,293 @@
     <section id="banda-pagina" reveal>
       <h1>Servizi</h1>
       <p>Solo HTML, CSS e JavaScript puro. Nessun WordPress, nessun canone mensile nascosto. Il codice è tuo per sempre.</p>
+    </section>
+
+    <!-- ============ PACCHETTI SERVIZI (card prodotto) ============ -->
+    <section id="sezione-pacchetti-servizi" class="sezione-comune" reveal>
+      <div id="griglia-prodotti">
+
+        <!-- 💻 Sito Web - Base -->
+        <article id="prodotto-card" reveal delay="1">
+          <header id="intestazione-prodotto">
+            <span id="icona-prodotto">💻</span>
+            <h2 id="titolo-prodotto">Sito Web - Base</h2>
+            <span id="prezzo">-</span>
+          </header>
+          <p id="sottotitolo">Un pacchetto essenziale per chi vuole un sito web elegante e funzionale da condividere direttamente sui social, perfetto per la bio di Instagram, Facebook o altre piattaforme.</p>
+          <div id="slider-immagini">
+            <button id="freccia-sinistra" type="button" aria-label="Immagine precedente">‹</button>
+            <div id="contenitore-slider">
+              <img slide="attivo" src="assets/portfolio/sito-vesuvio.png" alt="Anteprima Sito Web - Base">
+              <img slide src="assets/portfolio/sito-barber.png" alt="Anteprima Sito Web - Base">
+              <img slide src="assets/portfolio/sito-fisio.png" alt="Anteprima Sito Web - Base">
+            </div>
+            <button id="freccia-destra" type="button" aria-label="Immagine successiva">›</button>
+          </div>
+          <p id="link-anteprima" hidden><a href="assets/portfolio/sito-vesuvio.png" target="_blank" rel="noopener">Apri l'anteprima</a></p>
+          <p id="consegna-info">🚚 Consegna entro 5-12 giorni lavorativi</p>
+          <button id="bottone-scopri" type="button" data-testo-chiuso="✅ Scopri cosa offriamo">✅ Scopri cosa offriamo</button>
+          <div id="sezione-cosa-offriamo">
+            <h3 id="titolo-sezione">Cosa include il pacchetto</h3>
+            <ul id="lista-caratteristiche">
+              <li>1 Pagina con design moderno e personalizzato</li>
+              <li>Sito responsive: perfetto su smartphone, tablet e desktop</li>
+              <li>Sviluppo con HTML, CSS e JavaScript</li>
+              <li>Hosting gratuito e permanente su GitHub Pages o Netlify</li>
+              <li>Integrazione con i tuoi profili social</li>
+              <li>Modulo di contatto funzionante</li>
+              <li>Pagine legali di base (Privacy, Termini, Cookie Policy)</li>
+              <li>30 giorni di assistenza gratuita dopo la consegna</li>
+            </ul>
+            <h3 id="titolo-sezione">Cosa NON è incluso</h3>
+            <ul id="lista-caratteristiche2">
+              <li>SEO: il sito è pensato per essere condiviso tramite link diretto, non per apparire su Google</li>
+              <li>Dominio personalizzato</li>
+              <li>Servizi di terze parti (Iubenda, PayPal, Stripe, newsletter)</li>
+              <li>Manutenzione post-consegna</li>
+            </ul>
+          </div>
+          <button id="bottone-acquista" type="button" data-servizio="sito-web">Acquista questo pacchetto</button>
+        </article>
+
+        <!-- 🎨 Creazione Logo -->
+        <article id="prodotto-card" reveal delay="2">
+          <header id="intestazione-prodotto">
+            <span id="icona-prodotto">🎨</span>
+            <h2 id="titolo-prodotto">Creazione Logo</h2>
+            <span id="prezzo">-</span>
+          </header>
+          <p id="sottotitolo">Rendi unico il tuo brand con un logo professionale.</p>
+          <div id="slider-immagini">
+            <button id="freccia-sinistra" type="button" aria-label="Immagine precedente">‹</button>
+            <div id="contenitore-slider">
+              <img slide="attivo" src="assets/portfolio/logo-atelier.png" alt="Anteprima Creazione Logo">
+              <img slide src="assets/portfolio/logo-greenbox.png" alt="Anteprima Creazione Logo">
+            </div>
+            <button id="freccia-destra" type="button" aria-label="Immagine successiva">›</button>
+          </div>
+          <p id="link-anteprima" hidden><a href="assets/portfolio/logo-atelier.png" target="_blank" rel="noopener">Apri l'anteprima</a></p>
+          <p id="consegna-info">🚚 Consegna in 1-3 giorni lavorativi (spesso entro 24h).</p>
+          <button id="bottone-scopri" type="button" data-testo-chiuso="✅ Scopri cosa offriamo">✅ Scopri cosa offriamo</button>
+          <div id="sezione-cosa-offriamo">
+            <h3 id="titolo-sezione">Cosa include il pacchetto</h3>
+            <ul id="lista-caratteristiche">
+              <li>Logo personalizzato creato da zero</li>
+              <li>Favicon per il web</li>
+              <li>Consegna in formati pronti all'uso (PNG, SVG, JPG)</li>
+            </ul>
+          </div>
+          <button id="bottone-acquista" type="button" data-servizio="creazione-logo">Acquista questo pacchetto</button>
+        </article>
+
+        <!-- 🖼️ Creazione Grafica -->
+        <article id="prodotto-card" reveal delay="3">
+          <header id="intestazione-prodotto">
+            <span id="icona-prodotto">🖼️</span>
+            <h2 id="titolo-prodotto">Creazione Grafica</h2>
+            <span id="prezzo">-</span>
+          </header>
+          <p id="sottotitolo">Dai visibilità ai tuoi eventi, prodotti o promozioni.</p>
+          <div id="slider-immagini">
+            <button id="freccia-sinistra" type="button" aria-label="Immagine precedente">‹</button>
+            <div id="contenitore-slider">
+              <img slide="attivo" src="assets/portfolio/grafica-palefit.png" alt="Anteprima Creazione Grafica">
+              <img slide src="assets/portfolio/grafica-foodtruck.png" alt="Anteprima Creazione Grafica">
+            </div>
+            <button id="freccia-destra" type="button" aria-label="Immagine successiva">›</button>
+          </div>
+          <p id="link-anteprima" hidden><a href="assets/portfolio/grafica-palefit.png" target="_blank" rel="noopener">Apri l'anteprima</a></p>
+          <p id="consegna-info">🚚 Consegna in 1-3 giorni lavorativi (spesso entro 24 ore)</p>
+          <button id="bottone-scopri" type="button" data-testo-chiuso="✅ Scopri cosa offriamo">✅ Scopri cosa offriamo</button>
+          <div id="sezione-cosa-offriamo">
+            <h3 id="titolo-sezione">Cosa include il pacchetto</h3>
+            <ul id="lista-caratteristiche">
+              <li>1 Grafica personalizzata</li>
+              <li>2 proposte di design tra cui scegliere</li>
+              <li>Formati file (PNG, JPG ecc.)</li>
+              <li>Formato per social o stampa</li>
+              <li>1 revisione inclusa</li>
+            </ul>
+            <h3 id="titolo-sezione">Cosa NON è incluso</h3>
+            <ul id="lista-caratteristiche2">
+              <li>Stampa fisica (forniamo solo il file digitale pronto per la stampa)</li>
+            </ul>
+          </div>
+          <button id="bottone-acquista" type="button" data-servizio="creazione-locandina">Acquista questo pacchetto</button>
+        </article>
+
+        <!-- 🔥 Brand Identity -->
+        <article id="prodotto-card" reveal delay="1">
+          <header id="intestazione-prodotto">
+            <span id="icona-prodotto">🔥</span>
+            <h2 id="titolo-prodotto">Brand Identity</h2>
+            <span id="prezzo">-</span>
+          </header>
+          <p id="sottotitolo">Costruisci un'identità visiva unica e riconoscibile per il tuo brand.</p>
+          <div id="slider-immagini">
+            <button id="freccia-sinistra" type="button" aria-label="Immagine precedente">‹</button>
+            <div id="contenitore-slider">
+              <img slide="attivo" src="assets/portfolio/logo-greenbox.png" alt="Anteprima Brand Identity">
+              <img slide src="assets/portfolio/logo-atelier.png" alt="Anteprima Brand Identity">
+            </div>
+            <button id="freccia-destra" type="button" aria-label="Immagine successiva">›</button>
+          </div>
+          <p id="link-anteprima" hidden><a href="assets/portfolio/logo-greenbox.png" target="_blank" rel="noopener">Apri l'anteprima</a></p>
+          <p id="consegna-info">🚚 Consegna in 2-7 giorni lavorativi (spesso entro 48 ore)</p>
+          <button id="bottone-scopri" type="button" data-testo-chiuso="✅ Scopri cosa include">✅ Scopri cosa include</button>
+          <div id="sezione-cosa-offriamo">
+            <h3 id="titolo-sezione">Cosa include il pacchetto</h3>
+            <ul id="lista-caratteristiche">
+              <li>Logo personalizzato</li>
+              <li>Palette colori e selezione tipografica</li>
+              <li>Set di icone coordinate e moodboard visivo</li>
+              <li>Tone of Voice del brand</li>
+              <li>Mini Brand Book in PDF</li>
+            </ul>
+            <h3 id="titolo-sezione">Cosa NON è incluso</h3>
+            <ul id="lista-caratteristiche2">
+              <li>Naming (creazione del nome del brand)</li>
+              <li>Materiali stampati e stampa fisica</li>
+            </ul>
+          </div>
+          <button id="bottone-acquista" type="button" data-servizio="brand-identity" data-preventivo="si">Richiedi un Preventivo</button>
+        </article>
+
+        <!-- 📱 Rebranding Social -->
+        <article id="prodotto-card" reveal delay="2">
+          <header id="intestazione-prodotto">
+            <span id="icona-prodotto">📱</span>
+            <h2 id="titolo-prodotto">Rebranding Social</h2>
+            <span id="prezzo">-</span>
+          </header>
+          <p id="sottotitolo">Dai un nuovo look ai tuoi profili social e migliora la tua presenza online.</p>
+          <div id="slider-immagini">
+            <button id="freccia-sinistra" type="button" aria-label="Immagine precedente">‹</button>
+            <div id="contenitore-slider">
+              <img slide="attivo" src="assets/portfolio/grafica-foodtruck.png" alt="Anteprima Rebranding Social">
+              <img slide src="assets/portfolio/grafica-palefit.png" alt="Anteprima Rebranding Social">
+            </div>
+            <button id="freccia-destra" type="button" aria-label="Immagine successiva">›</button>
+          </div>
+          <p id="link-anteprima" hidden><a href="assets/portfolio/grafica-foodtruck.png" target="_blank" rel="noopener">Apri l'anteprima</a></p>
+          <p id="consegna-info">🚚 Consegna completa entro 24-48 ore</p>
+          <button id="bottone-scopri" type="button" data-testo-chiuso="✅ Scopri cosa offriamo">✅ Scopri cosa offriamo</button>
+          <div id="sezione-cosa-offriamo">
+            <h3 id="titolo-sezione">Cosa include il pacchetto</h3>
+            <ul id="lista-caratteristiche">
+              <li>Rebranding dei post e del profilo (colori, layout e stile)</li>
+              <li>Aggiornamento della biografia e delle informazioni profilo</li>
+              <li>Strategia settimanale: cosa postare, quando e perché</li>
+              <li>Mini guida "Come andare virale in 30 giorni"</li>
+              <li>Template per contenuti virali (reels e post)</li>
+              <li>5+ prompt pronti per ChatGPT</li>
+              <li>Creazione logo (se necessario)</li>
+            </ul>
+          </div>
+          <button id="bottone-acquista" type="button" data-servizio="rebranding-social">Acquista questo pacchetto</button>
+        </article>
+
+        <!-- 📝 Post+Copywriting -->
+        <article id="prodotto-card" reveal delay="3">
+          <header id="intestazione-prodotto">
+            <span id="icona-prodotto">📝</span>
+            <h2 id="titolo-prodotto">Post + Copywriting</h2>
+            <span id="prezzo">-</span>
+          </header>
+          <p id="sottotitolo">Un post perfetto per i Social e ads.</p>
+          <div id="slider-immagini">
+            <button id="freccia-sinistra" type="button" aria-label="Immagine precedente">‹</button>
+            <div id="contenitore-slider">
+              <img slide="attivo" src="assets/portfolio/grafica-palefit.png" alt="Anteprima Post + Copywriting">
+              <img slide src="assets/portfolio/grafica-foodtruck.png" alt="Anteprima Post + Copywriting">
+            </div>
+            <button id="freccia-destra" type="button" aria-label="Immagine successiva">›</button>
+          </div>
+          <p id="link-anteprima" hidden><a href="assets/portfolio/grafica-palefit.png" target="_blank" rel="noopener">Apri l'anteprima</a></p>
+          <p id="consegna-info">🚚 Consegna in 1-3 giorni lavorativi (spesso entro 12 ore)</p>
+          <button id="bottone-scopri" type="button" data-testo-chiuso="✅ Scopri cosa offriamo">✅ Scopri cosa offriamo</button>
+          <div id="sezione-cosa-offriamo">
+            <h3 id="titolo-sezione">Cosa include il pacchetto</h3>
+            <ul id="lista-caratteristiche">
+              <li>Grafica del post personalizzata</li>
+              <li>Testi persuasivi (copywriting) pronti da pubblicare</li>
+              <li>Adatto a social e pubblicità</li>
+            </ul>
+          </div>
+          <button id="bottone-acquista" type="button" data-servizio="post-copywriting">Acquista questo pacchetto</button>
+        </article>
+
+        <!-- ✍️ Restyling Sito Web -->
+        <article id="prodotto-card" reveal delay="1">
+          <header id="intestazione-prodotto">
+            <span id="icona-prodotto">✍️</span>
+            <h2 id="titolo-prodotto">Restyling Sito Web</h2>
+            <span id="prezzo">-</span>
+          </header>
+          <p id="sottotitolo">Rinnova il tuo sito esistente con un design moderno, responsive e più efficace.</p>
+          <div id="slider-immagini">
+            <button id="freccia-sinistra" type="button" aria-label="Immagine precedente">‹</button>
+            <div id="contenitore-slider">
+              <img slide="attivo" src="assets/portfolio/sito-barber.png" alt="Anteprima Restyling Sito Web">
+              <img slide src="assets/portfolio/sito-fisio.png" alt="Anteprima Restyling Sito Web">
+            </div>
+            <button id="freccia-destra" type="button" aria-label="Immagine successiva">›</button>
+          </div>
+          <p id="link-anteprima" hidden><a href="assets/portfolio/sito-barber.png" target="_blank" rel="noopener">Apri l'anteprima</a></p>
+          <p id="consegna-info">🚚 Consegna in 3-6 giorni lavorativi</p>
+          <button id="bottone-scopri" type="button" data-testo-chiuso="✅ Scopri cosa offriamo">✅ Scopri cosa offriamo</button>
+          <div id="sezione-cosa-offriamo">
+            <h3 id="titolo-sezione">Cosa include il pacchetto</h3>
+            <ul id="lista-caratteristiche">
+              <li>Nuovo design moderno e professionale, coerente con il tuo brand</li>
+              <li>Versione completamente responsive</li>
+              <li>Miglioramento dell'usabilità e della navigazione</li>
+              <li>Aggiornamento di testi e immagini (se forniti)</li>
+              <li>Logo personalizzato creato da zero (se necessario)</li>
+            </ul>
+            <h3 id="titolo-sezione">Cosa NON è incluso</h3>
+            <ul id="lista-caratteristiche2">
+              <li>Modulo di contatto e integrazioni esterne</li>
+              <li>Funzionalità dinamiche (form, login, carrello)</li>
+              <li>Trasferimento o gestione del dominio</li>
+              <li>Manutenzione o aggiornamenti futuri</li>
+            </ul>
+          </div>
+          <button id="bottone-acquista" type="button" data-servizio="restyling-sito-web">Acquista questo pacchetto</button>
+        </article>
+
+        <!-- 📅 Calendario Prenotazione -->
+        <article id="prodotto-card" reveal delay="2">
+          <header id="intestazione-prodotto">
+            <span id="icona-prodotto">📅</span>
+            <h2 id="titolo-prodotto">Calendario Prenotazione</h2>
+            <span id="prezzo">-</span>
+          </header>
+          <p id="sottotitolo">Un calendario privato da condividere direttamente con i tuoi clienti per gestire appuntamenti o sessioni.</p>
+          <div id="slider-immagini">
+            <button id="freccia-sinistra" type="button" aria-label="Immagine precedente">‹</button>
+            <div id="contenitore-slider">
+              <img slide="attivo" src="assets/portfolio/sito-fisio.png" alt="Anteprima Calendario Prenotazione">
+              <img slide src="assets/portfolio/sito-vesuvio.png" alt="Anteprima Calendario Prenotazione">
+            </div>
+            <button id="freccia-destra" type="button" aria-label="Immagine successivo">›</button>
+          </div>
+          <p id="link-anteprima" hidden><a href="assets/portfolio/sito-fisio.png" target="_blank" rel="noopener">Apri l'anteprima</a></p>
+          <p id="consegna-info">🚚 Consegna in 1-2 giorni lavorativi</p>
+          <button id="bottone-scopri" type="button" data-testo-chiuso="✅ Scopri cosa offriamo">✅ Scopri cosa offriamo</button>
+          <div id="sezione-cosa-offriamo">
+            <h3 id="titolo-sezione">Cosa include il pacchetto</h3>
+            <ul id="lista-caratteristiche">
+              <li>Calendario prenotazioni privato e personalizzato</li>
+              <li>Link diretto da condividere con i clienti</li>
+              <li>Gestione di appuntamenti e sessioni</li>
+              <li>Design coerente con il tuo brand</li>
+            </ul>
+          </div>
+          <button id="bottone-acquista" type="button" data-servizio="calendario-prenotazione">Acquista questo pacchetto</button>
+        </article>
+
+      </div>
     </section>
 
     <!-- ============ SUPPORTO CLIENTI E GARANZIE ============ -->

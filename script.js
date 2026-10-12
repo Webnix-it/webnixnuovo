@@ -618,12 +618,46 @@
       });
     });
 
-    /* "Acquista questo pacchetto" \u2192 WhatsApp precompilato */
+    /* "Acquista questo pacchetto" / "Richiedi un Preventivo" -> WhatsApp precompilato */
     document.querySelectorAll("#bottone-acquista").forEach(function (btn) {
       btn.addEventListener("click", function () {
         var chiave = btn.getAttribute("data-servizio") || "";
         var nome = NOMI_SERVIZI[chiave] || chiave;
-        window.open(waLink("Ciao Webnix! Voglio ACQUISTARE il pacchetto \"" + nome + "\". Come procediamo?"), "_blank", "noopener");
+        var frase = btn.getAttribute("data-preventivo") === "si"
+          ? "Ciao Webnix! Voglio RICHIEDERE UN PREVENTIVO per il pacchetto \"" + nome + "\". Come procediamo?"
+          : "Ciao Webnix! Voglio ACQUISTARE il pacchetto \"" + nome + "\". Come procediamo?";
+        window.open(waLink(frase), "_blank", "noopener");
+      });
+    });
+
+    /* Slider immagini: frecce dentro ogni card prodotto */
+    document.querySelectorAll("#slider-immagini").forEach(function (slider) {
+      var slide = slider.querySelectorAll("[slide]");
+      if (!slide.length) return;
+      var idx = 0;
+      function mostra(nuovo) {
+        slide[idx].removeAttribute("slide");
+        idx = (nuovo + slide.length) % slide.length;
+        slide[idx].setAttribute("slide", "attivo");
+      }
+      var sx = slider.querySelector("#freccia-sinistra");
+      var dx = slider.querySelector("#freccia-destra");
+      if (sx) sx.addEventListener("click", function () { mostra(idx - 1); });
+      if (dx) dx.addEventListener("click", function () { mostra(idx + 1); });
+    });
+
+    /* "Apri l'anteprima": click sull'immagine attiva del slider */
+    document.querySelectorAll("#prodotto-card").forEach(function (card) {
+      var link = card.querySelector("#link-anteprima a");
+      if (!link) return;
+      var contenitore = card.querySelector("#contenitore-slider");
+      if (!contenitore) return;
+      contenitore.style.cursor = "pointer";
+      contenitore.title = "Apri l'anteprima";
+      contenitore.addEventListener("click", function () {
+        var attiva = contenitore.querySelector('[slide="attivo"]');
+        if (attiva && attiva.src) link.href = attiva.src;
+        window.open(link.href, "_blank", "noopener");
       });
     });
   }
