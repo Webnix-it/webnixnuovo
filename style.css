@@ -1525,66 +1525,108 @@ details.domanda[open] summary { color: var(--ciano); }
 
 #griglia-garanzie {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-  gap: 26px;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 20px;
   max-width: 1200px;
   margin: 40px auto 0;
 }
 
+/* Card stile "bento" moderno: bordo gradiente animato, layout orizzontale */
 #card-garanzia {
-  background: rgba(255, 255, 255, .03);
-  border: 1px solid rgba(255, 255, 255, .08);
-  border-radius: 16px;
-  padding: 30px 22px;
-  text-align: center;
-  transition: all .6s cubic-bezier(.23, 1, .32, 1);
+  position: relative;
+  isolation: isolate;
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  text-align: left;
+  padding: 26px 24px;
+  border-radius: 18px;
+  background: linear-gradient(160deg, rgba(22, 27, 34, .9), rgba(13, 17, 23, .95));
+  border: 1px solid rgba(255, 255, 255, .06);
+  overflow: hidden;
+  transition: transform .45s cubic-bezier(.23, 1, .32, 1), border-color .45s ease, box-shadow .45s ease;
+}
+
+/* Glow d'angolo che appare al passaggio del mouse */
+#card-garanzia::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: radial-gradient(320px 180px at 0% 0%, rgba(232, 28, 255, .14), transparent 60%),
+              radial-gradient(320px 180px at 100% 100%, rgba(64, 201, 255, .12), transparent 60%);
+  opacity: 0;
+  transition: opacity .45s ease;
+}
+
+/* Linea gradiente superiore che si illumina in hover */
+#card-garanzia::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: var(--gradiente-brand);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform .5s cubic-bezier(.23, 1, .32, 1);
 }
 
 #card-garanzia:hover {
-  transform: scale(1.2);
-  border-color: rgba(232, 28, 255, .5);
-  box-shadow: 0 14px 34px rgba(232, 28, 255, .25);
-  background: rgba(232, 28, 255, .05);
+  transform: translateY(-6px);
+  border-color: rgba(64, 201, 255, .35);
+  box-shadow: 0 18px 40px rgba(0, 0, 0, .5), var(--shadow-neon);
 }
 
+#card-garanzia:hover::before { opacity: 1; }
+#card-garanzia:hover::after { transform: scaleX(1); }
+
+/* Icona: quadrato arrotondato "glass" con bordo neon, non più cerchio pieno */
 #icona-garanzia {
-  width: 64px;
-  height: 64px;
-  margin: 0 auto 18px;
-  border-radius: 50%;
+  flex-shrink: 0;
+  width: 54px;
+  height: 54px;
+  border-radius: 14px;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(-45deg, #e81cff 0%, #40c9ff 100%);
-  box-shadow: 0 0 20px rgba(232, 28, 255, .45);
-  transition: all .6s cubic-bezier(.23, 1, .32, 1);
+  background: rgba(255, 255, 255, .04);
+  border: 1px solid rgba(232, 28, 255, .35);
+  box-shadow: inset 0 0 12px rgba(232, 28, 255, .12);
+  transition: all .45s cubic-bezier(.23, 1, .32, 1);
 }
 
-#icona-garanzia svg { width: 30px; height: 30px; }
+#icona-garanzia svg { width: 26px; height: 26px; opacity: .9; transition: opacity .45s ease; }
 
 #card-garanzia:hover #icona-garanzia {
-  transform: scale(1.15) translateY(-4px);
-  box-shadow: 0 0 30px rgba(232, 28, 255, .7);
+  background: var(--gradiente-brand);
+  border-color: transparent;
+  box-shadow: 0 0 22px rgba(64, 201, 255, .45);
+  transform: rotate(-6deg) scale(1.06);
 }
+
+#card-garanzia:hover #icona-garanzia svg { opacity: 1; }
 
 #card-garanzia h3 {
   font-family: 'Cocogoose', sans-serif;
-  font-size: 1.15rem;
+  font-size: 1.05rem;
   font-weight: bold;
   color: #fff;
-  margin-bottom: 10px;
+  margin-bottom: 6px;
+  letter-spacing: .2px;
 }
 
 #card-garanzia p {
   color: var(--testo-3);
-  font-size: .95rem;
+  font-size: .9rem;
   line-height: 1.5;
   margin: 0;
 }
 
 @media (max-width: 560px) {
   #griglia-garanzie { grid-template-columns: 1fr; }
-  #card-garanzia:hover { transform: scale(1.05); }
+  #card-garanzia { padding: 22px 20px; }
 }
 
 /* ============ FAQ NUOVO STILE (accordion .faq-item) — SFONDO BIANCO ============ */
