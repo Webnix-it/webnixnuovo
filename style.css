@@ -903,6 +903,7 @@ details.domanda summary:hover {
   color: white;
   transition: transform 1.2s cubic-bezier(.23, 1, .32, 1);
 }
+.scheda-uiverse:hover { transform: translateY(-8px) scale(1.03); }
 .scheda-uiverse::before {
   content: '';
   position: absolute;
