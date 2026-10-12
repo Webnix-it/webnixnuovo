@@ -1280,7 +1280,8 @@ details.domanda[open] summary { color: var(--ciano); }
   align-items: stretch;
   text-align: left;
   box-shadow: 0 14px 34px rgba(0, 0, 0, .35);
-  transition: all .6s cubic-bezier(.175,.885,.32,.9), transform .6s cubic-bezier(.175,.885,.32,.9);
+  /* Transizione uniforme richiesta: 1.2s ease-out-quint */
+  transition: transform 1.2s cubic-bezier(0.23, 1, 0.32, 1), border-color 1.2s cubic-bezier(0.23, 1, 0.32, 1), box-shadow 1.2s cubic-bezier(0.23, 1, 0.32, 1);
 }
 
 #griglia-prodotti > #prodotto-card:hover {
@@ -1465,7 +1466,8 @@ details.domanda[open] summary { color: var(--ciano); }
   background: linear-gradient(160deg, rgba(22, 27, 34, .9), rgba(13, 17, 23, .95));
   border: 1px solid rgba(255, 255, 255, .06);
   overflow: hidden;
-  transition: transform .45s cubic-bezier(.23, 1, .32, 1), border-color .45s ease, box-shadow .45s ease;
+  /* Transizione uniforme richiesta: 1.2s ease-out-quint */
+  transition: transform 1.2s cubic-bezier(0.23, 1, 0.32, 1), border-color 1.2s cubic-bezier(0.23, 1, 0.32, 1), box-shadow 1.2s cubic-bezier(0.23, 1, 0.32, 1);
 }
 
 /* Glow d'angolo che appare al passaggio del mouse */
