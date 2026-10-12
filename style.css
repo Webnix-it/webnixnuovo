@@ -890,10 +890,10 @@ details.domanda summary:hover {
    gradiente #e81cff -> #40c9ff, hover con rotazione ::before
    ============================================================ */
 .griglia-uiverse {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(210px, 210px));
+  display: flex;
+  flex-wrap: wrap;
   justify-content: center;
-  gap: 34px 26px;
+  gap: 14px;
 }
 .scheda-uiverse {
   position: relative;
