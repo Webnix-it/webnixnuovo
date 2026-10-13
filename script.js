@@ -617,13 +617,21 @@
       var btn = card.querySelector("#bottone-scopri");
       var det = card.querySelector("#sezione-cosa-offriamo");
       if (!btn || !det) return;
+      var etichetta = btn.querySelector(".scopri-etichetta");
       btn.addEventListener("click", function () {
         var aperto = det.getAttribute("aperto") === "si";
         det.setAttribute("aperto", aperto ? "" : "si");
-        btn.textContent = aperto
-          ? (btn.getAttribute("data-testo-chiuso") || "\u2705 Scopri cosa offriamo")
-          : "\u2b06\ufe0f Chiudi il dettaglio";
-        if (!btn.getAttribute("data-testo-chiuso")) btn.setAttribute("data-testo-chiuso", btn.textContent.replace("\u2b06\ufe0f Chiudi il dettaglio", "\u2705 Scopri cosa offriamo"));
+        btn.setAttribute("aperto", aperto ? "" : "si");
+        btn.setAttribute("aria-expanded", aperto ? "false" : "true");
+        if (etichetta) {
+          etichetta.textContent = aperto
+            ? (btn.getAttribute("data-testo-chiuso") || "Scopri cosa offriamo")
+            : "Chiudi il dettaglio";
+        } else {
+          btn.textContent = aperto
+            ? (btn.getAttribute("data-testo-chiuso") || "\u2705 Scopri cosa offriamo")
+            : "\u2b06\ufe0f Chiudi il dettaglio";
+        }
       });
     });
 
