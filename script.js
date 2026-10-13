@@ -761,6 +761,81 @@
     }, true);
   }
 
+  /* ---------- POPUP MODAL "Visualizza l'anteprima" PORTFOLIO (home) ---------- */
+  var ANTEPRIME_PORTFOLIO = [
+    { img: "assets/portfolio/sito-barber.png",   titolo: "Barber Shop — Sito Web",      cat: "Sito Web" },
+    { img: "assets/portfolio/sito-fisio.png",    titolo: "Studio Fisioterapia — Sito",  cat: "Sito Web" },
+    { img: "assets/portfolio/sito-vesuvio.png",  titolo: "Vesuvio — Sito Web",          cat: "Sito Web" },
+    { img: "assets/portfolio/logo-atelier.png",  titolo: "Atelier — Logo",              cat: "Logo" },
+    { img: "assets/portfolio/logo-greenbox.png", titolo: "GreenBox — Logo",             cat: "Logo" },
+    { img: "assets/portfolio/grafica-foodtruck.png", titolo: "Food Truck — Locandina",  cat: "Grafica" },
+    { img: "assets/portfolio/grafica-palefit.png",   titolo: "PaleFit — Grafica",       cat: "Grafica" }
+  ];
+
+  function inizializzaModalPortfolio() {
+    var btnApri = document.getElementById("openModal");
+    var overlay = document.getElementById("overlay-portfolio");
+    var btnChiudi = document.getElementById("chiudi-modal-portfolio");
+    var elenco = document.getElementById("colonna-elenco-portfolio");
+    var imgGrande = document.getElementById("immagine-grande-portfolio");
+    var didascalia = document.getElementById("didascalia-portfolio");
+    if (!btnApri || !overlay || !btnChiudi || !elenco || !imgGrande) return;
+
+    var popolato = false;
+    function popola() {
+      if (popolato) return;
+      popolato = true;
+      ANTEPRIME_PORTFOLIO.forEach(function (a, i) {
+        var item = document.createElement("button");
+        item.type = "button";
+        item.className = "item-anteprima";
+        item.innerHTML =
+          '<img src="' + a.img + '" alt="' + a.titolo + '" loading="lazy">' +
+          '<span class="meta-anteprima"><strong>' + a.titolo + '</strong><span>' + a.cat + '</span></span>';
+        item.addEventListener("click", function () { scegli(i, item); });
+        elenco.appendChild(item);
+      });
+      scegli(0, elenco.firstChild);
+    }
+    function scegli(i, item) {
+      elenco.querySelectorAll(".item-anteprima").forEach(function (b) { b.removeAttribute("attiva"); });
+      if (item) item.setAttribute("attiva", "si");
+      var a = ANTEPRIME_PORTFOLIO[i];
+      imgGrande.classList.add("cambio");
+      setTimeout(function () {
+        imgGrande.src = a.img;
+        imgGrande.alt = a.titolo;
+        if (didascalia) didascalia.textContent = a.titolo + " · " + a.cat;
+        imgGrande.classList.remove("cambio");
+      }, 250);
+    }
+
+    function apri() {
+      popola();
+      overlay.classList.remove("uscita");
+      overlay.classList.add("aperto");
+      overlay.setAttribute("aria-hidden", "false");
+      document.body.style.overflow = "hidden";
+    }
+    function chiudi() {
+      overlay.classList.add("uscita");
+      setTimeout(function () {
+        overlay.classList.remove("aperto", "uscita");
+        overlay.setAttribute("aria-hidden", "true");
+        document.body.style.overflow = "";
+      }, 450);
+    }
+
+    btnApri.addEventListener("click", apri);
+    btnChiudi.addEventListener("click", chiudi);
+    overlay.addEventListener("click", function (e) {
+      if (e.target === overlay) chiudi();
+    });
+    document.addEventListener("keydown", function (e) {
+      if (e.key === "Escape" && overlay.classList.contains("aperto")) chiudi();
+    });
+  }
+
   /* ---------- AVVIO ---------- */
   document.addEventListener("DOMContentLoaded", function () {
     avviaLoader();
@@ -776,6 +851,7 @@
     applicaConfigLink();
     inizializzaPacchetti();
     inizializzaModalCalendario();
+    inizializzaModalPortfolio();
     inizializzaCardUiverse();
     inizializzaReveal();
   });
