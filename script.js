@@ -690,12 +690,19 @@
       var pacchetto = document.getElementById("acquisto-pacchetto").value;
       var nomeEl = document.getElementById("acquisto-nome");
       var nome = nomeEl.value.trim();
+      var emailEl = document.getElementById("acquisto-email");
+      var email = emailEl ? emailEl.value.trim() : "";
+      var whatsappEl = document.getElementById("acquisto-whatsapp");
+      var whatsapp = whatsappEl ? whatsappEl.value.trim() : "";
       var attivita = document.getElementById("acquisto-attivita").value.trim();
       var messaggio = document.getElementById("acquisto-messaggio").value.trim();
       if (!nome) { nomeEl.focus(); return; }
+      if (!email) { if (emailEl) emailEl.focus(); return; }
       var frase = "Ciao Webnix! Vorrei ACQUISTARE il pacchetto \"" + pacchetto + "\".\n" +
         "Nome: " + nome + "\n" +
-        "Attività: " + attivita;
+        "Email: " + email;
+      if (whatsapp) frase += "\nWhatsApp: " + whatsapp;
+      frase += "\nAttività: " + attivita;
       if (messaggio) frase += "\nNote: " + messaggio;
       window.open(waLink(frase), "_blank", "noopener");
       chiudi();
