@@ -512,6 +512,14 @@
       if (motivo) console.warn("Webnix recensioni:", motivo);
     }
 
+    /* FIX BLOCCO TOTALE JS: se config.js non contiene il blocco firebase,
+       leggere CFG.firebase.databaseURL lanciava un errore che fermava TUTTI gli
+       script successivi (menu, modal "Visualizza l'anteprima", ecc.).
+       Ora, senza configurazione Firebase, si usa direttamente la demo. */
+    if (!CFG.firebase || !CFG.firebase.databaseURL) {
+      fallbackDemo("Configurazione Firebase assente: uso recensioni demo");
+      return;
+    }
     var url = CFG.firebase.databaseURL + "/" + CFG.firebase.reviewsPath + ".json";
     if (!/^https:\/\/.+\.firebaseio\.com|^https:\/\/.+firebasestorage/.test(url) && !/firebase/.test(url)) {
       fallbackDemo("URL Firebase non valido");
