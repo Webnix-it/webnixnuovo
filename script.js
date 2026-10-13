@@ -90,8 +90,9 @@
       if (etichetta) etichetta.textContent = "Caricamento completato ✓";
       setTimeout(function () {
         loader.style.opacity = "0";
+        loader.style.pointerEvents = "none"; // non blocca piu' i click durante la dissolvenza
         setTimeout(function () {
-          loader.style.display = "none"; // rimuovi dal flusso dopo dissolvenza
+          loader.remove(); // rimuovi del tutto dal DOM dopo dissolvenza
           document.body.style.overflow = "";
         }, 650);
       }, 350);
@@ -773,6 +774,8 @@
   ];
 
   function inizializzaModalPortfolio() {
+    /* FIX: prima di tutto scollega il bottone dal reveal (evita che resti a
+       opacity:0 / non cliccabile) e rimuove eventuali listener duplicati. */
     var btnApri = document.getElementById("openModal");
     var overlay = document.getElementById("overlay-portfolio");
     var btnChiudi = document.getElementById("chiudi-modal-portfolio");
@@ -780,6 +783,13 @@
     var imgGrande = document.getElementById("immagine-grande-portfolio");
     var didascalia = document.getElementById("didascalia-portfolio");
     if (!btnApri || !overlay || !btnChiudi || !elenco || !imgGrande) return;
+
+    btnApri.removeAttribute("reveal");
+    btnApri.style.opacity = "1";
+    btnApri.style.transform = "none";
+    var nuovoBtn = btnApri.cloneNode(true);
+    btnApri.parentNode.replaceChild(nuovoBtn, btnApri);
+    btnApri = nuovoBtn;
 
     var popolato = false;
     function popola() {
