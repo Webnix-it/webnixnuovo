@@ -191,11 +191,10 @@ button, input, textarea, select { font: inherit; color: inherit; }
   transition: all 0.6s cubic-bezier(.23, 1, .32, 1);
 }
 #header[scrollato="si"] {
-  background: rgba(13, 17, 23, .35);           /* vetro trasparente colorato */
-  backdrop-filter: blur(14px) saturate(140%);  /* blur SOLO dopo lo scroll */
-  -webkit-backdrop-filter: blur(14px) saturate(140%);
-  border-bottom: 1px solid rgba(64, 201, 255, .18);
-  box-shadow: 0 8px 28px rgba(0, 0, 0, .35);
+    background: rgb(13 17 23 / 54%);
+    backdrop-filter: blur(5px) saturate(140%);
+    -webkit-backdrop-filter: blur(14px) saturate(140%);
+    box-shadow: 0 8px 28px rgb(0 0 0 / 42%);
 }
 #corpo-pagina { padding-top: var(--header-h); }
 #logo-link { display: flex; align-items: center; }
@@ -2331,20 +2330,18 @@ body:has(#sezione-faq) { background: #ffffff; }
 }
 
 .duo-card {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: min(300px, 78%);
-  height: auto;
-  object-fit: contain;
-  border-radius: 18px;
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  background: #fff;
-  padding: 8px;
-  box-shadow: 0 15px 45px rgba(0, 0, 0, 0.5), 0 0 25px rgba(232, 28, 255, 0.25);
-  opacity: 0;
-  pointer-events: none;
-  animation: duo-loop 10s infinite cubic-bezier(0.23, 1, 0.32, 1);
+    position: absolute;
+    left: 5%;
+    height: auto;
+    object-fit: contain;
+    border-radius: 18px;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    background: #fff;
+    padding: 8px;
+    box-shadow: 0 15px 45px rgba(0, 0, 0, 0.5), 0 0 25px rgba(232, 28, 255, 0.25);
+    opacity: 0;
+    pointer-events: none;
+    animation: duo-loop 10s infinite cubic-bezier(0.23, 1, 0.32, 1);
 }
 
 /* La seconda card entra sfasata di metà ciclo */
@@ -2380,12 +2377,11 @@ body:has(#sezione-faq) { background: #ffffff; }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .duo-card {
-    animation: none;
-    opacity: 1;
-    position: relative;
-    transform: rotate(-4deg);
-  }
+    .duo-card {
+        opacity: 1;
+        /* position: relative; */
+        transform: rotate(10deg);
+    }
   .servizi-duo-immagini {
     display: grid;
     grid-template-columns: 1fr 1fr;
