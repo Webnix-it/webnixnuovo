@@ -2734,3 +2734,28 @@ body:has(#sezione-faq) { background: #ffffff; }
   .item-anteprima { flex: 0 0 auto; width: 190px; }
   #chiudi-modal-portfolio { top: -14px; right: -6px; width: 46px; height: 46px; }
 }
+
+/* --- MINI BOX CONSEGNA (dentro "Scopri i dettagli") --- */
+.consegna-box {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: rgba(232, 28, 255, 0.07);
+  border: 1px solid rgba(232, 28, 255, 0.25);
+  border-radius: 10px;
+  padding: 10px 14px;
+  margin-bottom: 16px;
+}
+.consegna-box .consegna-icona {
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+  color: #40c9ff;
+  filter: drop-shadow(0 0 6px rgba(64, 201, 255, 0.5));
+}
+.consegna-box span {
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: #e8ecf4;
+  letter-spacing: 0.3px;
+}
