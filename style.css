@@ -1340,6 +1340,47 @@ details.domanda[open] summary { color: var(--ciano); }
 }
 
 /* --- SCOPRI COSA OFFRIAMO (minimale, riga auto) --- */
+/* --- RIGA SCOPRI: consegna + etichetta allineate --- */
+.scopri-contenuto {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+  text-align: left;
+}
+
+.scopri-consegna {
+  font-size: .8rem;
+  font-weight: 500;
+  letter-spacing: .3px;
+  color: #b9c4d6;
+  text-transform: none;
+  transition: color 1.2s cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+#bottone-scopri:hover .scopri-consegna,
+#bottone-scopri[aperto="si"] .scopri-consegna { color: #fff; }
+
+/* anche il bottone del Calendario usa la stessa riga minimale */
+#bottone-scopri-modal {
+  background: none;
+  border: none;
+  padding: 6px 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  color: #40c9ff;
+  font-size: .78rem;
+  font-weight: 600;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+  transition: color 1.2s cubic-bezier(0.23, 1, 0.32, 1), text-shadow 1.2s cubic-bezier(0.23, 1, 0.32, 1);
+}
+#bottone-scopri-modal:hover { color: #fff; text-shadow: 0 0 12px rgba(232, 28, 255, .7); }
+#bottone-scopri-modal .scopri-consegna { color: #b9c4d6; }
+#bottone-scopri-modal:hover .scopri-consegna { color: #fff; }
+
 .scopri-riga {
   display: flex;
   justify-content: space-between;
