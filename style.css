@@ -2759,3 +2759,119 @@ body:has(#sezione-faq) { background: #ffffff; }
   color: #e8ecf4;
   letter-spacing: 0.3px;
 }
+
+/* ===== POPUP MODALE ACQUISTO PACCHETTO ===== */
+.acquisto-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 10000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  background: rgba(8, 10, 16, 0.75);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity .4s ease, visibility .4s ease;
+}
+.acquisto-overlay.aperto { opacity: 1; visibility: visible; }
+.acquisto-modal {
+  position: relative;
+  width: min(520px, 100%);
+  max-height: 90vh;
+  overflow-y: auto;
+  background: #12141f;
+  border: 1px solid rgba(255,255,255,.1);
+  border-radius: 20px;
+  padding: 34px 30px 30px;
+  box-shadow: 0 25px 70px rgba(0,0,0,.6), 0 0 30px rgba(232,28,255,.25);
+  transform: scale(.85) translateY(20px);
+  opacity: 0;
+  transition: transform 1.2s cubic-bezier(0.23, 1, 0.32, 1), opacity .4s ease;
+}
+.acquisto-overlay.aperto .acquisto-modal { transform: scale(1) translateY(0); opacity: 1; }
+.acquisto-overlay.uscita .acquisto-modal { transform: scale(.9) translateY(10px); opacity: 0; transition: transform .35s ease, opacity .35s ease; }
+.acquisto-modal h3 {
+  font-family: 'Cocogoose', sans-serif;
+  font-size: 1.5rem;
+  color: #fff;
+  margin: 0 0 6px;
+}
+.acquisto-sottotitolo { color: #adadad; font-size: .95rem; margin: 0 0 22px; }
+.acquisto-label {
+  display: block;
+  color: #e8e8e8;
+  font-size: .85rem;
+  letter-spacing: .5px;
+  margin-bottom: 16px;
+}
+.acquisto-label input,
+.acquisto-label select,
+.acquisto-label textarea {
+  display: block;
+  width: 100%;
+  margin-top: 6px;
+  padding: 12px 14px;
+  border-radius: 10px;
+  border: 1px solid rgba(255,255,255,.14);
+  background: rgba(255,255,255,.05);
+  color: #fff;
+  font-size: .95rem;
+  font-family: inherit;
+  box-sizing: border-box;
+  transition: border-color .3s ease, box-shadow .3s ease;
+}
+.acquisto-label input:focus,
+.acquisto-label select:focus,
+.acquisto-label textarea:focus {
+  outline: none;
+  border-color: #40c9ff;
+  box-shadow: 0 0 12px rgba(64,201,255,.3);
+}
+.acquisto-label textarea { resize: vertical; }
+.acquisto-label select option { background: #12141f; color: #fff; }
+#form-acquisto .btn-seleziona-uiverse {
+  width: 100%;
+  margin-top: 8px;
+  cursor: pointer;
+  border: none;
+  font-family: inherit;
+}
+#acquisto-chiudi {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(-45deg, #e81cff, #40c9ff);
+  color: #fff;
+  overflow: hidden;
+  box-shadow: 0 0 15px rgba(232,28,255,.5);
+  animation: glow-pulsante 2.5s ease-in-out infinite;
+}
+#acquisto-chiudi svg {
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  opacity: 0;
+  transform: scale(.4) rotate(-90deg);
+  transition: opacity .35s ease, transform .5s cubic-bezier(.68,-0.55,.27,1.55);
+}
+#acquisto-chiudi .acquisto-chiudi-etichetta {
+  font-size: .7rem;
+  letter-spacing: .5px;
+  transition: opacity .3s ease, transform .3s ease;
+}
+#acquisto-chiudi:hover svg { opacity: 1; transform: scale(1.15) rotate(0deg); }
+#acquisto-chiudi:hover .acquisto-chiudi-etichetta { opacity: 0; transform: scale(.6); }
+@media (max-width: 480px) {
+  .acquisto-modal { padding: 30px 20px 22px; }
+}

@@ -638,13 +638,67 @@
     /* "Acquista questo pacchetto" / "Richiedi un Preventivo" -> WhatsApp precompilato */
     document.querySelectorAll("#bottone-acquista").forEach(function (btn) {
       btn.addEventListener("click", function () {
-        var chiave = btn.getAttribute("data-servizio") || "";
-        var nome = NOMI_SERVIZI[chiave] || chiave;
-        var frase = btn.getAttribute("data-preventivo") === "si"
-          ? "Ciao Webnix! Voglio RICHIEDERE UN PREVENTIVO per il pacchetto \"" + nome + "\". Come procediamo?"
-          : "Ciao Webnix! Voglio ACQUISTARE il pacchetto \"" + nome + "\". Come procediamo?";
-        window.open(waLink(frase), "_blank", "noopener");
+        apriModuloAcquisto(btn);
       });
+    });
+  }
+
+  /* ---------- POPUP MODALE "Acquista questo pacchetto" ---------- */
+  function apriModuloAcquisto(btn) {
+    var overlay = document.getElementById("overlay-acquisto");
+    if (!overlay) return;
+    var chiave = btn.getAttribute("data-servizio") || "";
+    var nome = NOMI_SERVIZI[chiave] || chiave;
+    var select = document.getElementById("acquisto-pacchetto");
+    if (select) {
+      for (var i = 0; i < select.options.length; i++) {
+        if (select.options[i].value === nome) { select.selectedIndex = i; break; }
+      }
+    }
+    overlay.classList.remove("uscita");
+    overlay.classList.add("aperto");
+    overlay.setAttribute("aria-hidden", "false");
+    document.body.style.overflow = "hidden";
+    setTimeout(function () {
+      var primo = overlay.querySelector("input, select");
+      if (primo) primo.focus();
+    }, 350);
+  }
+
+  function inizializzaModuloAcquisto() {
+    var overlay = document.getElementById("overlay-acquisto");
+    var btnChiudi = document.getElementById("acquisto-chiudi");
+    var form = document.getElementById("form-acquisto");
+    if (!overlay || !btnChiudi || !form) return;
+
+    function chiudi() {
+      overlay.classList.add("uscita");
+      overlay.classList.remove("aperto");
+      overlay.setAttribute("aria-hidden", "true");
+      document.body.style.overflow = "";
+      setTimeout(function () { overlay.classList.remove("uscita"); }, 400);
+    }
+
+    btnChiudi.addEventListener("click", chiudi);
+    overlay.addEventListener("click", function (e) { if (e.target === overlay) chiudi(); });
+    document.addEventListener("keydown", function (e) {
+      if (e.key === "Escape" && overlay.classList.contains("aperto")) chiudi();
+    });
+
+    form.addEventListener("submit", function (e) {
+      e.preventDefault();
+      var pacchetto = document.getElementById("acquisto-pacchetto").value;
+      var nomeEl = document.getElementById("acquisto-nome");
+      var nome = nomeEl.value.trim();
+      var attivita = document.getElementById("acquisto-attivita").value.trim();
+      var messaggio = document.getElementById("acquisto-messaggio").value.trim();
+      if (!nome) { nomeEl.focus(); return; }
+      var frase = "Ciao Webnix! Vorrei ACQUISTARE il pacchetto \"" + pacchetto + "\".\n" +
+        "Nome: " + nome + "\n" +
+        "Attività: " + attivita;
+      if (messaggio) frase += "\nNote: " + messaggio;
+      window.open(waLink(frase), "_blank", "noopener");
+      chiudi();
     });
   }
 
@@ -876,6 +930,7 @@
     inizializzaBottoneTouch();
     applicaConfigLink();
     inizializzaPacchetti();
+    inizializzaModuloAcquisto();
     inizializzaModalCalendario();
     inizializzaModalPortfolio();
     inizializzaCardUiverse();
