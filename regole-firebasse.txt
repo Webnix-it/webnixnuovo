@@ -1,0 +1,153 @@
+============================================================
+WEBNIX — REGOLE FIREBASE
+Progetto: webnix-a2293
+============================================================
+File di riferimento per la dashboard admin (admin.html).
+La configurazione del progetto è già dentro firebase-config.js.
+
+Contenuto:
+1) Regole Firestore (contenuti del sito + dashboard)
+2) Regole Realtime Database (facoltative: recensioni "storiche")
+3) Cose da attivare nella Console Firebase
+4) Prova rapida che tutto funzioni
+
+Le collezioni usate dalla dashboard sono:
+  recensioni   → name, text, stars, url, timestamp
+  portfolio    → title, category (siti|loghi|grafica), img, desc, link
+  pacchetti    → name, tag, description, price, cta, link
+  faq          → question, answer, icon
+  impostazioni → documento unico "sito"
+                 - colori: { viola, ciano, sfondo, sfondoCard }
+                 - link:   { instagram, facebook, email, cookiebot, pixel }
+
+Database Realtime (opzionale): /recensioni
+
+
+------------------------------------------------------------
+1) REGOLE FIRESTORE
+------------------------------------------------------------
+Console Firebase → Firestore Database → Regole.
+Incolla tutto e premi "Pubblica". Se aggiungi altri amministratori,
+metti le loro email nella lista di isAdmin().
+
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Chi è amministratore: deve aver fatto accesso con Google
+    // ed essere nella lista degli indirizzi autorizzati.
+    function isAdmin() {
+      return request.auth != null
+        && request.auth.token.email_verified == true
+        && request.auth.token.email in [
+             'webnixit@gmail.com'
+           ];
+    }
+
+    // Contenuti pubblici: tutti possono leggerli,
+    // solo l'amministratore può scriverli.
+    match /recensioni/{doc} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    match /portfolio/{doc} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    match /pacchetti/{doc} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    match /faq/{doc} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    match /impostazioni/{doc} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    // Tutto il resto è chiuso.
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
+
+
+------------------------------------------------------------
+2) REGOLE REALTIME DATABASE (facoltative)
+------------------------------------------------------------
+Servono solo se vuoi usare anche il Realtime Database /recensioni.
+Database già creato: webnix-a2293-default-rtdb (europe-west1).
+Console Firebase → Realtime Database → Regole.
+
+{
+  "rules": {
+    "recensioni": {
+      ".read": true,
+      ".write": "auth != null && auth.token.email_verified == true && auth.token.email === 'webnixit@gmail.com'"
+    },
+    "$other": {
+      ".read": false,
+      ".write": false
+    }
+  }
+}
+
+
+------------------------------------------------------------
+3) COSA ATTIVARE NELLA CONSOLE FIREBASE
+------------------------------------------------------------
+a) Authentication → Sign-in method → Google: ATTIVO.
+   Se è la prima volta, imposta anche l'email di supporto del progetto.
+
+b) Authentication → Settings → Authorized domains devono contenere:
+   - localhost                    (prove in locale)
+   - webnix-a2293.firebaseapp.com (dominio Firebase)
+   - il dominio del sito pubblicato (es. webnix.it e www.webnix.it)
+   Senza il dominio giusto il login Google restituisce
+   "auth/unauthorized-domain".
+
+c) Firestore Database: crea il database (posizione europe-west,
+   es. eur3) in modalità produzione, poi incolla le regole del punto 1.
+   Le collezioni recensioni / portfolio / pacchetti / faq / impostazioni
+   non vanno create a mano: nascono al primo salvataggio dalla dashboard.
+
+d) Realtime Database: già presente. Se NON usi le recensioni storiche
+   puoi lasciare le regole chiuse:
+   { "rules": { ".read": false, ".write": false } }
+
+e) firebase-config.js è già compilato con i dati di webnix-a2293.
+   Se cambi progetto, sostituisci lì i valori e ripeti i punti a–d.
+
+f) La stessa email admin deve comparire in tre punti:
+   - regole Firestore (punto 1)
+   - regole Realtime Database (punto 2, se usate)
+   - window.WEBNIX_ADMIN_EMAILS dentro firebase-config.js
+   Oggi è: webnixit@gmail.com
+
+Nota: l'accesso con Google richiede un dominio http(s)
+(localhost o il sito pubblicato). Aprendo admin.html con
+doppio clic (file://) il login non funziona.
+
+
+------------------------------------------------------------
+4) PROVA RAPIDA CHE TUTTO FUNZIONI
+------------------------------------------------------------
+1. Apri admin.html da un server locale (es. http://localhost:5500/admin.html)
+   oppure dal sito pubblicato.
+2. "Accedi con Google" con webnixit@gmail.com → deve entrare nella dashboard.
+3. Sezione Recensioni → aggiungi una recensione di prova → Salva.
+4. Controlla in Console Firebase → Firestore Database → recensioni:
+   il documento deve esserci.
+5. Apri la home del sito: la recensione compare nel carosello.
+6. Se compare "Missing or insufficient permissions" le regole del
+   punto 1 non sono pubblicate o l'email non è nella lista isAdmin().
+7. Se compare "auth/unauthorized-domain" manca il dominio in
+   Authentication → Settings → Authorized domains.
