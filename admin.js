@@ -80,6 +80,28 @@ function errore(testo) {
   mostraStato(testo, "errore");
 }
 
+/* Traduce gli errori Firebase in istruzioni capibili. */
+function descriviErrore(err) {
+  var codice = err && err.code ? String(err.code) : "";
+  var testo = err && err.message ? String(err.message) : String(err || "errore sconosciuto");
+
+  if (codice === "permission-denied" || /insufficient permissions|permission_denied/i.test(testo)) {
+    return "permessi Firestore insufficienti. Le regole pubblicate non consentono la scrittura: " +
+      "incolla quelle di regole-firebasse.txt in Firebase → Firestore Database → Regole, premi Pubblica " +
+      "e controlla che l'account collegato sia webnixit@gmail.com.";
+  }
+  if (codice === "unauthenticated") {
+    return "sessione scaduta: esci e accedi di nuovo con Google.";
+  }
+  if (codice === "not-found") {
+    return "percorso Firestore inesistente: verifica che il database Firestore sia stato creato nella Console Firebase.";
+  }
+  if (codice === "unavailable") {
+    return "Firebase non raggiungibile: controlla la connessione e riprova.";
+  }
+  return testo;
+}
+
 /* ============================================================
    SCHEMI DEI CONTENUTI
    ============================================================ */
@@ -205,7 +227,7 @@ var SEZIONI = {
     collezione: "faq",
     campi: [
       { chiave: "question", etichetta: "Domanda", tipo: "text", obbligatorio: true, largo: true },
-      { chiave: "icon", etichetta: "Icona Font Awesome", tipo: "text", valore: "fa-solid fa-circle-question", placeholder: "fa-solid fa-circle-question" },
+      { chiave: "icon", etichetta: "Icona Font Awesome", tipo: "text", valore: "fa-solid fa-circle-question", placeholder: "fa-solid fa-circle-question", anteprimaIcona: true },
       { chiave: "answer", etichetta: "Risposta", tipo: "textarea", obbligatorio: true, largo: true }
     ],
     nuovi: function () { return { ordine: Date.now() }; },
@@ -368,6 +390,31 @@ function creaCampo(c) {
   if (c.tipo === "date") input.value = c.valore ? String(c.valore) : oggiISO();
   else if (c.valore !== undefined && c.valore !== null) input.value = String(c.valore);
 
+  /* Icona Font Awesome: anteprima accanto al campo di testo. */
+  if (c.anteprimaIcona) {
+    var riga = document.createElement("div");
+    riga.className = "riga-icona";
+
+    var anteprima = document.createElement("div");
+    anteprima.className = "anteprima-icona";
+    var iconaAnteprima = document.createElement("i");
+    iconaAnteprima.setAttribute("aria-hidden", "true");
+    anteprima.appendChild(iconaAnteprima);
+
+    riga.appendChild(input);
+    riga.appendChild(anteprima);
+    label.appendChild(riga);
+
+    input.aggiornaAnteprima = function () {
+      var classe = String(input.value || "").trim() || "fa-solid fa-circle-question";
+      iconaAnteprima.className = classe;
+      anteprima.title = classe;
+    };
+    input.addEventListener("input", input.aggiornaAnteprima);
+    input.aggiornaAnteprima();
+    return label;
+  }
+
   label.appendChild(input);
   return label;
 }
@@ -429,6 +476,7 @@ function creaForm(chiave) {
       if (c.tipo === "toggle") campo.checked = Boolean(c.valore);
       else if (c.tipo === "date") campo.value = c.valore ? String(c.valore) : oggiISO();
       else if (c.valore !== undefined) campo.value = String(c.valore);
+      if (campo.aggiornaAnteprima) campo.aggiornaAnteprima();
     });
     aggiornaWidget();
   }
@@ -473,7 +521,7 @@ function creaForm(chiave) {
       delete cacheListe[chiave];
       disegnaLista(chiave, true);
     } catch (err) {
-      errore("Salvataggio non riuscito: " + (err && err.message ? err.message : err));
+      errore("Salvataggio non riuscito: " + descriviErrore(err));
     }
   });
 
@@ -494,6 +542,7 @@ function creaForm(chiave) {
         return;
       }
       campo.value = valore === undefined || valore === null ? "" : String(valore);
+      if (campo.aggiornaAnteprima) campo.aggiornaAnteprima();
     });
     aggiornaWidget();
     form.setAttribute("data-id", id);
@@ -552,9 +601,9 @@ async function disegnaLista(chiave, forza) {
     contenitore.innerHTML = "";
     var erroreBox = document.createElement("p");
     erroreBox.className = "stato-vuoto";
-    erroreBox.textContent = "Impossibile caricare i contenuti. Controlla le regole di Firestore.";
+    erroreBox.textContent = "Impossibile caricare i contenuti. " + descriviErrore(err);
     contenitore.appendChild(erroreBox);
-    errore("Lettura " + schema.collezione + ": " + (err && err.message ? err.message : err));
+    errore("Lettura " + schema.collezione + ": " + descriviErrore(err));
   }
 }
 
@@ -785,7 +834,7 @@ async function caricaImpostazioni() {
       });
     }
   } catch (err) {
-    errore("Impostazioni non leggibili: " + (err && err.message ? err.message : err));
+    errore("Impostazioni non leggibili: " + descriviErrore(err));
   }
 }
 
@@ -796,7 +845,7 @@ async function salvaImpostazioni(parte, dati) {
     await setDoc(doc(db, "impostazioni", "sito"), payload, { merge: true });
     mostraStato("Impostazioni salvate.", "ok");
   } catch (err) {
-    errore("Salvataggio non riuscito: " + (err && err.message ? err.message : err));
+    errore("Salvataggio non riuscito: " + descriviErrore(err));
   }
 }
 

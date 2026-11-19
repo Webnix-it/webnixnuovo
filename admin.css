@@ -417,6 +417,24 @@ code {
 .campo input[type="color"] { padding: 4px; height: 46px; cursor: pointer; }
 .campo-largo { grid-column: 1 / -1; }
 
+/* ---------- ANTEPRIMA ICONA (campo "Icona Font Awesome") ---------- */
+.riga-icona { display: flex; align-items: stretch; gap: 10px; }
+.riga-icona input { flex: 1 1 auto; min-width: 0; width: auto; }
+.anteprima-icona {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 46px;
+  border: 1px solid var(--bordo);
+  border-radius: 10px;
+  background: var(--sfondo-campo);
+  color: var(--viola);
+  font-size: 1.15rem;
+  transition: border-color .25s ease, color .25s ease;
+}
+.campo:hover .anteprima-icona { border-color: var(--viola); }
+
 .azioni-form { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 20px; }
 
 .bottone-primario,
