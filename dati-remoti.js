@@ -24,6 +24,14 @@
     encodeURIComponent(CFG.projectId) +
     "/databases/(default)/documents";
 
+  /* numero WhatsApp usato dal link "di base" dei pacchetti */
+  var numeroWhatsapp = "14132259397";
+
+  function linkPreventivo(nome) {
+    var testo = "Ciao Webnix! Mi interessa il pacchetto \"" + (nome || "indicato nel sito") + "\". Come procediamo?";
+    return "https://wa.me/" + numeroWhatsapp + "?text=" + encodeURIComponent(testo);
+  }
+
   /* ---------- conversione valori Firestore ---------- */
   function valore(v) {
     if (!v || typeof v !== "object") return "";
@@ -122,6 +130,11 @@
     if (link.facebook) {
       document.querySelectorAll('a[href*="facebook.com"]').forEach(function (a) {
         a.href = link.facebook;
+      });
+    }
+    if (link.tiktok) {
+      document.querySelectorAll('a[href*="tiktok.com"]').forEach(function (a) {
+        a.href = link.tiktok;
       });
     }
     if (link.whatsapp) {
@@ -372,16 +385,76 @@
 
       var link = document.createElement("a");
       link.className = "cta-scorrimento";
-      link.href = p.link || "#";
-      if (p.link) {
-        link.target = "_blank";
-        link.rel = "noopener";
-      }
+      /* link vuoto in dashboard = link WhatsApp di base */
+      link.href = p.link || linkPreventivo(p.name);
+      link.target = "_blank";
+      link.rel = "noopener";
       link.textContent = p.cta || "Richiedi un preventivo";
 
       card.appendChild(titolo);
       card.appendChild(descrizione);
       card.appendChild(link);
+      griglia.appendChild(card);
+    });
+  }
+
+  /* ============================================================
+     PACCHETTI IN HOME (interruttore "Mostra in home")
+     ============================================================ */
+  function disegnaServiziHome(voci) {
+    var griglia = document.getElementById("griglia-servizi");
+    if (!griglia) return;
+
+    var scelti = voci.filter(function (p) {
+      return p.mostraHome === true || p.mostraHome === "true";
+    });
+    if (!scelti.length) return;
+
+    scelti.sort(perOrdine);
+    griglia.innerHTML = "";
+
+    scelti.forEach(function (p, i) {
+      var card = document.createElement("article");
+      card.className = "card-servizio";
+      card.setAttribute("reveal", "");
+      card.setAttribute("delay", String((i % 3) + 1));
+
+      var intest = document.createElement("div");
+      intest.className = "intestazione-servizio";
+
+      var eyebrow = document.createElement("span");
+      eyebrow.className = "eyebrow-card-servizio";
+      eyebrow.textContent = "Pacchetto";
+
+      var titolo = document.createElement("h3");
+      titolo.textContent = p.name || "";
+
+      intest.appendChild(eyebrow);
+      intest.appendChild(titolo);
+      card.appendChild(intest);
+
+      if (p.price) {
+        var prezzo = document.createElement("p");
+        prezzo.className = "prezzo-servizio";
+        prezzo.textContent = p.price;
+        card.appendChild(prezzo);
+      }
+
+      if (p.description) {
+        var descrizione = document.createElement("p");
+        descrizione.className = "descrizione-servizio";
+        descrizione.textContent = p.description;
+        card.appendChild(descrizione);
+      }
+
+      var link = document.createElement("a");
+      link.className = "btn_seleziona";
+      link.href = p.link || linkPreventivo(p.name);
+      link.target = "_blank";
+      link.rel = "noopener";
+      link.textContent = p.cta || "Richiedi un preventivo";
+      card.appendChild(link);
+
       griglia.appendChild(card);
     });
   }
@@ -474,6 +547,10 @@
         applicaColori(impostazioni.colori);
         applicaLink(impostazioni.link);
         if (impostazioni.link) {
+          if (impostazioni.link.whatsapp) {
+            var soloNumeri = String(impostazioni.link.whatsapp).replace(/[^\d]/g, "");
+            if (soloNumeri) numeroWhatsapp = soloNumeri;
+          }
           caricaCookiebot(impostazioni.link.cookiebot);
           caricaPixel(impostazioni.link.pixel);
         }
@@ -501,6 +578,12 @@
     if (document.getElementById("griglia-lavori")) {
       leggiCollezione("pacchetti").then(function (voci) {
         if (voci.length) disegnaPacchetti(voci);
+      });
+    }
+
+    if (document.getElementById("griglia-servizi")) {
+      leggiCollezione("pacchetti").then(function (voci) {
+        if (voci.length) disegnaServiziHome(voci);
       });
     }
 

@@ -501,6 +501,202 @@ code {
   text-align: center;
 }
 
+/* ---------- SEZIONE LINK A ELENCO ---------- */
+.elenco-link { display: grid; gap: 10px; }
+
+.riga-link {
+  display: grid;
+  grid-template-columns: 42px minmax(140px, 210px) minmax(0, 1fr);
+  align-items: center;
+  gap: 14px;
+  padding: 12px 14px;
+  border: 1px solid var(--bordo);
+  border-radius: 12px;
+  background: var(--sfondo-campo);
+  transition: border-color .25s ease, background .25s ease;
+}
+.riga-link:hover { border-color: rgba(64, 201, 255, .35); background: #0f1724; }
+.riga-link:focus-within { border-color: var(--viola); box-shadow: 0 0 0 3px rgba(232, 28, 255, .16); }
+
+.icona-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 42px;
+  height: 42px;
+  border-radius: 11px;
+  border: 1px solid var(--bordo);
+  background: rgba(255, 255, 255, .06);
+  color: var(--ciano);
+}
+.icona-link svg { width: 20px; height: 20px; }
+
+.testo-link strong { display: block; font-size: .9rem; }
+.testo-link small { display: block; color: var(--testo-3); font-size: .76rem; line-height: 1.4; }
+
+.riga-link input {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid var(--bordo);
+  border-radius: 9px;
+  background: #0a0f18;
+  color: var(--testo);
+  font-size: .9rem;
+  transition: border-color .2s ease, box-shadow .2s ease;
+}
+.riga-link input::placeholder { color: #5d6979; }
+.riga-link input:focus {
+  outline: none;
+  border-color: var(--viola);
+  box-shadow: 0 0 0 3px rgba(232, 28, 255, .16);
+}
+
+/* ---------- BARRA DI RICERCA ---------- */
+.barra-ricerca { margin: 0 0 18px; }
+
+.campo-ricerca {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 0 14px;
+  border: 1px solid var(--bordo);
+  border-radius: 999px;
+  background: var(--sfondo-campo);
+  transition: border-color .25s ease, box-shadow .25s ease;
+}
+.campo-ricerca:focus-within { border-color: var(--ciano); box-shadow: 0 0 0 3px rgba(64, 201, 255, .16); }
+.campo-ricerca svg { width: 17px; height: 17px; color: var(--testo-3); flex: 0 0 auto; }
+.campo-ricerca input {
+  flex: 1;
+  min-width: 0;
+  padding: 11px 0;
+  border: 0;
+  background: transparent;
+  font-size: .9rem;
+}
+.campo-ricerca input::placeholder { color: #5d6979; }
+.campo-ricerca input:focus { outline: none; }
+
+/* ---------- STELLE (selettore e lista) ---------- */
+.blocco-stelle { display: grid; gap: 7px; }
+
+.etichetta-campo {
+  font-size: .74rem;
+  font-weight: 700;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: var(--testo-3);
+}
+
+.selettore-stelle { display: flex; gap: 4px; }
+
+.stella {
+  appearance: none;
+  padding: 2px;
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+  color: #2c3646;
+  line-height: 0;
+  cursor: pointer;
+  transition: transform .3s cubic-bezier(.175, .885, .32, 1.275), color .2s ease;
+}
+.stella svg { width: 30px; height: 30px; fill: currentColor; }
+.stella:hover { transform: scale(1.14); }
+.stella.attiva { color: #ffc93c; filter: drop-shadow(0 0 10px rgba(255, 201, 60, .35)); }
+.stella:focus-visible { outline: 2px solid var(--ciano); outline-offset: 2px; }
+
+.voce-testo .meta-admin {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin: 4px 0 6px;
+}
+.voce-testo .stelle-admin { display: inline-flex; gap: 2px; }
+.voce-testo .stelle-admin svg { width: 15px; height: 15px; fill: #2c3646; }
+.voce-testo .stelle-admin svg.attiva { fill: #ffc93c; }
+.voce-testo .data-admin { font-size: .76rem; color: var(--testo-3); letter-spacing: .02em; }
+
+/* ---------- INTERRUTTORE (mostra in home) ---------- */
+.campo-toggle {
+  grid-template-columns: minmax(0, 1fr);
+  padding: 12px 14px;
+  border: 1px solid var(--bordo);
+  border-radius: 12px;
+  background: var(--sfondo-campo);
+  cursor: pointer;
+  transition: border-color .25s ease;
+}
+.campo-toggle:hover { border-color: rgba(64, 201, 255, .35); }
+
+.contenitore-toggle { display: flex; align-items: center; gap: 12px; }
+.campo-toggle > .contenitore-toggle {
+  font-size: .88rem;
+  font-weight: 400;
+  letter-spacing: 0;
+  text-transform: none;
+  color: var(--testo);
+}
+
+.campo-toggle .interruttore {
+  position: relative;
+  width: 46px;
+  height: 26px;
+  flex: 0 0 auto;
+  display: block;
+  font-size: 0;
+}
+.campo-toggle .interruttore input {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+.campo-toggle .cursore {
+  position: absolute;
+  inset: 0;
+  border-radius: 999px;
+  border: 1px solid var(--bordo);
+  background: #253044;
+  transition: background .25s ease, border-color .25s ease;
+}
+.campo-toggle .cursore::after {
+  content: "";
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #8e9aab;
+  transition: transform .3s cubic-bezier(.175, .885, .32, 1.275), background .25s ease;
+}
+.campo-toggle .interruttore input:checked + .cursore {
+  background: var(--gradiente-brand);
+  border-color: transparent;
+}
+.campo-toggle .interruttore input:checked + .cursore::after {
+  transform: translateX(20px);
+  background: #ffffff;
+}
+.campo-toggle .interruttore input:focus-visible + .cursore { outline: 2px solid var(--ciano); outline-offset: 3px; }
+
+.campo-toggle .testi-toggle {
+  display: block;
+  font-size: .88rem;
+  font-weight: 400;
+  letter-spacing: 0;
+  text-transform: none;
+  color: var(--testo);
+}
+.campo-toggle .testi-toggle strong { display: block; font-size: .88rem; }
+.campo-toggle .testi-toggle small { display: block; color: var(--testo-3); font-size: .76rem; line-height: 1.45; }
+
 /* ---------- RESPONSIVE ---------- */
 @media (max-width: 900px) {
   .scheda-accesso { grid-template-columns: 1fr; }
@@ -528,7 +724,15 @@ code {
   #contenuto-admin { padding-top: 26px; }
 }
 
+@media (max-width: 720px) {
+  .riga-link { grid-template-columns: 38px minmax(0, 1fr); }
+  .riga-link input { grid-column: 1 / -1; }
+  .icona-link { width: 38px; height: 38px; }
+}
+
 @media (max-width: 520px) {
   .voce-admin { align-items: flex-start; }
   .voce-azioni { width: 100%; justify-content: flex-end; }
+  .campo-ricerca input { font-size: .86rem; }
+  .stella svg { width: 26px; height: 26px; }
 }

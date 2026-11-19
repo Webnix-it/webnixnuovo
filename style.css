@@ -1159,6 +1159,8 @@ details.domanda summary:hover {
 .btn_dettagli_pacchetto i { font-size: .72rem; transition: transform .35s ease; }
 .card-servizio[dettagli="aperti"] .btn_dettagli_pacchetto i { transform: rotate(180deg); }
 .card-servizio .btn_seleziona { margin-top: auto; }
+/* pacchetto creato dalla dashboard e mostrato tra i servizi della home */
+.card-servizio > a.btn_seleziona { display: block; text-align: center; text-decoration: none; }
 
 /* ---------- PORTFOLIO filtrabile ---------- */
 #fila-filtri { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; margin-bottom: 40px; }
