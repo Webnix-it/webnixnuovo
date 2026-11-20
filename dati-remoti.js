@@ -198,6 +198,33 @@
     }
   }
 
+  /* video YouTube della CTA: accetta link watch, youtu.be, shorts, live o embed */
+  function idYouTube(url) {
+    var trovato = String(url || "").match(
+      /(?:youtu\.be\/|youtube(?:-nocookie)?\.com\/(?:watch\?[^#]*v=|embed\/|shorts\/|live\/))([\w-]{11})/i
+    );
+    return trovato ? trovato[1] : "";
+  }
+
+  function applicaVideo(link) {
+    var blocco = document.getElementById("video-cta");
+    if (!blocco) return;
+
+    var visibili = (link && link.visibili) || {};
+    if (visibili.video === false) {
+      nascondi(blocco);
+      return;
+    }
+    blocco.hidden = false;
+    blocco.style.display = "";
+
+    var id = idYouTube(link && link.video);
+    var iframe = blocco.querySelector("iframe");
+    if (!id || !iframe) return;
+    var indirizzo = "https://www.youtube-nocookie.com/embed/" + id + "?rel=0";
+    if (iframe.getAttribute("src") !== indirizzo) iframe.setAttribute("src", indirizzo);
+  }
+
   function applicaLink(link) {
     if (!link || typeof link !== "object") return;
 
@@ -240,6 +267,9 @@
 
     /* la card TikTok viene creata solo se il canale è attivo */
     if (canaleAttivo("tiktok", visibili, link.tiktok)) inserisciTikTok(link.tiktok);
+
+    /* video della CTA: link e interruttore arrivano dalla dashboard */
+    applicaVideo(link);
   }
 
   /* ============================================================

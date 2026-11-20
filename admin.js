@@ -722,6 +722,7 @@ var LINK_DEFAULT = {
   tiktok: "",
   whatsapp: "14132259397",
   email: "webnixit@gmail.com",
+  video: "https://www.youtube.com/watch?v=aqz-KE-bpKQ",
   cookiebot: "",
   pixel: "",
   visibili: {
@@ -730,6 +731,7 @@ var LINK_DEFAULT = {
     tiktok: true,
     whatsapp: true,
     email: true,
+    video: true,
     cookiebot: false,
     pixel: false
   }
@@ -799,7 +801,7 @@ var PALETTE = [
   }
 ];
 
-var CHIAVI_VISIBILI = ["instagram", "facebook", "tiktok", "whatsapp", "email", "cookiebot", "pixel"];
+var CHIAVI_VISIBILI = ["instagram", "facebook", "tiktok", "whatsapp", "email", "video", "cookiebot", "pixel"];
 
 function nomeInterruttore(chiave) {
   return chiave === "cookiebot" || chiave === "pixel" ? "attivo_" + chiave : "mostra_" + chiave;
@@ -809,7 +811,7 @@ function impostaToggles(visibili, link) {
   if (!formLink) return;
   visibili = visibili || {};
   link = link || {};
-  ["instagram", "facebook", "tiktok", "whatsapp", "email"].forEach(function (k) {
+  ["instagram", "facebook", "tiktok", "whatsapp", "email", "video"].forEach(function (k) {
     var campo = formLink.elements["mostra_" + k];
     if (campo) campo.checked = visibili[k] !== false;
   });
@@ -999,9 +1001,14 @@ async function caricaImpostazioni() {
 
     var link = dati.link || {};
     if (formLink) {
-      ["instagram", "facebook", "tiktok", "whatsapp", "email", "cookiebot", "pixel"].forEach(function (k) {
+      ["instagram", "facebook", "tiktok", "whatsapp", "email", "video", "cookiebot", "pixel"].forEach(function (k) {
         if (link[k] && formLink.elements[k]) formLink.elements[k].value = link[k];
       });
+      /* video non ancora salvato: mostra il segnaposto usato dalla home,
+         così un semplice "Salva link" non lo cancella */
+      if (formLink.elements.video && !link.video) {
+        formLink.elements.video.value = LINK_DEFAULT.video;
+      }
       impostaToggles(link.visibili, link);
     }
   } catch (err) {

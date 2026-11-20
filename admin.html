@@ -184,7 +184,7 @@
       <section class="pannello" data-pannello="link" hidden>
         <header class="testata-pannello">
           <h1>Link e tracciamenti</h1>
-          <p>Social, CookieBot e Facebook Pixel: i valori vengono letti dal sito a ogni caricamento.</p>
+          <p>Social, video YouTube, CookieBot e Facebook Pixel: i valori vengono letti dal sito a ogni caricamento.</p>
         </header>
         <form class="form-admin" id="form-link">
           <div class="elenco-link">
@@ -267,6 +267,24 @@
               <input type="email" name="email" placeholder="webnixit@gmail.com" aria-label="Email di contatto">
               <label class="interruttore-riga" title="Mostra l'email nel sito">
                 <input type="checkbox" name="mostra_email" checked aria-label="Mostra l'email nel sito">
+                <span class="cursore"></span>
+              </label>
+            </div>
+
+            <div class="riga-link">
+              <span class="icona-link" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+                  <rect x="2.5" y="5" width="19" height="14" rx="4"></rect>
+                  <path d="M10.2 9.3 15 12l-4.8 2.7z" fill="currentColor" stroke="none"></path>
+                </svg>
+              </span>
+              <span class="testo-link">
+                <strong>Video YouTube</strong>
+                <small>Video mostrato sotto la CTA della home</small>
+              </span>
+              <input type="url" name="video" placeholder="https://www.youtube.com/watch?v=…" aria-label="Link video YouTube">
+              <label class="interruttore-riga" title="Mostra il video nella home">
+                <input type="checkbox" name="mostra_video" checked aria-label="Mostra il video nella home">
                 <span class="cursore"></span>
               </label>
             </div>
@@ -368,6 +386,6 @@
       if (accesso) accesso.hidden = !pronto;
     })();
   </script>
-  <script type="module" src="admin.js?v=20261120-3"></script>
+  <script type="module" src="admin.js?v=20261120-4"></script>
 </body>
 </html>

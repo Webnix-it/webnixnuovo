@@ -3,34 +3,81 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Webnix — Sito Web per Nuove Attività | Bozza Gratuita in 48 Ore</title>
-  <meta name="description" content="La tua attività non è su Google? Webnix crea siti web professionali in HTML, CSS e JS puro per nuove attività: bozza gratuita in 48 ore, nessun canone mensile, codice tuo per sempre. Genova e tutta Italia.">
+  <title>Hai Aperto un'Attività? Fatti Trovare su Google | Webnix</title>
+  <meta name="description" content="Hai appena aperto la tua attività e non sei visibile su Google o Google Maps? Webnix ti aiuta a farti trovare online con siti web professionali, brand identity, loghi e grafica.">
+  <meta name="keywords" content="Webnix, digital agency, siti web professionali, creazione siti web, attività locali, visibilità Google, Google Maps, brand identity, creazione logo, grafica pubblicitaria, restyling siti web, rebranding social">
+  <meta name="author" content="Webnix Digital Agency">
+  <meta name="robots" content="index, follow">
   <meta name="theme-color" content="#0d1117">
+  <link rel="canonical" href="https://webnixit.netlify.app/">
   <link rel="icon" type="image/svg+xml" href="favicon.svg">
   <link rel="icon" type="image/png" sizes="96x96" href="favicon-96x96.png">
   <link rel="apple-touch-icon" href="apple-touch-icon.png">
-  <meta property="og:title" content="Webnix — Bozza gratuita del tuo sito in 48 ore">
-  <meta property="og:description" content="Siti web veloci in codice pulito per nuove attività. Dimentica WordPress.">
   <meta property="og:type" content="website">
+  <meta property="og:locale" content="it_IT">
+  <meta property="og:site_name" content="Webnix Digital Agency">
+  <meta property="og:title" content="Hai Aperto un'Attività? Fatti Trovare su Google | Webnix">
+  <meta property="og:description" content="Aiutiamo le nuove attività a farsi trovare online con siti web professionali, brand identity, loghi e grafica.">
+  <meta property="og:url" content="https://webnixit.netlify.app/">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Webnix Digital Agency">
+  <meta name="twitter:description" content="Siti web, brand identity e visibilità online per la tua attività.">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
-  <link rel="stylesheet" href="style.css?v=20261120-4">
+  <link rel="stylesheet" href="style.css?v=20261120-6">
 
-  <!-- JSON-LD: Instagram uniformato a webnix.it ovunque -->
+  <!-- JSON-LD: Organization + WebSite/WebPage + BreadcrumbList (struttura per i sitelinks di Google) -->
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
-    "@type": "ProfessionalService",
-    "name": "Webnix Digital Agency",
-    "description": "Creazione siti web in HTML, CSS e JavaScript puro per nuove attività. Bozza gratuita in 48 ore.",
-    "email": "webnixit@gmail.com",
-    "telephone": "+14132259397",
-    "address": { "@type": "PostalAddress", "addressLocality": "Genova", "addressRegion": "Liguria", "addressCountry": "IT" },
-    "openingHours": "Mo-Fr 09:00-18:00",
-    "sameAs": [
-      "https://www.instagram.com/webnix.it",
-      "https://www.facebook.com/people/Webnix-Digital-Agency/61582890411506/"
-    ],
-    "priceRange": "€€"
+    "@graph": [
+      {
+        "@type": "Organization",
+        "@id": "https://webnixit.netlify.app/#organization",
+        "name": "Webnix Digital Agency",
+        "alternateName": "Webnix",
+        "url": "https://webnixit.netlify.app/",
+        "logo": "https://webnixit.netlify.app/loghi/WEBNIX.png",
+        "email": "webnixit@gmail.com",
+        "telephone": "+14132259397",
+        "description": "Webnix aiuta nuove attività e imprese a costruire una presenza digitale professionale attraverso siti web, brand identity, loghi, grafica e soluzioni digitali.",
+        "address": { "@type": "PostalAddress", "addressLocality": "Genova", "addressRegion": "Liguria", "addressCountry": "IT" },
+        "areaServed": { "@type": "Country", "name": "Italia" },
+        "priceRange": "€€",
+        "openingHours": "Mo-Fr 09:00-18:00",
+        "sameAs": [
+          "https://www.instagram.com/webnix.it",
+          "https://www.facebook.com/people/Webnix-Digital-Agency/61582890411506/"
+        ],
+        "knowsAbout": [
+          "Creazione siti web",
+          "Web design",
+          "SEO",
+          "Google Maps",
+          "Brand identity",
+          "Logo design",
+          "Graphic design",
+          "Social media branding",
+          "Restyling siti web"
+        ]
+      },
+      {
+        "@type": "WebSite",
+        "@id": "https://webnixit.netlify.app/#website",
+        "url": "https://webnixit.netlify.app/",
+        "name": "Webnix Digital Agency",
+        "publisher": { "@id": "https://webnixit.netlify.app/#organization" },
+        "inLanguage": "it-IT"
+      },
+      {
+        "@type": "WebPage",
+        "@id": "https://webnixit.netlify.app/#webpage",
+        "url": "https://webnixit.netlify.app/",
+        "name": "Hai Aperto un'Attività? Fatti Trovare su Google | Webnix",
+        "isPartOf": { "@id": "https://webnixit.netlify.app/#website" },
+        "about": { "@id": "https://webnixit.netlify.app/#organization" },
+        "inLanguage": "it-IT"
+      }
+    ]
   }
   </script>
 </head>
@@ -609,7 +656,17 @@
     <section id="cta-finale" reveal>
       <h2 id="titolo-cta-finale" reveal>Smetti di perdere clienti <span class="accento-brand">oggi stesso</span>.</h2>
       <p id="sottotitolo-cta-finale" reveal delay="1">Parliamo del tuo progetto: la prima bozza è offerta da noi.</p>
-      <a id="link-whatsapp-hero" href="https://wa.me/14132259397" target="_blank" rel="noopener" reveal delay="2">
+      <div id="video-cta" reveal delay="2">
+        <div class="cornice-video">
+          <iframe
+            src="https://www.youtube-nocookie.com/embed/aqz-KE-bpKQ?rel=0"
+            title="Webnix — video di presentazione"
+            loading="lazy"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+            allowfullscreen></iframe>
+        </div>
+      </div>
+      <a id="link-whatsapp-hero" href="https://wa.me/14132259397" target="_blank" rel="noopener" reveal delay="3">
         <button id="glow-button" type="button">
           <div id="glow-top"></div><div id="glow-bottom"></div>
           <div id="glow-left"></div><div id="glow-right"></div>
@@ -617,6 +674,92 @@
         </button>
       </a>
     </section>
+
+    <!-- ============ ESPLORA IL SITO (sezione bianca) ============ -->
+    <section id="esplora-sito" aria-labelledby="titolo-esplora">
+      <div class="contenuto-esplora">
+        <div class="intestazione-esplora">
+          <span class="eyebrow-esplora"><i class="fa-solid fa-compass" aria-hidden="true"></i> Esplora il sito</span>
+          <h2 id="titolo-esplora">Scegli la tua prossima mossa</h2>
+          <p class="sottotitolo-esplora">Cinque strade, un solo obiettivo: far crescere la tua attività online. Apri quella che ti serve.</p>
+        </div>
+
+        <nav class="griglia-esplora" aria-label="Navigazione tra le sezioni del sito">
+          <a class="scheda-esplora" href="servizi.html">
+            <span class="numero-esplora" aria-hidden="true">01</span>
+            <span class="icona-esplora" aria-hidden="true"><i class="fa-solid fa-layer-group"></i></span>
+            <span class="testo-esplora">
+              <strong>Servizi</strong>
+              <small>Siti web, logo e restyling: cosa facciamo, con prezzi chiari.</small>
+            </span>
+            <span class="freccia-esplora" aria-hidden="true"><i class="fa-solid fa-arrow-right"></i></span>
+          </a>
+
+          <a class="scheda-esplora" href="faq.html">
+            <span class="numero-esplora" aria-hidden="true">02</span>
+            <span class="icona-esplora" aria-hidden="true"><i class="fa-solid fa-circle-question"></i></span>
+            <span class="testo-esplora">
+              <strong>FAQ</strong>
+              <small>Hai delle domande? Qui trovi le risposte, senza giri di parole.</small>
+            </span>
+            <span class="freccia-esplora" aria-hidden="true"><i class="fa-solid fa-arrow-right"></i></span>
+          </a>
+
+          <a class="scheda-esplora" href="assistenza.html">
+            <span class="numero-esplora" aria-hidden="true">03</span>
+            <span class="icona-esplora" aria-hidden="true"><i class="fa-solid fa-headset"></i></span>
+            <span class="testo-esplora">
+              <strong>Assistenza</strong>
+              <small>Supporto e modifiche anche dopo la consegna del sito.</small>
+            </span>
+            <span class="freccia-esplora" aria-hidden="true"><i class="fa-solid fa-arrow-right"></i></span>
+          </a>
+
+          <a class="scheda-esplora scheda-larga" href="chi-siamo.html">
+            <span class="numero-esplora" aria-hidden="true">04</span>
+            <span class="icona-esplora" aria-hidden="true"><i class="fa-solid fa-people-group"></i></span>
+            <span class="testo-esplora">
+              <strong>Chi Siamo</strong>
+              <small>Il team, il metodo di lavoro e i valori che mettiamo in ogni progetto.</small>
+            </span>
+            <span class="freccia-esplora" aria-hidden="true"><i class="fa-solid fa-arrow-right"></i></span>
+          </a>
+
+          <a class="scheda-esplora scheda-larga scheda-contatti" href="https://wa.me/14132259397?text=Ciao%20Webnix!%20Vorrei%20parlare%20del%20mio%20progetto." target="_blank" rel="noopener">
+            <span class="numero-esplora" aria-hidden="true">05</span>
+            <span class="icona-esplora" aria-hidden="true"><i class="fa-solid fa-comment-dots"></i></span>
+            <span class="testo-esplora">
+              <strong>Contatti</strong>
+              <small>Raccontaci il tuo progetto: ti rispondiamo su WhatsApp, di persona.</small>
+            </span>
+            <span class="freccia-esplora" aria-hidden="true"><i class="fa-solid fa-arrow-right"></i></span>
+          </a>
+        </nav>
+      </div>
+    </section>
+
+    <script>
+      /* Navigazione con animazione: la card scelta si chiude, le altre sfumano,
+         poi si apre la pagina di destinazione. */
+      (function () {
+        var griglia = document.querySelector(".griglia-esplora");
+        if (!griglia) return;
+        griglia.addEventListener("click", function (e) {
+          var scheda = e.target.closest(".scheda-esplora");
+          if (!scheda) return;
+          if (e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+          var destinazione = scheda.getAttribute("href");
+          if (!destinazione) return;
+          e.preventDefault();
+          var nuovaScheda = scheda.getAttribute("target") === "_blank";
+          if (nuovaScheda) window.open(destinazione, "_blank", "noopener");
+          scheda.classList.add("in-uscita");
+          griglia.classList.add("griglia-in-uscita");
+          if (nuovaScheda) return;
+          setTimeout(function () { window.location.href = destinazione; }, 430);
+        });
+      })();
+    </script>
 
     <!-- ============ FOOTER ============ -->
         <footer id="footer">
@@ -750,6 +893,6 @@
   <script src="config.js"></script>
   <script src="script.js?v=20261120-3"></script>
   <script src="firebase-config.js"></script>
-  <script src="dati-remoti.js?v=20261120-3"></script>
+  <script src="dati-remoti.js?v=20261120-4"></script>
 </body>
 </html>
