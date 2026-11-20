@@ -546,13 +546,6 @@
       }, 160);
     });
 
-    /* contenuti arrivati da Firestore (dati-remoti.js): rilegge le schede */
-    window.__webnixRicaricaPortfolio = function () {
-      statoPortfolio.schede = Array.prototype.slice.call(binario.children);
-      pagina = 0;
-      mostra(0);
-    };
-
     mostra(0);
   }
 
@@ -1374,9 +1367,6 @@
     document.body.classList.add('popup-aperto');
     if (chiudiBtn) chiudiBtn.focus();
   }
-
-  /* apertura dall'esterno (miniature generate da dati-remoti.js) */
-  window.__webnixApriAnteprima = apri;
 
   function chiudi() {
     if (popup.hidden || inChiusura) return;

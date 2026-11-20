@@ -1159,8 +1159,6 @@ details.domanda summary:hover {
 .btn_dettagli_pacchetto i { font-size: .72rem; transition: transform .35s ease; }
 .card-servizio[dettagli="aperti"] .btn_dettagli_pacchetto i { transform: rotate(180deg); }
 .card-servizio .btn_seleziona { margin-top: auto; }
-/* pacchetto creato dalla dashboard e mostrato tra i servizi della home */
-.card-servizio > a.btn_seleziona { display: block; text-align: center; text-decoration: none; }
 
 /* ---------- PORTFOLIO filtrabile ---------- */
 #fila-filtri { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; margin-bottom: 40px; }
@@ -1248,41 +1246,6 @@ details.domanda summary:hover {
 .punto-portfolio:hover { background: rgba(255, 255, 255, .5); }
 .punto-portfolio[aria-current="true"] { width: 26px; background: var(--gradiente-brand); }
 #azione-portfolio { display: flex; justify-content: center; margin-top: 30px; }
-
-/* ---------- PORTFOLIO DELLA HOME: fondo bianco a tutta larghezza ----------
-   La sezione esce dal max-width di .sezione-comune (fondo bianco da bordo a
-   bordo) e i singoli blocchi restano centrati sul contenuto. */
-#portfolio {
-  background: #ffffff;
-  color: #0d1117;
-  max-width: none;
-  padding-left: 0;
-  padding-right: 0;
-}
-#portfolio > .intestazione-sezione,
-#portfolio > #fila-filtri,
-#portfolio > #carosello-portfolio,
-#portfolio > #punti-portfolio,
-#portfolio > #azione-portfolio {
-  max-width: 1240px;
-  margin-left: auto;
-  margin-right: auto;
-  padding-left: clamp(18px, 5vw, 60px);
-  padding-right: clamp(18px, 5vw, 60px);
-}
-#portfolio .eyebrow-sezione { color: #a412c9; }
-#portfolio .titoli-sezione { color: #0d1117; }
-#portfolio .sottotitolo-sezione { color: #4b5563; }
-#portfolio .filtro-portfolio { border-color: rgba(13, 17, 23, .22); color: #3d4552; }
-#portfolio .filtro-portfolio:hover { border-color: var(--viola); color: #0d1117; }
-#portfolio .filtro-portfolio[selezionato="si"] { color: #ffffff; border-color: transparent; }
-#portfolio .freccia-portfolio { border-color: rgba(13, 17, 23, .18); background: #f3f4f7; color: #0d1117; }
-#portfolio .freccia-portfolio:hover,
-#portfolio .freccia-portfolio:focus-visible { color: #ffffff; border-color: transparent; }
-#portfolio .punto-portfolio { background: rgba(13, 17, 23, .22); }
-#portfolio .punto-portfolio:hover { background: rgba(13, 17, 23, .42); }
-#portfolio .card-portfolio { box-shadow: 0 12px 28px rgba(13, 17, 23, .12); }
-#portfolio #popup-lavori { color: var(--testo); }
 
 .card-portfolio[role="button"] { cursor: pointer; }
 .card-portfolio[role="button"]:focus-visible { outline: 2px solid var(--azione); outline-offset: 3px; }
@@ -2784,19 +2747,18 @@ body:has(#sezione-faq) { background: #ffffff; }
   border: 1px solid rgba(255, 255, 255, .1);
 }
 
-/* titolo a targhetta, appoggiato sul bordo superiore della card.
-   Sfondo uguale alla CTA della nav "Bozza Gratuita" (gradiente brand). */
+/* titolo a targhetta, appoggiato sul bordo superiore della card */
 .card-lavoro h3 {
   position: absolute;
   top: 0; left: 50%;
   transform: translate(-50%, -50%);
   z-index: 2;
   margin: 0;
-  padding: 5px 18px;
+  padding: 5px 16px;
   border-radius: 999px;
-  background: var(--gradiente-brand);
-  border: 1px solid transparent;
-  box-shadow: 0 8px 22px rgba(232, 28, 255, .38);
+  background: var(--sfondo);
+  border: 1px solid rgba(232, 28, 255, .45);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, .45);
   color: #fff;
   font-size: .92rem;
   white-space: nowrap;
