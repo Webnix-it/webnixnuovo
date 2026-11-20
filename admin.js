@@ -191,6 +191,7 @@ var SEZIONI = {
       },
       { chiave: "img", etichetta: "Immagine (URL o percorso)", tipo: "text", obbligatorio: true, placeholder: "assets/portfolio/progetto.png" },
       { chiave: "link", etichetta: "Link al progetto (facoltativo)", tipo: "url", placeholder: "https://…" },
+      { chiave: "mostraServizi", etichetta: "Mostra in pagina Servizi", tipo: "toggle", valore: false, aiuto: "Se attivo, il progetto compare in «I nostri lavori» nella pagina Servizi." },
       { chiave: "desc", etichetta: "Descrizione breve", tipo: "textarea", largo: true }
     ],
     nuovi: function () { return { ordine: Date.now() }; },
@@ -722,8 +723,136 @@ var LINK_DEFAULT = {
   whatsapp: "14132259397",
   email: "webnixit@gmail.com",
   cookiebot: "",
-  pixel: ""
+  pixel: "",
+  visibili: {
+    instagram: true,
+    facebook: true,
+    tiktok: true,
+    whatsapp: true,
+    email: true,
+    cookiebot: false,
+    pixel: false
+  }
 };
+
+/* palette pronte: un clic riempie i quattro campi colore */
+var PALETTE = [
+  {
+    nome: "Webnix",
+    colori: { viola: "#e81cff", ciano: "#40c9ff", sfondo: "#0d1117", sfondoCard: "#161b22" }
+  },
+  {
+    nome: "Notte elettrica",
+    colori: { viola: "#7c3aed", ciano: "#22d3ee", sfondo: "#070b12", sfondoCard: "#101827" }
+  },
+  {
+    nome: "Tramonto",
+    colori: { viola: "#ff4d6d", ciano: "#ffb703", sfondo: "#14090f", sfondoCard: "#241018" }
+  },
+  {
+    nome: "Bosco",
+    colori: { viola: "#22c55e", ciano: "#a3e635", sfondo: "#08120c", sfondoCard: "#10201a" }
+  },
+  {
+    nome: "Ghiaccio",
+    colori: { viola: "#38bdf8", ciano: "#e879f9", sfondo: "#0b1220", sfondoCard: "#141e2e" }
+  }
+];
+
+var CHIAVI_VISIBILI = ["instagram", "facebook", "tiktok", "whatsapp", "email", "cookiebot", "pixel"];
+
+function nomeInterruttore(chiave) {
+  return chiave === "cookiebot" || chiave === "pixel" ? "attivo_" + chiave : "mostra_" + chiave;
+}
+
+function impostaToggles(visibili, link) {
+  if (!formLink) return;
+  visibili = visibili || {};
+  link = link || {};
+  ["instagram", "facebook", "tiktok", "whatsapp", "email"].forEach(function (k) {
+    var campo = formLink.elements["mostra_" + k];
+    if (campo) campo.checked = visibili[k] !== false;
+  });
+  var cookie = formLink.elements["attivo_cookiebot"];
+  if (cookie) {
+    cookie.checked = visibili.cookiebot === undefined ? Boolean(link.cookiebot) : visibili.cookiebot === true;
+  }
+  var pixel = formLink.elements["attivo_pixel"];
+  if (pixel) {
+    pixel.checked = visibili.pixel === undefined ? Boolean(link.pixel) : visibili.pixel === true;
+  }
+}
+
+function datiLink() {
+  var dati = {};
+  Array.prototype.forEach.call(formLink.elements, function (campo) {
+    if (!campo.name) return;
+    var nome = campo.name;
+    for (var i = 0; i < CHIAVI_VISIBILI.length; i++) {
+      if (nome === nomeInterruttore(CHIAVI_VISIBILI[i])) return;
+    }
+    dati[nome] = String(campo.value).trim();
+  });
+
+  var visibili = {};
+  CHIAVI_VISIBILI.forEach(function (k) {
+    var campo = formLink.elements[nomeInterruttore(k)];
+    visibili[k] = campo ? campo.checked : true;
+  });
+  dati.visibili = visibili;
+  return dati;
+}
+
+function creaPalette() {
+  var box = document.getElementById("palette-colori");
+  if (!box || !formColori) return;
+
+  function aggiornaStato() {
+    Array.prototype.forEach.call(box.querySelectorAll(".palette"), function (bottone, i) {
+      var p = PALETTE[i];
+      var uguale = Object.keys(p.colori).every(function (k) {
+        var campo = formColori.elements[k];
+        return campo && String(campo.value).toLowerCase() === p.colori[k].toLowerCase();
+      });
+      bottone.setAttribute("aria-pressed", uguale ? "true" : "false");
+    });
+  }
+
+  box.innerHTML = "";
+  PALETTE.forEach(function (p) {
+    var bottone = document.createElement("button");
+    bottone.type = "button";
+    bottone.className = "palette";
+    bottone.setAttribute("aria-pressed", "false");
+    bottone.setAttribute("aria-label", "Applica la palette " + p.nome);
+
+    var campioni = document.createElement("span");
+    campioni.className = "palette-campioni";
+    ["viola", "ciano", "sfondo", "sfondoCard"].forEach(function (k) {
+      var campione = document.createElement("span");
+      campione.style.background = p.colori[k];
+      campioni.appendChild(campione);
+    });
+
+    var nome = document.createElement("span");
+    nome.className = "palette-nome";
+    nome.textContent = p.nome;
+
+    bottone.appendChild(campioni);
+    bottone.appendChild(nome);
+    bottone.addEventListener("click", function () {
+      Object.keys(p.colori).forEach(function (k) {
+        if (formColori.elements[k]) formColori.elements[k].value = p.colori[k];
+      });
+      aggiornaStato();
+      mostraStato("Palette «" + p.nome + "» caricata: premi Salva colori.", "ok");
+    });
+    box.appendChild(bottone);
+  });
+
+  formColori.addEventListener("input", aggiornaStato);
+  aggiornaStato();
+}
 
 /* pacchetti creati dal pulsante "Ripristina default" della sezione Pacchetti */
 var PACCHETTI_DEFAULT = [
@@ -795,6 +924,7 @@ function ripristinaSezione(chiave) {
   if (chiave === "link") {
     if (!window.confirm("Ripristinare i link di default del sito?")) return;
     svuotaCampi(formLink, LINK_DEFAULT);
+    impostaToggles(LINK_DEFAULT.visibili, LINK_DEFAULT);
     salvaImpostazioni("link", Object.assign({}, LINK_DEFAULT));
     return;
   }
@@ -832,6 +962,7 @@ async function caricaImpostazioni() {
       ["instagram", "facebook", "tiktok", "whatsapp", "email", "cookiebot", "pixel"].forEach(function (k) {
         if (link[k] && formLink.elements[k]) formLink.elements[k].value = link[k];
       });
+      impostaToggles(link.visibili, link);
     }
   } catch (err) {
     errore("Impostazioni non leggibili: " + descriviErrore(err));
@@ -867,9 +998,11 @@ if (formColori) {
 if (formLink) {
   formLink.addEventListener("submit", function (e) {
     e.preventDefault();
-    salvaImpostazioni("link", datiForm(formLink));
+    salvaImpostazioni("link", datiLink());
   });
 }
+
+creaPalette();
 
 Array.prototype.forEach.call(document.querySelectorAll("[data-default]"), function (bottone) {
   bottone.addEventListener("click", function () {

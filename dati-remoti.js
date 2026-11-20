@@ -119,6 +119,72 @@
   /* ============================================================
      SOCIAL / EMAIL / WHATSAPP
      ============================================================ */
+  var ID_SOCIAL = {
+    whatsapp: "whatsapp",
+    instagram: "instagram",
+    facebook: "facebook",
+    tiktok: "tiktok",
+    email: "gmail"
+  };
+
+  /* TikTok nel footer: viene creato solo se il link è impostato in dashboard */
+  function inserisciTikTok(url) {
+    var cards = document.getElementById("cards");
+    if (!cards) return;
+
+    var esistente = cards.querySelector('.card-container[id="tiktok"]');
+    if (esistente) {
+      var linkEsistente = esistente.closest("a");
+      if (linkEsistente && url) linkEsistente.href = url;
+      return;
+    }
+    if (!url) return;
+
+    var link = document.createElement("a");
+    link.href = url;
+    link.target = "_blank";
+    link.rel = "noopener";
+    link.style.textDecoration = "none";
+    link.style.color = "inherit";
+    link.setAttribute("aria-label", "Profilo TikTok di Webnix");
+
+    var scheda = document.createElement("div");
+    scheda.className = "card-container";
+    scheda.id = "tiktok";
+
+    var icona = document.createElement("div");
+    icona.className = "icon-container";
+    icona.innerHTML = '<svg viewBox="0 0 24 24" fill="#fff" width="16" height="16" aria-hidden="true"><path d="M16.6 5.9a5 5 0 0 1-2.9-2.5h-2.6v11.5a2.7 2.7 0 1 1-2.7-2.7c.2 0 .5 0 .7.1V9.6a5.4 5.4 0 1 0 4.6 5.3V9.3a7 7 0 0 0 3.7 1.1V7.7a4.5 4.5 0 0 1-.8-1.8z"></path></svg>';
+    var etichetta = document.createElement("p");
+    etichetta.textContent = "TikTok";
+    icona.appendChild(etichetta);
+    scheda.appendChild(icona);
+    link.appendChild(scheda);
+
+    var instagram = cards.querySelector('.card-container[id="instagram"]');
+    var riferimento = instagram ? instagram.closest("a") : null;
+    if (riferimento && riferimento.parentNode === cards) {
+      cards.insertBefore(link, riferimento.nextSibling);
+    } else {
+      cards.appendChild(link);
+    }
+  }
+
+  /* gli interruttori della dashboard mostrano o nascondono le card social */
+  function aggiornaVisibilitaSocial(visibili) {
+    if (!visibili || typeof visibili !== "object") return;
+    Object.keys(ID_SOCIAL).forEach(function (chiave) {
+      var attivo = visibili[chiave] !== false;
+      var id = ID_SOCIAL[chiave];
+      document.querySelectorAll(".card-container").forEach(function (scheda) {
+        if (String(scheda.id || "").toLowerCase() !== id) return;
+        var contenitore = scheda.closest("a") || scheda;
+        contenitore.hidden = !attivo;
+        contenitore.style.display = attivo ? "" : "none";
+      });
+    });
+  }
+
   function applicaLink(link) {
     if (!link || typeof link !== "object") return;
 
@@ -151,6 +217,9 @@
         a.href = "mailto:" + link.email;
       });
     }
+
+    inserisciTikTok(link.tiktok);
+    aggiornaVisibilitaSocial(link.visibili);
   }
 
   /* ============================================================
@@ -233,15 +302,55 @@
     card.appendChild(intest);
     card.appendChild(testo);
 
-    if (r.timestamp) {
-      var data = document.createElement("span");
-      data.className = "data-recensione";
-      try {
-        data.textContent = new Date(Number(r.timestamp)).toLocaleDateString("it-IT", {
-          day: "numeric", month: "long", year: "numeric"
-        });
-      } catch (e) { data.textContent = ""; }
-      card.appendChild(data);
+    /* recensione lunga: testo tagliato e freccia per aprire quella completa */
+    if (String(r.text || "").length > 180) {
+      testo.classList.add("troncata");
+
+      var area = document.createElement("span");
+      area.className = "area-espandi";
+
+      var suggerimento = document.createElement("span");
+      suggerimento.className = "suggerimento-espandi";
+      suggerimento.textContent = "Leggi la recensione completa";
+
+      var freccia = document.createElement("button");
+      freccia.type = "button";
+      freccia.className = "bottone-espandi";
+      freccia.setAttribute("aria-expanded", "false");
+      freccia.setAttribute("aria-label", "Leggi la recensione completa");
+      freccia.innerHTML = '<i class="fa-solid fa-chevron-down" aria-hidden="true"></i>';
+
+      area.appendChild(suggerimento);
+      area.appendChild(freccia);
+      card.appendChild(area);
+    }
+
+    if (r.timestamp || r.url) {
+      var piede = document.createElement("div");
+      piede.className = "piede-recensione";
+
+      if (r.timestamp) {
+        var data = document.createElement("span");
+        data.className = "data-recensione";
+        try {
+          data.textContent = new Date(Number(r.timestamp)).toLocaleDateString("it-IT", {
+            day: "numeric", month: "long", year: "numeric"
+          });
+        } catch (e) { data.textContent = ""; }
+        piede.appendChild(data);
+      }
+
+      if (r.url) {
+        var linkProgetto = document.createElement("a");
+        linkProgetto.className = "link-recensione";
+        linkProgetto.href = r.url;
+        linkProgetto.target = "_blank";
+        linkProgetto.rel = "noopener";
+        linkProgetto.textContent = "SITO WEB";
+        piede.appendChild(linkProgetto);
+      }
+
+      card.appendChild(piede);
     }
     return card;
   }
@@ -254,6 +363,26 @@
     if (caricamento) caricamento.remove();
 
     voci.sort(function (a, b) { return (b.timestamp || 0) - (a.timestamp || 0); });
+
+    /* delega: funziona anche sulle card copiate per lo scorrimento continuo */
+    if (!griglia.dataset.espandiCollegato) {
+      griglia.dataset.espandiCollegato = "si";
+      griglia.addEventListener("click", function (e) {
+        var freccia = e.target.closest(".bottone-espandi");
+        if (!freccia) return;
+        var card = freccia.closest(".card-recensione");
+        var eraAperta = freccia.getAttribute("aria-expanded") === "true";
+        freccia.setAttribute("aria-expanded", eraAperta ? "false" : "true");
+        freccia.setAttribute("aria-label", eraAperta ? "Leggi la recensione completa" : "Mostra meno");
+        if (card) card.classList.toggle("espansa", !eraAperta);
+        var suggerimento = freccia.parentNode
+          ? freccia.parentNode.querySelector(".suggerimento-espandi")
+          : null;
+        if (suggerimento) {
+          suggerimento.textContent = eraAperta ? "Leggi la recensione completa" : "Mostra meno";
+        }
+      });
+    }
 
     griglia.innerHTML = "";
     voci.forEach(function (r) { griglia.appendChild(cardRecensione(r)); });
@@ -360,6 +489,72 @@
         });
         galleria.appendChild(b);
       });
+    }
+  }
+
+  /* ============================================================
+     PORTFOLIO DELLA PAGINA SERVIZI ("I nostri lavori")
+     Mostra i progetti con l'interruttore "Mostra in pagina Servizi" attivo.
+     ============================================================ */
+  function disegnaLavoriServizi(voci) {
+    var scena = document.getElementById("sezione-nostri-lavori");
+    if (!scena) return;
+
+    var scelti = voci.filter(function (p) {
+      return p.mostraServizi === true || p.mostraServizi === "true";
+    });
+    if (!scelti.length) return;
+    scelti.sort(perOrdine);
+
+    var pc = scena.querySelector(".pc-schermo");
+    var telefono = scena.querySelector(".telefono-schermo");
+
+    if (pc) {
+      pc.innerHTML = "";
+      scelti.forEach(function (p, i) {
+        var img = document.createElement("img");
+        img.className = "schermata" + (i === 0 ? " attiva" : "");
+        img.src = p.img || "";
+        img.alt = p.title || "";
+        img.loading = "lazy";
+        pc.appendChild(img);
+      });
+    }
+
+    if (telefono) {
+      telefono.innerHTML = "";
+      scelti.slice().reverse().forEach(function (p, i) {
+        var img = document.createElement("img");
+        img.className = "schermata" + (i === 0 ? " attiva" : "");
+        img.src = p.img || "";
+        img.alt = p.title || "";
+        img.loading = "lazy";
+        telefono.appendChild(img);
+      });
+    }
+
+    var galleria = scena.querySelector("#popup-lavori .popup-galleria");
+    if (galleria) {
+      galleria.innerHTML = "";
+      scelti.forEach(function (p) {
+        var b = document.createElement("button");
+        b.type = "button";
+        b.className = "popup-miniatura";
+        b.setAttribute("data-immagine", p.img || "");
+        b.setAttribute("data-didascalia", p.title || "");
+        b.setAttribute("aria-label", "Vedi " + (p.title || "progetto"));
+
+        var img = document.createElement("img");
+        img.src = p.img || "";
+        img.alt = "Anteprima " + (p.title || "");
+        img.loading = "lazy";
+        b.appendChild(img);
+        galleria.appendChild(b);
+      });
+    }
+
+    if (typeof window.__webnixAggiornaLavori === "function") {
+      window.__webnixAggiornaLavori();
     }
   }
 
@@ -551,8 +746,9 @@
             var soloNumeri = String(impostazioni.link.whatsapp).replace(/[^\d]/g, "");
             if (soloNumeri) numeroWhatsapp = soloNumeri;
           }
-          caricaCookiebot(impostazioni.link.cookiebot);
-          caricaPixel(impostazioni.link.pixel);
+          var visibili = impostazioni.link.visibili || {};
+          if (visibili.cookiebot !== false) caricaCookiebot(impostazioni.link.cookiebot);
+          if (visibili.pixel !== false) caricaPixel(impostazioni.link.pixel);
         }
       })
       .catch(function () { /* configurazione non ancora pubblicata */ });
@@ -572,6 +768,12 @@
     if (document.getElementById("binario-portfolio")) {
       leggiCollezione("portfolio").then(function (voci) {
         if (voci.length) disegnaPortfolio(voci);
+      });
+    }
+
+    if (document.getElementById("sezione-nostri-lavori")) {
+      leggiCollezione("portfolio").then(function (voci) {
+        if (voci.length) disegnaLavoriServizi(voci);
       });
     }
 

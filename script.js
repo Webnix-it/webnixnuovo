@@ -546,6 +546,13 @@
       }, 160);
     });
 
+    /* contenuti arrivati da Firestore (dati-remoti.js): rilegge le schede */
+    window.__webnixRicaricaPortfolio = function () {
+      statoPortfolio.schede = Array.prototype.slice.call(binario.children);
+      pagina = 0;
+      mostra(0);
+    };
+
     mostra(0);
   }
 
@@ -1226,6 +1233,17 @@
     }
   };
 
+  var collegaMiniature = function () {
+    miniature = popup ? popup.querySelectorAll('.popup-miniatura') : [];
+    for (var k = 0; k < miniature.length; k++) {
+      if (miniature[k].getAttribute('data-collegata') === 'si') continue;
+      miniature[k].setAttribute('data-collegata', 'si');
+      miniature[k].addEventListener('click', function () {
+        seleziona(this.getAttribute('data-immagine'), this.getAttribute('data-didascalia'));
+      });
+    }
+  };
+
   var inChiusura = false;
 
   var apriPopup = function () {
@@ -1258,11 +1276,7 @@
   if (popup) {
     var sfondo = popup.querySelector('.popup-sfondo');
     if (sfondo) sfondo.addEventListener('click', chiudiPopup);
-    for (var m = 0; m < miniature.length; m++) {
-      miniature[m].addEventListener('click', function () {
-        seleziona(this.getAttribute('data-immagine'), this.getAttribute('data-didascalia'));
-      });
-    }
+    collegaMiniature();
     document.addEventListener('keydown', function (e) {
       if (popup.hidden) return;
       if (e.key === 'Escape' || e.key === 'Esc') chiudiPopup();
@@ -1279,6 +1293,20 @@
   var frecciaNext = document.getElementById('freccia-next');
   if (frecciaPrev) frecciaPrev.addEventListener('click', function () { cambia(-1); });
   if (frecciaNext) frecciaNext.addEventListener('click', function () { cambia(1); });
+
+  /* i progetti caricati da Firestore (dati-remoti.js) arrivano dopo: si riagganciano qui */
+  window.__webnixAggiornaLavori = function () {
+    pcImmagini = scena.querySelectorAll('.pc-schermo img');
+    telImmagini = scena.querySelectorAll('.telefono-schermo img');
+    collegaMiniature();
+    mostraPc(0);
+    indiceTel = 0;
+    attiva(telImmagini, 0);
+    if (timerPc) { clearInterval(timerPc); timerPc = null; }
+    if (timerTel) { clearInterval(timerTel); timerTel = null; }
+    avviaPc();
+    avviaTelefono();
+  };
 
   var apri = function () {
     if (scena.classList.contains('in-scena')) return;
@@ -1367,6 +1395,9 @@
     document.body.classList.add('popup-aperto');
     if (chiudiBtn) chiudiBtn.focus();
   }
+
+  /* apertura dall'esterno (miniature generate da dati-remoti.js) */
+  window.__webnixApriAnteprima = apri;
 
   function chiudi() {
     if (popup.hidden || inChiusura) return;

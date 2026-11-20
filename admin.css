@@ -524,7 +524,7 @@ code {
 
 .riga-link {
   display: grid;
-  grid-template-columns: 42px minmax(140px, 210px) minmax(0, 1fr);
+  grid-template-columns: 42px minmax(140px, 210px) minmax(0, 1fr) auto;
   align-items: center;
   gap: 14px;
   padding: 12px 14px;
@@ -568,6 +568,103 @@ code {
   border-color: var(--viola);
   box-shadow: 0 0 0 3px rgba(232, 28, 255, .16);
 }
+
+/* interruttore a destra di ogni riga: mostra o nasconde il canale nel sito */
+.interruttore-riga {
+  position: relative;
+  display: block;
+  width: 46px;
+  height: 26px;
+  flex: 0 0 auto;
+  margin: 0;
+  font-size: 0;
+  cursor: pointer;
+}
+.riga-link .interruttore-riga input {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  opacity: 0;
+  cursor: pointer;
+}
+.interruttore-riga .cursore {
+  position: absolute;
+  inset: 0;
+  display: block;
+  border-radius: 999px;
+  border: 1px solid var(--bordo);
+  background: rgba(255, 255, 255, .14);
+  transition: background .3s ease, border-color .3s ease;
+}
+.interruttore-riga .cursore::after {
+  content: "";
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #ffffff;
+  transition: transform .3s cubic-bezier(.22, .61, .36, 1);
+}
+.interruttore-riga input:checked + .cursore {
+  background: var(--gradiente-brand);
+  border-color: transparent;
+}
+.interruttore-riga input:checked + .cursore::after { transform: translateX(20px); }
+.interruttore-riga input:focus-visible + .cursore { outline: 2px solid var(--ciano); outline-offset: 3px; }
+
+/* ---------- PALETTE COLORI PRONTE ---------- */
+.titolo-palette {
+  margin: 4px 0 12px;
+  font-size: .82rem;
+  font-weight: 700;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: var(--testo-3);
+}
+.palette-colori {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 12px;
+  margin-bottom: 22px;
+}
+.palette {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 12px;
+  border: 1px solid var(--bordo);
+  border-radius: 12px;
+  background: var(--sfondo-campo);
+  color: var(--testo);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: transform .3s cubic-bezier(.22, .61, .36, 1), border-color .3s ease, box-shadow .3s ease;
+}
+.palette:hover,
+.palette:focus-visible {
+  transform: translateY(-3px) scale(1.02);
+  border-color: var(--ciano);
+  box-shadow: 0 12px 26px rgba(0, 0, 0, .35);
+  outline: none;
+}
+.palette[aria-pressed="true"] { border-color: var(--viola); }
+.palette-campioni { display: flex; gap: 6px; }
+.palette-campioni span {
+  width: 22px;
+  height: 22px;
+  border-radius: 6px;
+  border: 1px solid rgba(255, 255, 255, .18);
+}
+.palette-nome { font-size: .84rem; font-weight: 700; }
 
 /* ---------- BARRA DI RICERCA ---------- */
 .barra-ricerca { margin: 0 0 18px; }
@@ -743,8 +840,9 @@ code {
 }
 
 @media (max-width: 720px) {
-  .riga-link { grid-template-columns: 38px minmax(0, 1fr); }
-  .riga-link input { grid-column: 1 / -1; }
+  .riga-link { grid-template-columns: 38px minmax(0, 1fr) auto; }
+  .riga-link > input { grid-column: 1 / -1; }
+  .riga-link .interruttore-riga { grid-column: 3; grid-row: 1; justify-self: end; }
   .icona-link { width: 38px; height: 38px; }
 }
 
