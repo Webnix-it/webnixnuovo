@@ -8,7 +8,7 @@
   <meta name="theme-color" content="#0d1117">
   <link rel="icon" type="image/svg+xml" href="favicon.svg">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
-  <link rel="stylesheet" href="style.css?v=20261120">
+  <link rel="stylesheet" href="style.css?v=20261120-3">
 </head>
 <body>
   <main id="corpo-pagina">
@@ -102,13 +102,13 @@
 
         <!-- Colonna sinistra: card Email + Instagram -->
         <div id="infoContactGrid">
-          <div class="infoContactItem" reveal delay="1">
+          <div class="infoContactItem" reveal delay="1" data-canale="email">
             <span class="icon fas fa-envelope"></span>
             <h3>Email</h3>
             <p><a href="mailto:webnixit@gmail.com?subject=Richiesta%20di%20preventivo&body=Ciao!%20Sto%20cercando%20qualcuno%20che%20mi%20aiuti%20a%20creare%20una%20presenza%20online.%20Da%20dove%20possiamo%20partire?" style="text-decoration: none; color: inherit;">webnixit@gmail.com</a></p>
           </div>
 
-          <div class="infoContactItem" reveal delay="2">
+          <div class="infoContactItem" reveal delay="2" data-canale="instagram">
             <span class="icon fab fa-instagram"></span>
             <h3>Instagram</h3>
             <p><a href="https://instagram.com/webnix.it" target="_blank" rel="noopener" class="infoSocialLink">@webnix.it</a></p>
@@ -116,7 +116,7 @@
         </div>
 
         <!-- Colonna destra: box WhatsApp con QR -->
-        <div id="whatsappContainer">
+        <div id="whatsappContainer" data-canale="whatsapp">
           <h2 id="whatsappTitle"><i class="fa-brands fa-whatsapp" id="whatsappIcon"></i> Parla con <span class="accento-brand">Noi</span></h2>
           <p id="whatsappText">Contattaci subito in modo facile e veloce!</p>
           <div id="qrContainer">
@@ -254,15 +254,15 @@
           <div id="copyright-container">
             <div id="copyright-main">
               <p><strong id="anno-copyright">© 2026 Webnix</strong> · Tutti i diritti riservati · Realizzato con solo HTML, CSS e JavaScript.</p>
-              <p>webnixit@gmail.com</p>
+              <p data-canale="email">webnixit@gmail.com</p>
             </div>
           </div>
         </footer>
   </main>
 
   <script src="config.js"></script>
-  <script src="script.js?v=20261120"></script>
+  <script src="script.js?v=20261120-3"></script>
   <script src="firebase-config.js"></script>
-  <script src="dati-remoti.js?v=20261120"></script>
+  <script src="dati-remoti.js?v=20261120-3"></script>
 </body>
 </html>

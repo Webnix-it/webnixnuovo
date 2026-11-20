@@ -756,6 +756,46 @@ var PALETTE = [
   {
     nome: "Ghiaccio",
     colori: { viola: "#38bdf8", ciano: "#e879f9", sfondo: "#0b1220", sfondoCard: "#141e2e" }
+  },
+  {
+    nome: "Oceano",
+    colori: { viola: "#0ea5e9", ciano: "#14b8a6", sfondo: "#04121c", sfondoCard: "#0b1f2e" }
+  },
+  {
+    nome: "Lavanda",
+    colori: { viola: "#a78bfa", ciano: "#f0abfc", sfondo: "#0f0a1a", sfondoCard: "#1a1229" }
+  },
+  {
+    nome: "Fuoco",
+    colori: { viola: "#f97316", ciano: "#facc15", sfondo: "#140b05", sfondoCard: "#241509" }
+  },
+  {
+    nome: "Rubino",
+    colori: { viola: "#e11d48", ciano: "#fb7185", sfondo: "#12060b", sfondoCard: "#241014" }
+  },
+  {
+    nome: "Menta",
+    colori: { viola: "#34d399", ciano: "#67e8f9", sfondo: "#05130f", sfondoCard: "#0c211b" }
+  },
+  {
+    nome: "Deserto",
+    colori: { viola: "#d97706", ciano: "#fcd34d", sfondo: "#14100a", sfondoCard: "#241a10" }
+  },
+  {
+    nome: "Indaco",
+    colori: { viola: "#6366f1", ciano: "#38bdf8", sfondo: "#0a0c1a", sfondoCard: "#141a2e" }
+  },
+  {
+    nome: "Crepuscolo",
+    colori: { viola: "#8b5cf6", ciano: "#f472b6", sfondo: "#0d0a16", sfondoCard: "#181226" }
+  },
+  {
+    nome: "Acciaio",
+    colori: { viola: "#94a3b8", ciano: "#38bdf8", sfondo: "#0b0f14", sfondoCard: "#151b23" }
+  },
+  {
+    nome: "Ametista",
+    colori: { viola: "#c026d3", ciano: "#8b5cf6", sfondo: "#100a14", sfondoCard: "#1c1224" }
   }
 ];
 

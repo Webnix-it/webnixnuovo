@@ -119,13 +119,41 @@
   /* ============================================================
      SOCIAL / EMAIL / WHATSAPP
      ============================================================ */
-  var ID_SOCIAL = {
-    whatsapp: "whatsapp",
-    instagram: "instagram",
-    facebook: "facebook",
-    tiktok: "tiktok",
-    email: "gmail"
+  /* selettori dei link di ogni canale: servono a nasconderli quando
+     l'interruttore della dashboard è spento */
+  var CANALI = {
+    instagram: 'a[href*="instagram.com"]',
+    facebook: 'a[href*="facebook.com"]',
+    tiktok: 'a[href*="tiktok.com"]',
+    whatsapp: 'a[href*="wa.me"]',
+    email: 'a[href^="mailto:"]'
   };
+
+  /* un interruttore spento in dashboard vince su qualsiasi valore salvato */
+  function canaleAttivo(chiave, visibili, valore) {
+    var scelta = visibili ? visibili[chiave] : undefined;
+    if (scelta === true || scelta === false) return scelta;
+    if (chiave === "cookiebot" || chiave === "pixel") return Boolean(valore);
+    return true;
+  }
+
+  function nascondi(elemento) {
+    if (!elemento) return;
+    elemento.hidden = true;
+    elemento.style.display = "none";
+  }
+
+  function nascondiCanale(chiave) {
+    document.querySelectorAll('[data-canale="' + chiave + '"]').forEach(nascondi);
+    var selettore = CANALI[chiave];
+    if (!selettore) return;
+    document.querySelectorAll(selettore).forEach(function (a) {
+      /* card social del footer: nascondo tutto il link che la contiene */
+      if (a.querySelector(".card-container")) return nascondi(a);
+      var blocco = a.closest("[data-canale]");
+      nascondi(blocco || a);
+    });
+  }
 
   /* TikTok nel footer: viene creato solo se il link è impostato in dashboard */
   function inserisciTikTok(url) {
@@ -170,40 +198,32 @@
     }
   }
 
-  /* gli interruttori della dashboard mostrano o nascondono le card social */
-  function aggiornaVisibilitaSocial(visibili) {
-    if (!visibili || typeof visibili !== "object") return;
-    Object.keys(ID_SOCIAL).forEach(function (chiave) {
-      var attivo = visibili[chiave] !== false;
-      var id = ID_SOCIAL[chiave];
-      document.querySelectorAll(".card-container").forEach(function (scheda) {
-        if (String(scheda.id || "").toLowerCase() !== id) return;
-        var contenitore = scheda.closest("a") || scheda;
-        contenitore.hidden = !attivo;
-        contenitore.style.display = attivo ? "" : "none";
-      });
-    });
-  }
-
   function applicaLink(link) {
     if (!link || typeof link !== "object") return;
 
-    if (link.instagram) {
-      document.querySelectorAll('a[href*="instagram.com"]').forEach(function (a) {
+    var visibili = link.visibili || {};
+
+    /* ogni canale spento in dashboard sparisce dalle pagine */
+    Object.keys(CANALI).forEach(function (chiave) {
+      if (!canaleAttivo(chiave, visibili, link[chiave])) nascondiCanale(chiave);
+    });
+
+    if (canaleAttivo("instagram", visibili, link.instagram) && link.instagram) {
+      document.querySelectorAll(CANALI.instagram).forEach(function (a) {
         a.href = link.instagram;
       });
     }
-    if (link.facebook) {
-      document.querySelectorAll('a[href*="facebook.com"]').forEach(function (a) {
+    if (canaleAttivo("facebook", visibili, link.facebook) && link.facebook) {
+      document.querySelectorAll(CANALI.facebook).forEach(function (a) {
         a.href = link.facebook;
       });
     }
-    if (link.tiktok) {
-      document.querySelectorAll('a[href*="tiktok.com"]').forEach(function (a) {
+    if (canaleAttivo("tiktok", visibili, link.tiktok) && link.tiktok) {
+      document.querySelectorAll(CANALI.tiktok).forEach(function (a) {
         a.href = link.tiktok;
       });
     }
-    if (link.whatsapp) {
+    if (canaleAttivo("whatsapp", visibili, link.whatsapp) && link.whatsapp) {
       var numero = String(link.whatsapp).replace(/[^\d]/g, "");
       if (numero) {
         document.querySelectorAll('a[href*="wa.me/"]').forEach(function (a) {
@@ -211,15 +231,15 @@
         });
       }
     }
-    if (link.email) {
-      document.querySelectorAll('a[href^="mailto:"]').forEach(function (a) {
+    if (canaleAttivo("email", visibili, link.email) && link.email) {
+      document.querySelectorAll(CANALI.email).forEach(function (a) {
         if (a.getAttribute("href").indexOf("?") !== -1) return; /* conserva l'oggetto precompilato */
         a.href = "mailto:" + link.email;
       });
     }
 
-    inserisciTikTok(link.tiktok);
-    aggiornaVisibilitaSocial(link.visibili);
+    /* la card TikTok viene creata solo se il canale è attivo */
+    if (canaleAttivo("tiktok", visibili, link.tiktok)) inserisciTikTok(link.tiktok);
   }
 
   /* ============================================================
@@ -609,47 +629,28 @@
     griglia.innerHTML = "";
 
     scelti.forEach(function (p, i) {
+      /* stessa card della pagina Servizi (.card-lavoro): targhetta, testo, CTA */
       var card = document.createElement("article");
-      card.className = "card-servizio";
+      card.className = "card-lavoro";
       card.setAttribute("reveal", "");
       card.setAttribute("delay", String((i % 3) + 1));
-
-      var intest = document.createElement("div");
-      intest.className = "intestazione-servizio";
-
-      var eyebrow = document.createElement("span");
-      eyebrow.className = "eyebrow-card-servizio";
-      eyebrow.textContent = "Pacchetto";
 
       var titolo = document.createElement("h3");
       titolo.textContent = p.name || "";
 
-      intest.appendChild(eyebrow);
-      intest.appendChild(titolo);
-      card.appendChild(intest);
-
-      if (p.price) {
-        var prezzo = document.createElement("p");
-        prezzo.className = "prezzo-servizio";
-        prezzo.textContent = p.price;
-        card.appendChild(prezzo);
-      }
-
-      if (p.description) {
-        var descrizione = document.createElement("p");
-        descrizione.className = "descrizione-servizio";
-        descrizione.textContent = p.description;
-        card.appendChild(descrizione);
-      }
+      var descrizione = document.createElement("p");
+      descrizione.textContent = p.description || "";
 
       var link = document.createElement("a");
-      link.className = "btn_seleziona";
+      link.className = "cta-scorrimento";
       link.href = p.link || linkPreventivo(p.name);
       link.target = "_blank";
       link.rel = "noopener";
       link.textContent = p.cta || "Richiedi un preventivo";
-      card.appendChild(link);
 
+      card.appendChild(titolo);
+      card.appendChild(descrizione);
+      card.appendChild(link);
       griglia.appendChild(card);
     });
   }
@@ -742,13 +743,18 @@
         applicaColori(impostazioni.colori);
         applicaLink(impostazioni.link);
         if (impostazioni.link) {
-          if (impostazioni.link.whatsapp) {
+          var visibili = impostazioni.link.visibili || {};
+          if (canaleAttivo("whatsapp", visibili, impostazioni.link.whatsapp) && impostazioni.link.whatsapp) {
             var soloNumeri = String(impostazioni.link.whatsapp).replace(/[^\d]/g, "");
             if (soloNumeri) numeroWhatsapp = soloNumeri;
           }
-          var visibili = impostazioni.link.visibili || {};
-          if (visibili.cookiebot !== false) caricaCookiebot(impostazioni.link.cookiebot);
-          if (visibili.pixel !== false) caricaPixel(impostazioni.link.pixel);
+          /* tracciamenti spenti: nessuno script e nessun pixel caricato */
+          if (canaleAttivo("cookiebot", visibili, impostazioni.link.cookiebot)) {
+            caricaCookiebot(impostazioni.link.cookiebot);
+          }
+          if (canaleAttivo("pixel", visibili, impostazioni.link.pixel)) {
+            caricaPixel(impostazioni.link.pixel);
+          }
         }
       })
       .catch(function () { /* configurazione non ancora pubblicata */ });
