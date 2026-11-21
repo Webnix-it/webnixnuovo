@@ -23,7 +23,8 @@
   <meta name="twitter:title" content="Webnix Digital Agency">
   <meta name="twitter:description" content="Siti web, brand identity e visibilità online per la tua attività.">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
-  <link rel="stylesheet" href="style.css?v=20261120-6">
+  <link rel="stylesheet" href="style.css?v=20261120-12">
+  <link rel="stylesheet" href="modulo-bozza.css?v=20261121-2">
 
   <!-- JSON-LD: Organization + WebSite/WebPage + BreadcrumbList (struttura per i sitelinks di Google) -->
   <script type="application/ld+json">
@@ -135,7 +136,7 @@
           <h1 id="titolo-hero" reveal>La tua attività non è su Google? I tuoi clienti ti stanno cercando, ma stanno trovando i tuoi <em>concorrenti</em>.</h1>
           <p id="sottotitolo-hero" reveal delay="1">Aiutiamo le nuove attività a ottenere una presenza digitale professionale, senza costi nascosti e senza la complessità di WordPress. <strong>Ottieni una bozza gratuita del tuo sito in 48 ore.</strong></p>
           <div id="fila-cta-hero" reveal delay="2">
-            <button id="bottone1" type="button" title="Paghi solo se ti piace" onclick="window.open('https://wa.me/14132259397?text=Ciao%20Webnix!%20Vorrei%20la%20bozza%20gratuita%20del%20mio%20sito%20web.','_blank','noopener')">Richiedi la tua bozza</button>
+            <button id="bottone1" type="button" title="Paghi solo se ti piace">Richiedi la tua bozza</button>
             <button id="bottone2-hero" type="button" onclick="document.getElementById('sezione-processo').scrollIntoView({behavior:'smooth'})">
               <i class="fa-solid fa-play" aria-hidden="true"></i> Vedi come funziona
             </button>
@@ -656,7 +657,18 @@
     <section id="cta-finale" reveal>
       <h2 id="titolo-cta-finale" reveal>Smetti di perdere clienti <span class="accento-brand">oggi stesso</span>.</h2>
       <p id="sottotitolo-cta-finale" reveal delay="1">Parliamo del tuo progetto: la prima bozza è offerta da noi.</p>
-      <div id="video-cta" reveal delay="2">
+
+      <!-- Invito al video: testo + freccia animata verso il basso -->
+      <div id="invito-video" reveal delay="2">
+        <p id="testo-invito-video">
+          Qui sotto, in poco più di un minuto, ti raccontiamo cosa facciamo e perché funziona:
+          come nasce un sito veloce, chi lo costruisce, quanto costa e quali risultati porta
+          a chi ci sceglie. Zero gergo tecnico, solo il nostro metodo.
+        </p>
+        <span id="freccia-giu" aria-hidden="true"><i class="fa-solid fa-arrow-down"></i></span>
+      </div>
+
+      <div id="video-cta" reveal delay="3">
         <div class="cornice-video">
           <iframe
             src="https://www.youtube-nocookie.com/embed/aqz-KE-bpKQ?rel=0"
@@ -774,7 +786,7 @@
               </div>
 
               <div>
-                <h3 style="color: white; margin-bottom: 30px;">Link Utili</h3>
+                <h3>Link Utili</h3>
                 <ul id="ul2">
                   <li><a href="index.html">Home</a></li>
                   <li><a href="servizi.html">Servizi</a></li>
@@ -786,7 +798,7 @@
               </div>
 
               <div>
-                <h3 style="color: white; text-align: left; margin-bottom: 30px;">Servizi</h3>
+                <h3>Servizi</h3>
                 <ul id="ul2">
                   <li><a href="servizi.html#sezione-servizi-completi">Siti Web</a></li>
                   <li><a href="servizi.html#sezione-servizi-completi">Creazione Logo</a></li>
@@ -797,7 +809,7 @@
               </div>
 
               <div>
-                <h3 style="color: white;">Social</h3>
+                <h3>Social</h3>
                 <ul id="ul3">
                   <div id="cards">
                     <a href="https://wa.me/14132259397?text=Ciao!%20Sto%20cercando%20qualcuno%20che%20mi%20aiuti%20a%20creare%20una%20presenza%20online.%20Da%20dove%20possiamo%20partire?" target="_blank" rel="noopener" style="text-decoration: none; color: inherit;">
@@ -893,6 +905,8 @@
   <script src="config.js"></script>
   <script src="script.js?v=20261120-3"></script>
   <script src="firebase-config.js"></script>
+  <script src="modulo-config.js"></script>
+  <script src="modulo-bozza.js?v=20261121-3"></script>
   <script src="dati-remoti.js?v=20261120-4"></script>
 </body>
 </html>

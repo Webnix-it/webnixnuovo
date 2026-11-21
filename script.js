@@ -102,14 +102,26 @@
       drawer.setAttribute("aperto", "si");
       overlay.setAttribute("aperto", "si");
       hamburger.setAttribute("aria-expanded", "true"); // stato aperto irrobustito
+      hamburger.setAttribute("aria-label", "Chiudi menu");
       document.body.style.overflow = "hidden";
+      if (chiudiBtn) chiudiBtn.focus({ preventScroll: true }); // focus dentro il popup
     }
     function chiudi() {
+      var dentro = drawer.contains(document.activeElement);
       drawer.removeAttribute("aperto");
       overlay.removeAttribute("aperto");
       hamburger.setAttribute("aria-expanded", "false");
+      hamburger.setAttribute("aria-label", "Apri menu");
       document.body.style.overflow = "";
+      if (dentro) hamburger.focus({ preventScroll: true }); // focus restituito all'hamburger
     }
+    /* Voce della pagina corrente evidenziata nel menu mobile */
+    var pagina = (location.pathname.split("/").pop() || "index.html");
+    drawer.querySelectorAll("#nav-mobile a").forEach(function (link) {
+      if (link.hash) return; // i link con ancora (Contatti) non marcano la pagina
+      var file = new URL(link.href, location.href).pathname.split("/").pop() || "index.html";
+      if (file === pagina) link.setAttribute("aria-current", "page");
+    });
     hamburger.addEventListener("click", apri);
     if (chiudiBtn) chiudiBtn.addEventListener("click", chiudi);
     overlay.addEventListener("click", chiudi); // tap outside

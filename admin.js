@@ -1078,10 +1078,11 @@ async function avviaDashboard(utente) {
   });
 
   await caricaImpostazioni();
+  initModuloAdmin();
 
   var sezioneIniziale = (window.location.hash || "").replace("#", "");
   if (sezioneIniziale && SEZIONI[sezioneIniziale]) mostraSezione(sezioneIniziale);
-  else if (sezioneIniziale === "colori" || sezioneIniziale === "link") mostraSezione(sezioneIniziale);
+  else if (sezioneIniziale === "colori" || sezioneIniziale === "link" || sezioneIniziale === "modulo") mostraSezione(sezioneIniziale);
   else mostraSezione("recensioni");
 }
 
@@ -1133,4 +1134,913 @@ if (auth) {
     if (dashboard) dashboard.hidden = false;
     avviaDashboard(utente);
   });
+}
+/* ============================================================
+   MODULO RICHIESTA BOZZA — configurazione + CRM richieste
+   Documento: impostazioni/modulo-bozza
+   Collezione: richieste-bozza
+   ============================================================ */
+var MODULO_DEFAULT = window.WEBNIX_MODULO_DEFAULT || {};
+var configModulo = null;
+var richiesteModulo = null;
+var richiestaAperta = null;
+var moduloAvviato = false;
+var ricercaRichieste = "";
+var filtroRichieste = "";
+
+var STATI_RICHIESTA = ["Nuova", "In lavorazione", "Completata", "Archiviata"];
+
+function clonaModulo(valore) {
+  return JSON.parse(JSON.stringify(valore || {}));
+}
+
+function fondiModulo(base, sopra) {
+  if (!sopra || typeof sopra !== "object") return base;
+  Object.keys(sopra).forEach(function (k) {
+    var v = sopra[k];
+    if (v === undefined || v === null) return;
+    if (Array.isArray(v)) base[k] = v;
+    else if (typeof v === "object") base[k] = fondiModulo(base[k] && typeof base[k] === "object" ? base[k] : {}, v);
+    else base[k] = v;
+  });
+  return base;
+}
+
+function percorsoModulo(obj, sentiero, valore) {
+  var parti = String(sentiero).split(".");
+  var nodo = obj;
+  for (var i = 0; i < parti.length - 1; i++) {
+    if (!nodo[parti[i]] || typeof nodo[parti[i]] !== "object") nodo[parti[i]] = {};
+    nodo = nodo[parti[i]];
+  }
+  nodo[parti[parti.length - 1]] = valore;
+}
+
+function dataRichiesta(valore) {
+  if (!valore) return "";
+  var quando = null;
+  if (typeof valore === "object" && typeof valore.toDate === "function") quando = valore.toDate();
+  else if (typeof valore === "number") quando = new Date(valore);
+  else {
+    var ms = Date.parse(String(valore));
+    quando = isNaN(ms) ? null : new Date(ms);
+  }
+  if (!quando || isNaN(quando.getTime())) return "";
+  return quando.toLocaleString("it-IT", {
+    day: "2-digit", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit"
+  });
+}
+
+/* ---------- editor configurazione ---------- */
+function campoEditor(nome, etichetta, valore, tipo, aiuto, onInput) {
+  var label = document.createElement("label");
+  label.className = "campo" + (tipo === "textarea" ? " campo-largo" : "");
+  var span = document.createElement("span");
+  span.textContent = etichetta;
+  label.appendChild(span);
+
+  var input;
+  if (tipo === "textarea") input = document.createElement("textarea");
+  else if (tipo === "select") input = document.createElement("select");
+  else input = document.createElement("input");
+  if (tipo !== "textarea" && tipo !== "select") input.type = tipo || "text";
+  input.setAttribute("data-campo", nome);
+  input.value = valore === undefined || valore === null ? "" : String(valore);
+  if (typeof onInput === "function") {
+    input.addEventListener("input", function () { onInput(input.value); });
+    input.addEventListener("change", function () { onInput(input.value); });
+  }
+  label.appendChild(input);
+
+  if (aiuto) {
+    var small = document.createElement("small");
+    small.className = "aiuto-campo";
+    small.textContent = aiuto;
+    label.appendChild(small);
+  }
+  return label;
+}
+
+function interruttoreEditor(testo, attivo, onCambia) {
+  var label = document.createElement("label");
+  label.className = "campo-toggle riga-toggle-editor";
+  var contenitore = document.createElement("span");
+  contenitore.className = "contenitore-toggle";
+  var interruttore = document.createElement("span");
+  interruttore.className = "interruttore";
+  var input = document.createElement("input");
+  input.type = "checkbox";
+  input.checked = Boolean(attivo);
+  input.addEventListener("change", function () { onCambia(input.checked); });
+  var cursore = document.createElement("span");
+  cursore.className = "cursore";
+  interruttore.appendChild(input);
+  interruttore.appendChild(cursore);
+
+  var testi = document.createElement("span");
+  testi.className = "testi-toggle";
+  var forte = document.createElement("strong");
+  forte.textContent = testo;
+  testi.appendChild(forte);
+
+  contenitore.appendChild(interruttore);
+  contenitore.appendChild(testi);
+  label.appendChild(contenitore);
+  return label;
+}
+
+function bottoneEditor(testo, classe, onClick) {
+  var b = document.createElement("button");
+  b.type = "button";
+  b.className = classe || "bottone-secondario";
+  b.textContent = testo;
+  b.addEventListener("click", onClick);
+  return b;
+}
+
+function disegnaEditorModulo() {
+  var box = document.getElementById("editor-modulo");
+  if (!box || !configModulo) return;
+  box.innerHTML = "";
+
+  var gruppoTesti = document.createElement("details");
+  gruppoTesti.className = "blocco-editor";
+  gruppoTesti.open = true;
+  var sommarioTesti = document.createElement("summary");
+  sommarioTesti.textContent = "Testi, stile e budget";
+  gruppoTesti.appendChild(sommarioTesti);
+
+  var form = document.createElement("form");
+  form.className = "form-admin form-modulo";
+  form.id = "form-modulo";
+  form.addEventListener("submit", function (e) { e.preventDefault(); salvaModuloConfig(); });
+
+  var griglia = document.createElement("div");
+  griglia.className = "griglia-campi";
+  griglia.appendChild(campoEditor("titolo", "Titolo del popup", configModulo.titolo));
+  griglia.appendChild(campoEditor("prezzo", "Prezzo mostrato", configModulo.prezzo));
+  griglia.appendChild(campoEditor("sottotitolo", "Sottotitolo", configModulo.sottotitolo, "textarea"));
+  griglia.appendChild(campoEditor("testoIntro", "Testo di introduzione (primo step)", configModulo.testoIntro, "textarea"));
+  griglia.appendChild(campoEditor("testoContinua", "Testo pulsante «Continua»", configModulo.testoContinua));
+  griglia.appendChild(campoEditor("testoIndietro", "Testo pulsante «Indietro»", configModulo.testoIndietro));
+  griglia.appendChild(campoEditor("testoFinale", "Testo pulsante finale", configModulo.testoFinale));
+  griglia.appendChild(campoEditor("messaggioSuccesso", "Messaggio di conferma", configModulo.messaggioSuccesso, "textarea"));
+
+  griglia.appendChild(campoEditor("stile.viola", "Colore primario", configModulo.stile.viola, "color"));
+  griglia.appendChild(campoEditor("stile.ciano", "Colore secondario", configModulo.stile.ciano, "color"));
+  griglia.appendChild(campoEditor("stile.sfondo", "Sfondo del popup", configModulo.stile.sfondo, "color"));
+  griglia.appendChild(campoEditor("stile.raggio", "Arrotondamento (px)", configModulo.stile.raggio, "number"));
+  griglia.appendChild(campoEditor("stile.animazione", "Durata animazioni (ms)", configModulo.stile.animazione, "number"));
+  griglia.appendChild(campoEditor("stile.font", "Font (facoltativo)", configModulo.stile.font, "text", "Es. Georgia, serif. Vuoto = font del sito."));
+
+  griglia.appendChild(campoEditor("budget.min", "Budget minimo", configModulo.budget.min, "number"));
+  griglia.appendChild(campoEditor("budget.max", "Budget massimo", configModulo.budget.max, "number"));
+  griglia.appendChild(campoEditor("budget.step", "Incremento del selettore", configModulo.budget.step, "number"));
+  griglia.appendChild(campoEditor("budget.valuta", "Valuta", configModulo.budget.valuta));
+  griglia.appendChild(campoEditor("budget.preset", "Valori rapidi", (configModulo.budget.preset || []).join(", "), "text", "Separati da virgola, es. 0, 50, 75, 100, 250, 500"));
+  griglia.appendChild(campoEditor("budget.testo", "Testo informativo del budget", configModulo.budget.testo, "textarea"));
+
+  griglia.appendChild(campoEditor("notifica.emailAdmin", "Email amministratore", configModulo.notifica.emailAdmin, "email"));
+  griglia.appendChild(campoEditor("notifica.formspree", "Formspree (email a ogni invio)", configModulo.notifica.formspree, "url", "Endpoint Formspree, es. https://formspree.io/f/xyewdvda. Vuoto = nessuna email automatica."));
+  griglia.appendChild(campoEditor("notifica.webhook", "Webhook notifica (facoltativo)", configModulo.notifica.webhook, "url", "URL che riceve un JSON a ogni richiesta (Zapier, Make, ecc.)."));
+
+  form.appendChild(griglia);
+  form.appendChild(interruttoreEditor("Il cliente può scegliere «Non ho ancora definito un budget»", configModulo.budget.nonDefinito !== false, function (v) {
+    configModulo.budget.nonDefinito = v;
+  }));
+  form.appendChild(interruttoreEditor("Invia email di conferma al cliente", configModulo.notifica.emailCliente !== false, function (v) {
+    configModulo.notifica.emailCliente = v;
+  }));
+
+  gruppoTesti.appendChild(form);
+  box.appendChild(gruppoTesti);
+
+  var gruppoPulsanti = document.createElement("details");
+  gruppoPulsanti.className = "blocco-editor";
+  var sommarioPulsanti = document.createElement("summary");
+  sommarioPulsanti.textContent = "Pulsanti collegati al modulo";
+  gruppoPulsanti.appendChild(sommarioPulsanti);
+  var corpoPulsanti = document.createElement("div");
+  corpoPulsanti.className = "editor-lista";
+  corpoPulsanti.id = "editor-pulsanti";
+  gruppoPulsanti.appendChild(corpoPulsanti);
+  box.appendChild(gruppoPulsanti);
+
+  var gruppoStep = document.createElement("details");
+  gruppoStep.className = "blocco-editor";
+  var sommarioStep = document.createElement("summary");
+  sommarioStep.textContent = "Step e domande";
+  gruppoStep.appendChild(sommarioStep);
+  var corpoStep = document.createElement("div");
+  corpoStep.className = "editor-lista";
+  corpoStep.id = "editor-step";
+  gruppoStep.appendChild(corpoStep);
+  box.appendChild(gruppoStep);
+
+  var azioni = document.createElement("div");
+  azioni.className = "azioni-form azioni-modulo";
+  azioni.appendChild(bottoneEditor("Salva configurazione", "bottone-primario", function () {
+    salvaModuloConfig();
+  }));
+  azioni.appendChild(bottoneEditor("Ripristina default", "bottone-secondario", function () {
+    if (!window.confirm("Ripristinare il modulo ai valori di default? Verranno persi testi e domande personalizzati.")) return;
+    configModulo = clonaModulo(MODULO_DEFAULT);
+    disegnaEditorModulo();
+    salvaModuloConfig();
+  }));
+  box.appendChild(azioni);
+
+  disegnaEditorPulsanti();
+  disegnaEditorStep();
+}
+
+function disegnaEditorPulsanti() {
+  var box = document.getElementById("editor-pulsanti");
+  if (!box) return;
+  box.innerHTML = "";
+
+  (configModulo.pulsanti || []).forEach(function (p, i) {
+    var riga = document.createElement("div");
+    riga.className = "editor-pulsante";
+
+    var testi = document.createElement("div");
+    testi.className = "editor-pulsante-testi";
+    testi.appendChild(campoEditor("pulsante.testo." + i, "Testo del pulsante", p.testo, "text", "", function (v) { p.testo = v; }));
+
+    var tipo = document.createElement("label");
+    tipo.className = "campo";
+    var spanTipo = document.createElement("span");
+    spanTipo.textContent = "Azione";
+    var select = document.createElement("select");
+    [["modulo", "Apre il modulo"], ["link", "Porta a un'altra destinazione"]].forEach(function (o) {
+      var opt = document.createElement("option");
+      opt.value = o[0];
+      opt.textContent = o[1];
+      select.appendChild(opt);
+    });
+    select.value = p.tipo === "link" ? "link" : "modulo";
+    select.addEventListener("change", function () { p.tipo = select.value; });
+    tipo.appendChild(spanTipo);
+    tipo.appendChild(select);
+    testi.appendChild(tipo);
+
+    testi.appendChild(campoEditor("pulsante.destinazione." + i, "Destinazione (per «link»)", p.destinazione, "text", "Es. chi-siamo.html#infoContactsSection", function (v) { p.destinazione = v; }));
+    testi.appendChild(campoEditor("pulsante.selettore." + i, "Selettore CSS", p.selettore, "text", "Avanzato: dove applicare il pulsante nel sito.", function (v) { p.selettore = v.trim(); }));
+
+    var azioni = document.createElement("div");
+    azioni.className = "editor-pulsante-azioni";
+    azioni.appendChild(interruttoreEditor("Attivo nel sito", p.attivo !== false, function (v) { p.attivo = v; }));
+
+    var elimina = bottoneEditor("Elimina", "elimina", function () {
+      configModulo.pulsanti.splice(i, 1);
+      disegnaEditorPulsanti();
+    });
+    azioni.appendChild(elimina);
+
+    riga.appendChild(testi);
+    riga.appendChild(azioni);
+    box.appendChild(riga);
+  });
+
+  box.appendChild(bottoneEditor("+ Aggiungi pulsante", "bottone-secondario", function () {
+    configModulo.pulsanti.push({
+      chiave: "cta" + Date.now(),
+      testo: "Richiedi la tua bozza",
+      tipo: "modulo",
+      destinazione: "",
+      attivo: true,
+      selettore: ""
+    });
+    disegnaEditorPulsanti();
+  }));
+}
+
+function disegnaEditorStep() {
+  var box = document.getElementById("editor-step");
+  if (!box) return;
+  box.innerHTML = "";
+
+  (configModulo.step || []).forEach(function (s, i) {
+    var blocco = document.createElement("details");
+    blocco.className = "editor-step";
+    if (i === 0) blocco.open = true;
+
+    var sommario = document.createElement("summary");
+    sommario.textContent = "Step " + (i + 1) + " · " + (s.titolo || "Senza titolo");
+    blocco.appendChild(sommario);
+
+    var corpo = document.createElement("div");
+    corpo.className = "editor-step-corpo";
+    corpo.appendChild(campoEditor("step.titolo." + i, "Titolo dello step", s.titolo, "text", "", function (v) { s.titolo = v; }));
+    corpo.appendChild(campoEditor("step.descrizione." + i, "Descrizione", s.descrizione, "textarea", "", function (v) { s.descrizione = v; }));
+
+    var rigaAzioni = document.createElement("div");
+    rigaAzioni.className = "editor-step-azioni";
+    rigaAzioni.appendChild(interruttoreEditor("Step attivo", s.attivo !== false, function (v) { s.attivo = v; }));
+
+    rigaAzioni.appendChild(bottoneEditor("Sposta su", "bottone-secondario", function () {
+      if (i === 0) return;
+      var tmp = configModulo.step[i - 1];
+      configModulo.step[i - 1] = configModulo.step[i];
+      configModulo.step[i] = tmp;
+      disegnaEditorStep();
+    }));
+    rigaAzioni.appendChild(bottoneEditor("Sposta giù", "bottone-secondario", function () {
+      if (i === configModulo.step.length - 1) return;
+      var tmp = configModulo.step[i + 1];
+      configModulo.step[i + 1] = configModulo.step[i];
+      configModulo.step[i] = tmp;
+      disegnaEditorStep();
+    }));
+    rigaAzioni.appendChild(bottoneEditor("Elimina step", "elimina", function () {
+      if (!window.confirm("Eliminare questo step e tutte le sue domande?")) return;
+      configModulo.step.splice(i, 1);
+      disegnaEditorStep();
+    }));
+    corpo.appendChild(rigaAzioni);
+
+    var domande = document.createElement("div");
+    domande.className = "editor-domande";
+    (s.domande || []).forEach(function (d, j) {
+      domande.appendChild(creaEditorDomanda(s, d, i, j));
+    });
+    corpo.appendChild(domande);
+
+    corpo.appendChild(bottoneEditor("+ Aggiungi domanda", "bottone-secondario", function () {
+      s.domande = s.domande || [];
+      s.domande.push({
+        chiave: "domanda" + Date.now(),
+        etichetta: "Nuova domanda",
+        tipo: "testo",
+        obbligatorio: false,
+        placeholder: "",
+        aiuto: "",
+        opzioni: []
+      });
+      disegnaEditorStep();
+    }));
+
+    blocco.appendChild(corpo);
+    box.appendChild(blocco);
+  });
+
+  box.appendChild(bottoneEditor("+ Aggiungi step", "bottone-secondario", function () {
+    configModulo.step.push({
+      id: "step" + Date.now(),
+      titolo: "Nuovo step",
+      descrizione: "",
+      attivo: true,
+      domande: []
+    });
+    disegnaEditorStep();
+  }));
+}
+
+function creaEditorDomanda(step, domanda, i, j) {
+  var riga = document.createElement("div");
+  riga.className = "editor-domanda";
+
+  var testa = document.createElement("div");
+  testa.className = "editor-domanda-testa";
+
+  var tipo = document.createElement("select");
+  [
+    ["testo", "Testo"],
+    ["testo-lungo", "Testo lungo"],
+    ["email", "Email"],
+    ["scelta", "Scelta singola"],
+    ["multipla", "Scelta multipla"],
+    ["si-no", "Sì / No"],
+    ["selettore", "Selettore"],
+    ["file", "Caricamento file"],
+    ["budget", "Budget"],
+    ["consenso", "Checkbox"],
+    ["nota", "Nota informativa"]
+  ].forEach(function (o) {
+    var opt = document.createElement("option");
+    opt.value = o[0];
+    opt.textContent = o[1];
+    tipo.appendChild(opt);
+  });
+  tipo.value = domanda.tipo || "testo";
+  testa.appendChild(tipo);
+
+  var etichetta = document.createElement("input");
+  etichetta.type = "text";
+  etichetta.className = "editor-etichetta-domanda";
+  etichetta.value = domanda.etichetta || domanda.testo || "";
+  etichetta.placeholder = "Etichetta della domanda";
+  testa.appendChild(etichetta);
+
+  riga.appendChild(testa);
+
+  var corpo = document.createElement("div");
+  corpo.className = "editor-domanda-corpo";
+  corpo.hidden = true;
+
+  var chiave = document.createElement("input");
+  chiave.type = "text";
+  chiave.value = domanda.chiave || "";
+  chiave.placeholder = "chiave_univoca";
+  chiave.className = "editor-chiave";
+  chiave.addEventListener("input", function () { domanda.chiave = chiave.value.trim(); });
+  corpo.appendChild(chiave);
+
+  var obbligatorio = document.createElement("label");
+  obbligatorio.className = "editor-check";
+  var check = document.createElement("input");
+  check.type = "checkbox";
+  check.checked = domanda.obbligatorio === true;
+  check.addEventListener("change", function () { domanda.obbligatorio = check.checked; });
+  obbligatorio.appendChild(check);
+  obbligatorio.appendChild(document.createTextNode("Obbligatoria"));
+  corpo.appendChild(obbligatorio);
+
+  var opzioni = document.createElement("textarea");
+  opzioni.placeholder = "Una opzione per riga: valore | testo | icona";
+  opzioni.value = (domanda.opzioni || []).map(function (o) {
+    return [o.valore, o.testo, o.icona].filter(Boolean).join(" | ");
+  }).join("\n");
+  opzioni.className = "editor-opzioni";
+  opzioni.addEventListener("input", function () {
+    domanda.opzioni = opzioni.value.split("\n").map(function (linea) {
+      var parti = linea.split("|").map(function (x) { return x.trim(); });
+      if (!parti[0]) return null;
+      return { valore: parti[0], testo: parti[1] || parti[0], icona: parti[2] || "" };
+    }).filter(Boolean);
+  });
+  corpo.appendChild(opzioni);
+
+  var placeholder = document.createElement("input");
+  placeholder.type = "text";
+  placeholder.value = domanda.placeholder || "";
+  placeholder.placeholder = "Testo suggerito nel campo";
+  placeholder.addEventListener("input", function () { domanda.placeholder = placeholder.value; });
+  corpo.appendChild(placeholder);
+
+  var aiuto = document.createElement("input");
+  aiuto.type = "text";
+  aiuto.value = domanda.aiuto || "";
+  aiuto.placeholder = "Testo di aiuto sotto il campo";
+  aiuto.addEventListener("input", function () { domanda.aiuto = aiuto.value; });
+  corpo.appendChild(aiuto);
+
+  var mostraSe = document.createElement("input");
+  mostraSe.type = "text";
+  mostraSe.value = domanda.mostraSe || "";
+  mostraSe.placeholder = "Mostra se: chiave=valore (es. attivita=Altro)";
+  mostraSe.addEventListener("input", function () { domanda.mostraSe = mostraSe.value.trim(); });
+  corpo.appendChild(mostraSe);
+
+  var nota = document.createElement("input");
+  nota.type = "text";
+  nota.value = domanda.testo || "";
+  nota.placeholder = "Testo della nota (solo per tipo «Nota»)";
+  nota.addEventListener("input", function () { domanda.testo = nota.value; });
+  corpo.appendChild(nota);
+
+  var linkTesto = document.createElement("input");
+  linkTesto.type = "text";
+  linkTesto.value = (domanda.link && domanda.link.testo) || "";
+  linkTesto.placeholder = "Testo del link (es. Privacy Policy)";
+  linkTesto.addEventListener("input", function () {
+    domanda.link = domanda.link || {};
+    domanda.link.testo = linkTesto.value;
+  });
+  corpo.appendChild(linkTesto);
+
+  var linkUrl = document.createElement("input");
+  linkUrl.type = "text";
+  linkUrl.value = (domanda.link && domanda.link.url) || "";
+  linkUrl.placeholder = "URL del link (es. privacy-policy.html)";
+  linkUrl.addEventListener("input", function () {
+    domanda.link = domanda.link || {};
+    domanda.link.url = linkUrl.value;
+  });
+  corpo.appendChild(linkUrl);
+
+  var azioni = document.createElement("div");
+  azioni.className = "editor-domanda-azioni";
+  azioni.appendChild(bottoneEditor("Elimina domanda", "elimina", function () {
+    step.domande.splice(j, 1);
+    disegnaEditorStep();
+  }));
+  corpo.appendChild(azioni);
+
+  testa.addEventListener("click", function (e) {
+    if (e.target.tagName === "INPUT" || e.target.tagName === "SELECT") return;
+    corpo.hidden = !corpo.hidden;
+  });
+
+  tipo.addEventListener("change", function () {
+    domanda.tipo = tipo.value;
+    corpo.hidden = false;
+  });
+  etichetta.addEventListener("input", function () {
+    if (domanda.tipo === "nota") domanda.testo = etichetta.value;
+    else domanda.etichetta = etichetta.value;
+  });
+
+  riga.appendChild(corpo);
+  return riga;
+}
+
+function raccogliFormModulo() {
+  var form = document.getElementById("form-modulo");
+  if (!form || !configModulo) return;
+  form.querySelectorAll("[data-campo]").forEach(function (input) {
+    var nome = input.getAttribute("data-campo");
+    var valore = String(input.value).trim();
+    if (nome === "budget.preset") {
+      configModulo.budget.preset = valore.split(",").map(function (x) {
+        return Number(String(x).replace(/[^\d.-]/g, ""));
+      }).filter(function (n) { return Number.isFinite(n); });
+      return;
+    }
+    if (nome === "stile.raggio" || nome === "stile.animazione" || nome === "budget.min" || nome === "budget.max" || nome === "budget.step") {
+      percorsoModulo(configModulo, nome, Number(valore) || 0);
+      return;
+    }
+    percorsoModulo(configModulo, nome, valore);
+  });
+}
+
+async function salvaModuloConfig() {
+  if (!configModulo) return;
+  raccogliFormModulo();
+  try {
+    await setDoc(doc(db, "impostazioni", "modulo-bozza"), configModulo);
+    mostraStato("Modulo salvato: il sito lo usa al prossimo caricamento.", "ok");
+  } catch (err) {
+    errore("Salvataggio modulo non riuscito: " + descriviErrore(err));
+  }
+}
+
+/* ---------- richieste ricevute ---------- */
+function statCard(valore, etichetta, tono) {
+  var card = document.createElement("article");
+  card.className = "stat-admin" + (tono ? " tono-" + tono : "");
+  var forte = document.createElement("strong");
+  forte.textContent = String(valore);
+  var span = document.createElement("span");
+  span.textContent = etichetta;
+  card.appendChild(forte);
+  card.appendChild(span);
+  return card;
+}
+
+function disegnaStatRichieste() {
+  var box = document.getElementById("stat-modulo");
+  if (!box || !richiesteModulo) return;
+  var totale = richiesteModulo.length;
+  var nuove = richiesteModulo.filter(function (r) { return r.stato === "Nuova"; }).length;
+  var lavorazione = richiesteModulo.filter(function (r) { return r.stato === "In lavorazione"; }).length;
+  var completate = richiesteModulo.filter(function (r) { return r.stato === "Completata"; }).length;
+
+  box.innerHTML = "";
+  box.appendChild(statCard(totale, "Totali", "totale"));
+  box.appendChild(statCard(nuove, "Nuove", "nuova"));
+  box.appendChild(statCard(lavorazione, "In lavorazione", "lavorazione"));
+  box.appendChild(statCard(completate, "Completate", "completata"));
+}
+
+async function caricaRichieste() {
+  var box = document.getElementById("lista-richieste");
+  if (!box) return;
+  box.innerHTML = "";
+  var attesa = document.createElement("p");
+  attesa.className = "stato-vuoto";
+  attesa.textContent = "Caricamento richieste…";
+  box.appendChild(attesa);
+
+  try {
+    var snap = await getDocs(collection(db, "richieste-bozza"));
+    richiesteModulo = snap.docs.map(function (d) {
+      var dati = d.data() || {};
+      dati.__id = d.id;
+      return dati;
+    });
+    richiesteModulo.sort(function (a, b) {
+      var da = a.creatoIl && a.creatoIl.toDate ? a.creatoIl.toDate().getTime() : Date.parse(a.creatoIl || "") || 0;
+      var db2 = b.creatoIl && b.creatoIl.toDate ? b.creatoIl.toDate().getTime() : Date.parse(b.creatoIl || "") || 0;
+      return db2 - da;
+    });
+    disegnaStatRichieste();
+    disegnaRichieste();
+  } catch (err) {
+    box.innerHTML = "";
+    var erroreBox = document.createElement("p");
+    erroreBox.className = "stato-vuoto";
+    erroreBox.textContent = "Impossibile caricare le richieste. " + descriviErrore(err);
+    box.appendChild(erroreBox);
+  }
+}
+
+function disegnaRichieste() {
+  var box = document.getElementById("lista-richieste");
+  if (!box || !richiesteModulo) return;
+  box.innerHTML = "";
+
+  if (!richiesteModulo.length) {
+    var vuoto = document.createElement("p");
+    vuoto.className = "stato-vuoto";
+    vuoto.textContent = "Nessuna richiesta ricevuta: arriveranno qui dal modulo del sito.";
+    box.appendChild(vuoto);
+    return;
+  }
+
+  var q = ricercaRichieste;
+  var filtrate = richiesteModulo.filter(function (r) {
+    if (filtroRichieste && r.stato !== filtroRichieste) return false;
+    if (!q) return true;
+    return [r.nome, r.email, r.attivita, r.riferimento].join(" ").toLowerCase().indexOf(q) !== -1;
+  });
+
+  if (!filtrate.length) {
+    var nessuna = document.createElement("p");
+    nessuna.className = "stato-vuoto";
+    nessuna.textContent = "Nessuna richiesta corrisponde alla ricerca.";
+    box.appendChild(nessuna);
+    return;
+  }
+
+  filtrate.forEach(function (r) {
+    var voce = document.createElement("article");
+    voce.className = "voce-admin voce-richiesta";
+    voce.addEventListener("click", function (e) {
+      if (e.target.closest("button")) return;
+      apriDettaglioRichiesta(r);
+    });
+
+    var testo = document.createElement("div");
+    testo.className = "voce-testo";
+
+    var rigaTitolo = document.createElement("div");
+    rigaTitolo.className = "riga-titolo-richiesta";
+    var titolo = document.createElement("strong");
+    titolo.textContent = r.nome || "Senza nome";
+    rigaTitolo.appendChild(titolo);
+
+    var stato = document.createElement("span");
+    stato.className = "stato-chip stato-" + String(r.stato || "Nuova").toLowerCase().replace(/\s+/g, "-");
+    stato.textContent = r.stato || "Nuova";
+    rigaTitolo.appendChild(stato);
+    testo.appendChild(rigaTitolo);
+
+    var sotto = document.createElement("span");
+    sotto.textContent = [r.attivita, r.email].filter(Boolean).join(" · ");
+    testo.appendChild(sotto);
+
+    var extra = document.createElement("span");
+    extra.className = "voce-extra";
+    extra.textContent = [dataRichiesta(r.creatoIl), r.budgetTesto].filter(Boolean).join(" · ");
+    testo.appendChild(extra);
+
+    voce.appendChild(testo);
+
+    var azioni = document.createElement("div");
+    azioni.className = "voce-azioni";
+    var apri = document.createElement("button");
+    apri.type = "button";
+    apri.textContent = "Apri scheda";
+    apri.addEventListener("click", function () { apriDettaglioRichiesta(r); });
+    azioni.appendChild(apri);
+    voce.appendChild(azioni);
+
+    box.appendChild(voce);
+  });
+}
+
+/* ---------- scheda dettaglio ---------- */
+function apriDettaglioRichiesta(r) {
+  var pannello = document.getElementById("dettaglio-richiesta");
+  var contenuto = document.getElementById("dettaglio-contenuto");
+  if (!pannello || !contenuto) return;
+  richiestaAperta = r;
+  contenuto.innerHTML = "";
+
+  var titolo = document.createElement("h2");
+  titolo.id = "dettaglio-titolo";
+  titolo.textContent = r.nome || "Senza nome";
+  contenuto.appendChild(titolo);
+
+  var email = document.createElement("p");
+  email.className = "dettaglio-email";
+  email.textContent = r.email || "";
+  contenuto.appendChild(email);
+
+  var meta = document.createElement("p");
+  meta.className = "dettaglio-meta";
+  meta.textContent = [r.attivita, dataRichiesta(r.creatoIl), r.riferimento ? "Rif. " + r.riferimento : ""]
+    .filter(Boolean).join(" · ");
+  contenuto.appendChild(meta);
+
+  var azioni = document.createElement("div");
+  azioni.className = "dettaglio-azioni";
+
+  if (r.email) {
+    var scrivi = document.createElement("a");
+    scrivi.className = "bottone-primario";
+    scrivi.href = "mailto:" + r.email + "?subject=" + encodeURIComponent("La tua richiesta di bozza gratuita — Webnix");
+    scrivi.textContent = "Scrivi una email";
+    azioni.appendChild(scrivi);
+  }
+
+  var statoLabel = document.createElement("label");
+  statoLabel.className = "dettaglio-stato";
+  var spanStato = document.createElement("span");
+  spanStato.textContent = "Stato";
+  var select = document.createElement("select");
+  STATI_RICHIESTA.forEach(function (s) {
+    var opt = document.createElement("option");
+    opt.value = s;
+    opt.textContent = s;
+    select.appendChild(opt);
+  });
+  select.value = r.stato || "Nuova";
+  select.addEventListener("change", function () {
+    cambiaStatoRichiesta(r, select.value);
+  });
+  statoLabel.appendChild(spanStato);
+  statoLabel.appendChild(select);
+  azioni.appendChild(statoLabel);
+  contenuto.appendChild(azioni);
+
+  var sottotitoloRisposte = document.createElement("h3");
+  sottotitoloRisposte.className = "dettaglio-titolo-blocco";
+  sottotitoloRisposte.textContent = "Risposte del modulo";
+  contenuto.appendChild(sottotitoloRisposte);
+
+  var listaRisposte = document.createElement("dl");
+  listaRisposte.className = "dettaglio-risposte";
+  (r.risposte || []).forEach(function (voce) {
+    var dt = document.createElement("dt");
+    dt.textContent = voce.domanda || voce.chiave || "";
+    var dd = document.createElement("dd");
+    dd.textContent = voce.risposta || "—";
+    listaRisposte.appendChild(dt);
+    listaRisposte.appendChild(dd);
+  });
+  if (!(r.risposte || []).length) {
+    var ddVuoto = document.createElement("dd");
+    ddVuoto.textContent = "Nessuna risposta registrata.";
+    listaRisposte.appendChild(ddVuoto);
+  }
+  contenuto.appendChild(listaRisposte);
+
+  var budget = document.createElement("p");
+  budget.className = "dettaglio-budget";
+  budget.textContent = "Budget indicato: " + (r.budgetTesto || (r.budget ? r.budget + " €" : "Non indicato"));
+  contenuto.appendChild(budget);
+
+  var titoloFile = document.createElement("h3");
+  titoloFile.className = "dettaglio-titolo-blocco";
+  titoloFile.textContent = "Allegati";
+  contenuto.appendChild(titoloFile);
+
+  var listaFile = document.createElement("ul");
+  listaFile.className = "dettaglio-file";
+  (r.allegati || []).forEach(function (f) {
+    var li = document.createElement("li");
+    if (f.url) {
+      var a = document.createElement("a");
+      a.href = f.url;
+      a.target = "_blank";
+      a.rel = "noopener";
+      a.textContent = f.nome || "Allegato";
+      li.appendChild(a);
+    } else {
+      li.textContent = (f.nome || "Allegato") + " (file non caricato)";
+    }
+    var peso = document.createElement("small");
+    peso.textContent = f.dimensione ? formattaPesoAdmin(f.dimensione) : "";
+    li.appendChild(peso);
+    listaFile.appendChild(li);
+  });
+  if (!(r.allegati || []).length) {
+    var liVuoto = document.createElement("li");
+    liVuoto.textContent = "Nessun allegato.";
+    listaFile.appendChild(liVuoto);
+  }
+  contenuto.appendChild(listaFile);
+
+  var titoloNote = document.createElement("h3");
+  titoloNote.className = "dettaglio-titolo-blocco";
+  titoloNote.textContent = "Note interne";
+  contenuto.appendChild(titoloNote);
+
+  var note = document.createElement("textarea");
+  note.className = "dettaglio-note";
+  note.placeholder = "Appunti visibili solo in dashboard…";
+  note.value = r.noteInterne || "";
+  contenuto.appendChild(note);
+
+  var salvaNote = document.createElement("button");
+  salvaNote.type = "button";
+  salvaNote.className = "bottone-secondario";
+  salvaNote.textContent = "Salva note";
+  salvaNote.addEventListener("click", function () {
+    aggiornaRichiesta(r, { noteInterne: note.value }, "Note aggiornate.");
+  });
+  contenuto.appendChild(salvaNote);
+
+  var titoloStorico = document.createElement("h3");
+  titoloStorico.className = "dettaglio-titolo-blocco";
+  titoloStorico.textContent = "Storico";
+  contenuto.appendChild(titoloStorico);
+
+  var storico = document.createElement("ul");
+  storico.className = "dettaglio-storico";
+  (r.storico || []).forEach(function (h) {
+    var li = document.createElement("li");
+    li.textContent = [h.stato, dataRichiesta(h.il), h.da].filter(Boolean).join(" · ");
+    storico.appendChild(li);
+  });
+  if (!(r.storico || []).length) {
+    var liStorico = document.createElement("li");
+    liStorico.textContent = "Nessuna modifica registrata.";
+    storico.appendChild(liStorico);
+  }
+  contenuto.appendChild(storico);
+
+  pannello.hidden = false;
+  document.body.classList.add("dettaglio-aperto");
+  var chiudi = document.getElementById("chiudi-dettaglio");
+  if (chiudi) {
+    try { chiudi.focus({ preventScroll: true }); } catch (e) { /* ignora */ }
+  }
+}
+
+function formattaPesoAdmin(byte) {
+  var n = Number(byte) || 0;
+  if (n >= 1024 * 1024) return (n / (1024 * 1024)).toFixed(1).replace(".", ",") + " MB";
+  if (n >= 1024) return Math.round(n / 1024) + " KB";
+  return n + " B";
+}
+
+function chiudiDettaglioRichiesta() {
+  var pannello = document.getElementById("dettaglio-richiesta");
+  if (pannello) pannello.hidden = true;
+  document.body.classList.remove("dettaglio-aperto");
+  richiestaAperta = null;
+}
+
+async function cambiaStatoRichiesta(r, nuovo) {
+  var storico = Array.isArray(r.storico) ? r.storico.slice() : [];
+  storico.push({ stato: nuovo, il: new Date().toISOString(), da: "Dashboard" });
+  await aggiornaRichiesta(r, { stato: nuovo, storico: storico }, "Stato aggiornato in «" + nuovo + "».");
+}
+
+async function aggiornaRichiesta(r, campi, messaggio) {
+  try {
+    await updateDoc(doc(db, "richieste-bozza", r.__id), campi);
+    Object.keys(campi).forEach(function (k) { r[k] = campi[k]; });
+    mostraStato(messaggio || "Richiesta aggiornata.", "ok");
+    disegnaStatRichieste();
+    disegnaRichieste();
+    if (richiestaAperta && richiestaAperta.__id === r.__id) apriDettaglioRichiesta(r);
+  } catch (err) {
+    errore("Aggiornamento richiesta non riuscito: " + descriviErrore(err));
+  }
+}
+
+/* ---------- avvio sezione ---------- */
+function initModuloAdmin() {
+  if (moduloAvviato) return;
+  moduloAvviato = true;
+
+  var ricerca = document.getElementById("ricerca-richieste");
+  if (ricerca) {
+    ricerca.addEventListener("input", function () {
+      ricercaRichieste = ricerca.value.trim().toLowerCase();
+      disegnaRichieste();
+    });
+  }
+  var filtro = document.getElementById("filtro-richieste");
+  if (filtro) {
+    filtro.addEventListener("change", function () {
+      filtroRichieste = filtro.value;
+      disegnaRichieste();
+    });
+  }
+  document.querySelectorAll("[data-chiudi-richiesta], #chiudi-dettaglio").forEach(function (el) {
+    el.addEventListener("click", chiudiDettaglioRichiesta);
+  });
+  document.addEventListener("keydown", function (e) {
+    if (e.key === "Escape" && richiestaAperta) chiudiDettaglioRichiesta();
+  });
+
+  caricaModuloAdmin();
+  caricaRichieste();
+}
+
+async function caricaModuloAdmin() {
+  try {
+    var snap = await getDoc(doc(db, "impostazioni", "modulo-bozza"));
+    configModulo = fondiModulo(clonaModulo(MODULO_DEFAULT), snap.exists() ? snap.data() : {});
+  } catch (err) {
+    configModulo = clonaModulo(MODULO_DEFAULT);
+    errore("Modulo non leggibile: " + descriviErrore(err));
+  }
+  disegnaEditorModulo();
 }

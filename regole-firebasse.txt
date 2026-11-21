@@ -151,3 +151,90 @@ doppio clic (file://) il login non funziona.
    punto 1 non sono pubblicate o l'email non è nella lista isAdmin().
 7. Se compare "auth/unauthorized-domain" manca il dominio in
    Authentication → Settings → Authorized domains.
+
+------------------------------------------------------------
+5) MODULO RICHIESTA BOZZA (popup + CRM)
+------------------------------------------------------------
+Il popup salva le richieste nella collezione "richieste-bozza" e la
+configurazione in "impostazioni/modulo-bozza".
+
+La lettura della configurazione è già consentita dalle regole del
+punto 1 (impostazioni/{doc}: read true). Per le richieste aggiungi
+questi blocchi DENTRO service cloud.firestore, prima del match
+finale "Tutto il resto è chiuso":
+
+    // Il visitatore può inviare una richiesta, ma non leggerla.
+    match /richieste-bozza/{doc} {
+      allow create: if request.resource.data.nome is string
+        && request.resource.data.nome.size() >= 2
+        && request.resource.data.nome.size() <= 120
+        && request.resource.data.email is string
+        && request.resource.data.email.matches('.+@.+\\..+')
+        && request.resource.data.stato == 'Nuova'
+        && request.resource.data.budget is int
+        && request.resource.data.budget >= 0
+        && request.resource.data.budget <= 1000000
+        && request.resource.data.risposte is list
+        && request.resource.data.risposte.size() <= 60
+        && request.resource.data.allegati is list
+        && request.resource.data.allegati.size() <= 4;
+
+      // Solo l'amministratore legge, aggiorna e cancella.
+      allow read, update, delete: if isAdmin();
+    }
+
+Senza "allow create" il popup mostra l'errore di invio e propone
+WhatsApp come alternativa: nessun dato va perso.
+
+------------------------------------------------------------
+6) ALLEGATI — FIREBASE STORAGE
+------------------------------------------------------------
+Console Firebase → Storage → Regole. Il modulo carica i file in
+richieste-bozza/ e salva nel documento solo nome, tipo, peso e URL.
+
+    rules_version = '2';
+    service firebase.storage {
+      match /b/{bucket}/o {
+        match /richieste-bozza/{cartella}/{file} {
+          // Il visitatore può caricare solo immagini e documenti,
+          // fino a 4 MB per file.
+          allow create: if request.resource.size < 4 * 1024 * 1024
+            && request.resource.contentType.matches('image/.*|application/pdf|application/msword|application/vnd.openxmlformats-officedocument.wordprocessingml.document|text/.*|application/zip');
+          allow read: if isAdminStorage();
+          allow update, delete: if isAdminStorage();
+        }
+
+        function isAdminStorage() {
+          return request.auth != null
+            && request.auth.token.email_verified == true
+            && request.auth.token.email in ['webnixit@gmail.com'];
+        }
+      }
+    }
+
+Se le regole Storage non sono pubblicate, la richiesta viene salvata
+comunque e la dashboard mostra gli allegati come "file non caricato".
+
+------------------------------------------------------------
+7) NOTIFICHE EMAIL (FORMSPREE)
+------------------------------------------------------------
+Il modulo invia ogni richiesta a Formspree, che la recapita per email
+all'amministratore. L'endpoint si imposta in
+"Modulo richiesta bozza" → campo "Formspree (email a ogni invio)"
+(valore predefinito: https://formspree.io/f/xyewdvda).
+
+Ogni invio arriva con oggetto, nome, email (rispondi direttamente al
+cliente), attività, budget, riferimento, consensi e il testo completo
+di tutte le domande con le risposte. Gli allegati sono elencati come
+link a Firebase Storage: per aprirli serve l'accesso admin.
+
+L'invio a Formspree è indipendente dal salvataggio in Firestore: se il
+database non risponde l'email parte comunque (e viceversa la richiesta
+resta in dashboard anche se Formspree non risponde).
+
+In alternativa si può usare il campo "Webhook notifica" con un URL di
+Zapier, Make, n8n o una Cloud Function che riceve lo stesso JSON.
+
+Senza webhook la richiesta viene comunque registrata e visibile in
+dashboard; l'email al cliente si può inviare a mano dalla scheda
+della richiesta ("Scrivi una email").
