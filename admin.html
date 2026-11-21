@@ -7,7 +7,7 @@
   <title>Area riservata</title>
   <link rel="icon" type="image/svg+xml" href="favicon.svg">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
-  <link rel="stylesheet" href="admin.css?v=20261121-1">
+  <link rel="stylesheet" href="admin.css?v=20261121-2">
 </head>
 <body>
 
@@ -378,45 +378,14 @@
       <section class="pannello" data-pannello="modulo" hidden>
         <header class="testata-pannello">
           <h1>Modulo richiesta bozza</h1>
-          <p>Gestisci il popup del sito, i pulsanti collegati, il budget e le richieste ricevute.</p>
+          <p>Popup «Richiedi la tua bozza gratuita»: testi, budget, notifiche email, pulsanti collegati e domande. Le modifiche si applicano al sito al prossimo caricamento.</p>
         </header>
 
-        <div class="stat-riga" id="stat-modulo"></div>
-
-        <h2 class="titolo-blocco">Richieste ricevute</h2>
-        <div class="barra-ricerca barra-richieste">
-          <label class="campo-ricerca">
-            <span class="icona-ricerca" aria-hidden="true">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="6.5"></circle><path d="m16 16 4.5 4.5"></path></svg>
-            </span>
-            <input type="search" id="ricerca-richieste" placeholder="Cerca per nome, email o attività…" autocomplete="off">
-          </label>
-          <select id="filtro-richieste" class="selettore-stato" aria-label="Filtra per stato">
-            <option value="">Tutti gli stati</option>
-            <option value="Nuova">Nuove</option>
-            <option value="In lavorazione">In lavorazione</option>
-            <option value="Completata">Completate</option>
-            <option value="Archiviata">Archiviate</option>
-          </select>
-        </div>
-        <div class="lista-admin" id="lista-richieste"></div>
-
-        <h2 class="titolo-blocco">Configurazione del modulo</h2>
+        <div class="barra-modulo" id="barra-modulo"></div>
         <div class="editor-modulo" id="editor-modulo"></div>
       </section>
 
     </main>
-  </div>
-
-  <!-- ============ DETTAGLIO RICHIESTA ============ -->
-  <div id="dettaglio-richiesta" class="dettaglio-richiesta" hidden>
-    <div class="dettaglio-sfondo" data-chiudi-richiesta></div>
-    <aside class="dettaglio-pannello" role="dialog" aria-modal="true" aria-labelledby="dettaglio-titolo">
-      <button type="button" id="chiudi-dettaglio" class="dettaglio-chiudi" aria-label="Chiudi la scheda">
-        <i class="fa-solid fa-xmark" aria-hidden="true"></i>
-      </button>
-      <div id="dettaglio-contenuto"></div>
-    </aside>
   </div>
 
   <script src="firebase-config.js"></script>
@@ -432,6 +401,6 @@
       if (accesso) accesso.hidden = !pronto;
     })();
   </script>
-  <script type="module" src="admin.js?v=20261121-3"></script>
+  <script type="module" src="admin.js?v=20261121-4"></script>
 </body>
 </html>

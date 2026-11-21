@@ -420,19 +420,24 @@ body.wb-blocco-scroll { overflow: hidden; }
   margin-top: -2px;
   overflow: visible;
 }
+/* animazione Uiverse: il tratto si disegna lentamente, con i colori del brand */
 .wb-consenso-path {
   fill: none;
-  stroke: rgba(255, 255, 255, .32);
+  stroke: url(#wb-brand-grad);
   stroke-width: 6;
   stroke-linecap: round;
   stroke-linejoin: round;
+  stroke-opacity: .34;
   stroke-dasharray: 241 9999999;
   stroke-dashoffset: 0;
-  transition: stroke-dasharray .5s ease, stroke-dashoffset .5s ease, stroke .5s ease;
+  transition:
+    stroke-dasharray 1.05s cubic-bezier(.65, .05, .36, 1),
+    stroke-dashoffset 1.05s cubic-bezier(.65, .05, .36, 1),
+    stroke-opacity .55s ease;
 }
-.wb-consenso:hover .wb-consenso-path { stroke: rgba(255, 255, 255, .52); }
+.wb-consenso:hover .wb-consenso-path { stroke-opacity: .62; }
 .wb-consenso input:checked ~ .wb-consenso-icona .wb-consenso-path {
-  stroke: url(#wb-brand-grad);
+  stroke-opacity: 1;
   stroke-dasharray: 70.5096664428711 9999999;
   stroke-dashoffset: -262.2723388671875;
 }
@@ -448,6 +453,12 @@ body.wb-blocco-scroll { overflow: hidden; }
   text-underline-offset: 2px;
 }
 .wb-consenso.wb-non-valido { border-color: rgba(255, 90, 130, .6); }
+
+/* l'animazione del consenso resta lenta anche con "movimento ridotto" attivo */
+@media (prefers-reduced-motion: reduce) {
+  .wb-consenso { transition-duration: .25s !important; }
+  .wb-consenso-path { transition-duration: 1.05s, 1.05s, .55s !important; }
+}
 
 /* ---------- ALLEGATI ---------- */
 .wb-drop {
