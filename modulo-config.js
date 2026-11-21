@@ -52,6 +52,12 @@ window.WEBNIX_MODULO_DEFAULT = {
   },
   notifica: {
     formspree: "https://formspree.io/f/xyewdvda",
+    emailjs: {
+      attivo: true,
+      serviceId: "",
+      templateId: "template_oafiwle",
+      publicKey: "ncCVMSvwgYoXtlD0x"
+    },
     webhook: "",
     emailAdmin: "webnixit@gmail.com",
     emailCliente: true
@@ -186,14 +192,6 @@ window.WEBNIX_MODULO_DEFAULT = {
           obbligatorio: false,
           placeholder: "Raccontaci cosa fai, quali servizi offri e cosa vorresti ottenere attraverso la tua presenza online.",
           aiuto: "Più dettagli ci dai, più la bozza sarà vicina a quello che immagini."
-        },
-        {
-          chiave: "allegati",
-          etichetta: "Allega materiale utile",
-          tipo: "file",
-          obbligatorio: false,
-          multiplo: true,
-          aiuto: "Foto, documenti, immagini di riferimento: tutto quello che ci aiuta a capire il progetto (max 4 file, 4 MB ciascuno)."
         }
       ]
     },

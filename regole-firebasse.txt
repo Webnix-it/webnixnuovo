@@ -216,25 +216,38 @@ Se le regole Storage non sono pubblicate, la richiesta viene salvata
 comunque e la dashboard mostra gli allegati come "file non caricato".
 
 ------------------------------------------------------------
-7) NOTIFICHE EMAIL (FORMSPREE)
+7) NOTIFICHE EMAIL (EMAILJS E FORMSPREE)
 ------------------------------------------------------------
-Il modulo invia ogni richiesta a Formspree, che la recapita per email
-all'amministratore. L'endpoint si imposta in
-"Modulo richiesta bozza" → campo "Formspree (email a ogni invio)"
-(valore predefinito: https://formspree.io/f/xyewdvda).
+Il modulo invia ogni richiesta per email all'amministratore. Il canale
+principale è EmailJS, configurato in
+"Modulo richiesta bozza" → "Invio e notifiche":
+  - EmailJS · Service ID   (Email Services, es. service_abc123)
+  - EmailJS · Template ID  (predefinito: template_oafiwle)
+  - EmailJS · Chiave pubblica
+Se EmailJS non è configurato o la chiamata fallisce, la stessa email
+parte da Formspree (https://formspree.io/f/xyewdvda).
 
-Ogni invio arriva con oggetto, nome, email (rispondi direttamente al
-cliente), attività, budget, riferimento, consensi e il testo completo
-di tutte le domande con le risposte. Gli allegati sono elencati come
-link a Firebase Storage: per aprirli serve l'accesso admin.
+Parametri disponibili nel template EmailJS:
+  {{messaggio}}  testo completo e ordinato della richiesta
+  {{consensi}}   una riga per ogni casella del modulo, con il testo
+                 della casella e «Acconsentito» / «Non acconsentito»
+  {{nome}} {{email}} {{attivita}} {{budget}} {{riferimento}}
+  {{pagina}} {{subject}} {{to_email}} {{reply_to}}
 
-L'invio a Formspree è indipendente dal salvataggio in Firestore: se il
+Il modello HTML pronto, con la grafica del sito, è in
+templateemailjs.txt: si incolla nel template EmailJS e va usato con
+il dominio del sito tra gli Allowed origins dell'account.
+Gli Allowed origins sono obbligatori: senza di essi l'API EmailJS
+rifiuta la chiamata.
+
+Ogni email contiene nome, email (rispondi direttamente al cliente),
+attività, budget, riferimento, pagina di provenienza, consensi e le
+risposte raggruppate per step. Il logo caricato dal cliente è un link
+a Firebase Storage: per aprirlo serve l'accesso admin.
+
+L'invio email è indipendente dal salvataggio in Firestore: se il
 database non risponde l'email parte comunque (e viceversa la richiesta
-resta in dashboard anche se Formspree non risponde).
+resta archiviata anche se nessun canale email risponde).
 
 In alternativa si può usare il campo "Webhook notifica" con un URL di
 Zapier, Make, n8n o una Cloud Function che riceve lo stesso JSON.
-
-Senza webhook la richiesta viene comunque registrata e visibile in
-dashboard; l'email al cliente si può inviare a mano dalla scheda
-della richiesta ("Scrivi una email").

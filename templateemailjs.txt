@@ -1,0 +1,222 @@
+============================================================
+WEBNIX — TEMPLATE EMAILJS (template_oafiwle)
+============================================================
+
+DOVE SI INCOLLA
+1) EmailJS → Email Templates → template_oafiwle → Edit.
+2) Campo "Subject":  [Webnix] {{subject}}
+3) Campo "To Email":  {{to_email}}
+4) Campo "Reply-To":  {{reply_to}}
+5) Scheda "Content" / HTML: incolla SOLO il blocco compreso tra
+   «--- INIZIO TEMPLATE HTML ---» e «--- FINE TEMPLATE HTML ---».
+6) Salva.
+
+ALLOWED ORIGINS
+Aggiungi il dominio del sito tra gli "Allowed origins" dell'account
+EmailJS (es. https://www.we-wnix.it e https://we-wnix.it), altrimenti
+l'API rifiuta la chiamata con errore 403.
+
+PARAMETRI DISPONIBILI NEL TEMPLATE
+  {{messaggio}}    testo completo e ordinato della richiesta (sezioni
+                   DATI DI CONTATTO, LA TUA ATTIVITÀ, IL TUO PROGETTO,
+                   LOGO, BUDGET), una riga per risposta
+  {{consensi}}     una riga per ogni casella del modulo, con il testo
+                   della casella e «Acconsentito» / «Non acconsentito»
+  {{nome}} {{email}} {{attivita}} {{budget}} {{riferimento}} {{pagina}}
+  {{subject}} {{to_email}} {{reply_to}}
+
+NOTE
+- La grafica segue il sito: sfondo scuro #0b0f16, card #161b22, barra
+  gradiente viola #e81cff → ciano #40c9ff, testo bianco.
+- Il layout è a tabelle con stili inline: si vede bene su Gmail, Outlook,
+  Apple Mail e smartphone.
+- Se cambi i colori nel sito, aggiorna qui i valori #e81cff e #40c9ff
+  (la sfumatura ha sempre il colore viola come ripiego, così resta
+  leggibile anche nei client che non supportano i gradienti).
+- {{messaggio}} e {{consensi}} vanno dentro un blocco con
+  white-space: pre-line: così gli «a capo» del testo restano visibili.
+
+
+--- INIZIO TEMPLATE HTML ---
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="dark">
+  <title>{{subject}}</title>
+</head>
+<body style="margin:0;padding:0;background:#0b0f16;">
+
+  <!-- preheader: anteprima nella casella di posta -->
+  <div style="display:none;max-height:0;overflow:hidden;opacity:0;color:#0b0f16;font-size:1px;line-height:1px;">
+    Nuova richiesta di bozza gratuita da {{nome}} — riferimento {{riferimento}}.
+  </div>
+
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0"
+         style="background:#0b0f16;padding:28px 12px;">
+    <tr>
+      <td align="center">
+
+        <table role="presentation" width="600" cellpadding="0" cellspacing="0" border="0"
+               style="width:100%;max-width:600px;background:#161b22;border:1px solid #2a2438;border-radius:18px;overflow:hidden;">
+
+          <!-- barra gradiente brand -->
+          <tr>
+            <td height="6" style="height:6px;background:#e81cff;background-image:linear-gradient(90deg,#e81cff 0%,#40c9ff 100%);font-size:0;line-height:0;">&nbsp;</td>
+          </tr>
+
+          <!-- intestazione -->
+          <tr>
+            <td style="padding:30px 30px 0 30px;font-family:'Segoe UI',Helvetica,Arial,sans-serif;">
+              <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+                <tr>
+                  <td align="left" style="font-size:20px;font-weight:800;letter-spacing:1.5px;color:#ffffff;">
+                    WEBNIX<span style="color:#e81cff;">.</span>
+                  </td>
+                  <td align="right">
+                    <span style="display:inline-block;padding:6px 12px;border:1px solid #40c9ff;border-radius:999px;color:#40c9ff;font-size:10px;font-weight:700;letter-spacing:1.4px;text-transform:uppercase;">
+                      Bozza gratuita
+                    </span>
+                  </td>
+                </tr>
+              </table>
+
+              <h1 style="margin:26px 0 8px 0;font-size:26px;line-height:1.3;font-weight:800;color:#ffffff;">
+                Nuova richiesta dal sito
+              </h1>
+              <p style="margin:0 0 6px 0;font-size:15px;line-height:1.6;color:#c9d1d9;">
+                <strong style="color:#ffffff;">{{nome}}</strong> ha compilato il modulo della bozza gratuita.
+              </p>
+              <p style="margin:0 0 22px 0;font-size:12px;line-height:1.6;color:#8b949e;">
+                Riferimento richiesta
+                <span style="display:inline-block;margin-left:6px;padding:3px 9px;border:1px solid #3a3350;border-radius:6px;color:#40c9ff;font-family:'Courier New',Courier,monospace;font-size:12px;">#{{riferimento}}</span>
+              </p>
+            </td>
+          </tr>
+
+          <!-- pulsante risposta -->
+          <tr>
+            <td style="padding:0 30px 8px 30px;">
+              <table role="presentation" cellpadding="0" cellspacing="0" border="0">
+                <tr>
+                  <td align="center" style="background:#e81cff;border-radius:999px;">
+                    <a href="mailto:{{reply_to}}"
+                       style="display:inline-block;padding:13px 24px;font-family:'Segoe UI',Helvetica,Arial,sans-serif;font-size:14px;font-weight:700;color:#ffffff;text-decoration:none;border-radius:999px;">
+                      Rispondi a {{nome}}
+                    </a>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+
+          <!-- dati di contatto -->
+          <tr>
+            <td style="padding:22px 30px 0 30px;font-family:'Segoe UI',Helvetica,Arial,sans-serif;">
+              <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0"
+                     style="background:#0f0f1a;border:1px solid #2a2438;border-radius:14px;">
+                <tr>
+                  <td style="padding:16px 18px 10px 18px;font-size:11px;font-weight:700;letter-spacing:1.6px;text-transform:uppercase;color:#40c9ff;">
+                    Dati di contatto
+                  </td>
+                </tr>
+                <tr>
+                  <td style="padding:0 18px 16px 18px;">
+                    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="font-size:14px;line-height:1.6;color:#c9d1d9;">
+                      <tr>
+                        <td width="92" style="padding:5px 0;color:#8b949e;font-size:12px;">Email</td>
+                        <td style="padding:5px 0;"><a href="mailto:{{email}}" style="color:#40c9ff;text-decoration:none;">{{email}}</a></td>
+                      </tr>
+                      <tr>
+                        <td style="padding:5px 0;color:#8b949e;font-size:12px;">Attività</td>
+                        <td style="padding:5px 0;color:#ffffff;">{{attivita}}</td>
+                      </tr>
+                      <tr>
+                        <td style="padding:5px 0;color:#8b949e;font-size:12px;">Budget</td>
+                        <td style="padding:5px 0;color:#ffffff;">{{budget}}</td>
+                      </tr>
+                      <tr>
+                        <td style="padding:5px 0;color:#8b949e;font-size:12px;">Pagina</td>
+                        <td style="padding:5px 0;color:#c9d1d9;word-break:break-word;">{{pagina}}</td>
+                      </tr>
+                    </table>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+
+          <!-- risposte del progetto -->
+          <tr>
+            <td style="padding:16px 30px 0 30px;font-family:'Segoe UI',Helvetica,Arial,sans-serif;">
+              <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0"
+                     style="background:#0f0f1a;border:1px solid #2a2438;border-radius:14px;">
+                <tr>
+                  <td style="padding:16px 18px 10px 18px;font-size:11px;font-weight:700;letter-spacing:1.6px;text-transform:uppercase;color:#40c9ff;">
+                    La richiesta
+                  </td>
+                </tr>
+                <tr>
+                  <td style="padding:0 18px 18px 18px;font-size:14px;line-height:1.75;color:#c9d1d9;white-space:pre-line;">
+{{messaggio}}
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+
+          <!-- consensi -->
+          <tr>
+            <td style="padding:16px 30px 0 30px;font-family:'Segoe UI',Helvetica,Arial,sans-serif;">
+              <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0"
+                     style="background:#0f0f1a;border:1px solid #2a2438;border-left:3px solid #e81cff;border-radius:14px;">
+                <tr>
+                  <td style="padding:16px 18px 10px 18px;font-size:11px;font-weight:700;letter-spacing:1.6px;text-transform:uppercase;color:#e81cff;">
+                    Consensi
+                  </td>
+                </tr>
+                <tr>
+                  <td style="padding:0 18px 18px 18px;font-size:13px;line-height:1.75;color:#c9d1d9;white-space:pre-line;">
+{{consensi}}
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+
+          <!-- chiusura -->
+          <tr>
+            <td style="padding:24px 30px 30px 30px;font-family:'Segoe UI',Helvetica,Arial,sans-serif;">
+              <p style="margin:0 0 6px 0;font-size:13px;line-height:1.6;color:#c9d1d9;">
+                Rispondi direttamente a questa email per scrivere a
+                <a href="mailto:{{reply_to}}" style="color:#40c9ff;text-decoration:none;">{{email}}</a>.
+              </p>
+              <p style="margin:0;font-size:12px;line-height:1.6;color:#8b949e;">
+                Richiesta inviata a {{to_email}} dal modulo del sito · {{subject}}
+              </p>
+            </td>
+          </tr>
+
+          <!-- footer -->
+          <tr>
+            <td style="padding:18px 30px;background:#0b0f16;border-top:1px solid #2a2438;font-family:'Segoe UI',Helvetica,Arial,sans-serif;">
+              <p style="margin:0 0 4px 0;font-size:11px;letter-spacing:1.4px;font-weight:700;color:#ffffff;">
+                WEBNIX<span style="color:#e81cff;">.</span>
+              </p>
+              <p style="margin:0;font-size:11px;line-height:1.6;color:#8b949e;">
+                Siti web che fanno trovare la tua attività. Email automatica:
+                non rispondere a questo indirizzo, usa il pulsante qui sopra.
+              </p>
+            </td>
+          </tr>
+
+        </table>
+
+      </td>
+    </tr>
+  </table>
+
+</body>
+</html>
+--- FINE TEMPLATE HTML ---

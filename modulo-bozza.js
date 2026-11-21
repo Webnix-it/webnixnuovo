@@ -8,7 +8,8 @@
    - La struttura degli step arriva da Firestore
      (impostazioni/modulo-bozza) e si modifica dalla dashboard.
    - Le richieste vengono salvate in richieste-bozza con stato
-     iniziale "Nuova"; gli allegati vanno su Firebase Storage.
+     iniziale "Nuova"; il logo caricato va su Firebase Storage.
+   - Le email partono da EmailJS (se configurato) oppure da Formspree.
    - JavaScript puro, nessuna dipendenza.
    ============================================================ */
 
@@ -94,6 +95,18 @@
     return dati;
   }
 
+  /* Il vecchio campo "Allega materiale utile" è stato rimosso: se una
+     configurazione salvata lo contiene ancora, viene ignorato. */
+  function pulisciConfig(config) {
+    (config.step || []).forEach(function (s) {
+      if (!s || !Array.isArray(s.domande)) return;
+      s.domande = s.domande.filter(function (d) {
+        return !(d && d.chiave === "allegati");
+      });
+    });
+    return config;
+  }
+
   function leggiConfig() {
     if (!ATTIVO) return Promise.resolve(copia(window.WEBNIX_MODULO_DEFAULT));
     var url = RADICE + "/impostazioni/modulo-bozza?key=" + encodeURIComponent(API_KEY);
@@ -106,7 +119,7 @@
         return res.json();
       })
       .then(function (json) {
-        return fondi(copia(window.WEBNIX_MODULO_DEFAULT), documento(json));
+        return pulisciConfig(fondi(copia(window.WEBNIX_MODULO_DEFAULT), documento(json)));
       })
       .catch(function () {
         if (timer) clearTimeout(timer);
@@ -769,6 +782,14 @@
   }
 
   /* ---------- riepilogo ---------- */
+  function testoOpzione(d, valore) {
+    var trovata = null;
+    (d.opzioni || []).forEach(function (o) {
+      if (o && String(o.valore) === String(valore)) trovata = o.testo || o.valore;
+    });
+    return trovata === null ? String(valore) : trovata;
+  }
+
   function valoreRisposta(d) {
     var v = stato.risposte[d.chiave];
     if (d.tipo === "budget") {
@@ -779,12 +800,14 @@
     }
     if (d.tipo === "file") {
       var files = stato.file[d.chiave] || [];
-      return files.length ? files.map(function (f) { return f.name; }).join(", ") : "Nessun allegato";
+      return files.length ? files.map(function (f) { return f.name; }).join(", ") : "Nessun file";
     }
-    if (d.tipo === "consenso") return v === true ? "Accettato" : "Non accettato";
-    if (Array.isArray(v)) return v.length ? v.join(", ") : "—";
+    if (d.tipo === "consenso") return v === true ? "Acconsentito" : "Non acconsentito";
+    if (Array.isArray(v)) {
+      return v.length ? v.map(function (x) { return testoOpzione(d, x); }).join(", ") : "—";
+    }
     if (v === undefined || v === null || v === "") return "—";
-    return String(v);
+    return testoOpzione(d, v);
   }
 
   function creaRiepilogo() {
@@ -1028,14 +1051,6 @@
     var endpoint = String(((stato.config.notifica || {}).formspree) || "").trim();
     if (!/^https:\/\/formspree\.io\/f\/[a-z0-9]+$/i.test(endpoint)) return Promise.resolve(false);
 
-    var consensi = "Privacy: " + (stato.risposte.consensoPrivacy === true ? "accettato" : "no") +
-      " · Termini: " + (stato.risposte.consensoTermini === true ? "accettato" : "no") +
-      " · Marketing: " + (stato.risposte.consensoMarketing === true ? "accettato" : "no");
-
-    var allegati = (dati.allegati || []).map(function (a) {
-      return "- " + (a.nome || "allegato") + (a.url ? " — " + a.url : " (file non caricato)");
-    }).join("\n");
-
     var corpo = {
       _subject: "Nuova richiesta bozza — " + (dati.nome || "senza nome") + " (" + dati.riferimento + ")",
       nome: dati.nome || "",
@@ -1044,9 +1059,8 @@
       budget: dati.budget || "",
       riferimento: dati.riferimento || "",
       pagina: location.pathname + location.search,
-      consensi: consensi,
-      allegati: allegati || "Nessun allegato",
-      messaggio: testoRichiesta()
+      consensi: testoConsensi(),
+      messaggio: testoDettagli()
     };
     if (dati.email) corpo._replyto = dati.email;
 
@@ -1060,6 +1074,58 @@
     }).catch(function (err) {
       console.warn("[Webnix modulo] email non inviata", err);
       return false;
+    });
+  }
+
+  /* ---------- EmailJS: canale principale quando è configurato ---------- */
+  function emailjsConfigurato() {
+    var c = (stato.config.notifica || {}).emailjs || {};
+    return c.attivo !== false &&
+      /^service_[a-z0-9]+$/i.test(String(c.serviceId || "").trim()) &&
+      /^template_[a-z0-9]+$/i.test(String(c.templateId || "").trim()) &&
+      Boolean(String(c.publicKey || "").trim());
+  }
+
+  function inviaEmailJS(dati) {
+    var c = (stato.config.notifica || {}).emailjs || {};
+    var parametri = {
+      subject: "Nuova richiesta bozza — " + (dati.nome || "senza nome") + " (" + dati.riferimento + ")",
+      to_email: (stato.config.notifica || {}).emailAdmin || "",
+      from_name: dati.nome || "",
+      reply_to: dati.email || "",
+      nome: dati.nome || "",
+      email: dati.email || "",
+      attivita: dati.attivita || "",
+      budget: dati.budget || "",
+      riferimento: dati.riferimento || "",
+      pagina: location.pathname + location.search,
+      consensi: testoConsensi(),
+      /* i consensi sono già in {{consensi}}: nel messaggio non si ripetono */
+      messaggio: testoRichiesta(dati, true)
+    };
+
+    return fetch("https://api.emailjs.com/api/v1.0/email/send", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        service_id: String(c.serviceId || "").trim(),
+        template_id: String(c.templateId || "").trim(),
+        user_id: String(c.publicKey || "").trim(),
+        template_params: parametri
+      })
+    }).then(function (res) {
+      if (!res.ok) throw new Error("HTTP " + res.status);
+      return true;
+    }).catch(function (err) {
+      console.warn("[Webnix modulo] EmailJS non ha inviato", err);
+      return false;
+    });
+  }
+
+  function notificaEmail(dati) {
+    if (!emailjsConfigurato()) return inviaFormspree(dati);
+    return inviaEmailJS(dati).then(function (ok) {
+      return ok ? true : inviaFormspree(dati);
     });
   }
 
@@ -1102,35 +1168,112 @@
     });
   }
 
-  /* tutte le domande del modulo con le risposte inserite */
-  function testoRichiesta() {
-    var righe = ["Richiesta bozza gratuita Webnix", ""];
-    (stato.config.step || []).forEach(function (s) {
+  /* ---------- testi della richiesta ---------- */
+  var TITOLI_SEZIONE = {
+    dati: "Dati di contatto",
+    attivita: "La tua attività",
+    progetto: "Il tuo progetto",
+    logo: "Logo",
+    budget: "Budget indicativo"
+  };
+
+  function titoloSezione(s, indice) {
+    var id = String(s.id || "").toLowerCase();
+    if (TITOLI_SEZIONE[id]) return TITOLI_SEZIONE[id];
+    return s.titolo || "Step " + (indice + 1);
+  }
+
+  /* risposte raggruppate per step, nell'ordine del modulo */
+  function gruppiRisposte() {
+    var gruppi = [];
+    (stato.config.step || []).forEach(function (s, indice) {
       if (!s || s.attivo === false) return;
-      var intestazione = false;
+      var righe = [];
       (s.domande || []).forEach(function (d) {
-        if (d.tipo === "nota" || d.tipo === "consenso") return;
+        if (!d || d.tipo === "nota" || d.tipo === "consenso") return;
         if (!domandaVisibile(d)) return;
-        if (!intestazione) {
-          righe.push("");
-          righe.push("— " + (s.titolo || ""));
-          intestazione = true;
-        }
         var valore = valoreRisposta(d);
         if (d.chiave === "attivita" && valore === "Altro" && stato.risposte.attivitaAltro) {
           valore = "Altro: " + stato.risposte.attivitaAltro;
         }
-        righe.push((d.etichetta || d.chiave) + ": " + valore);
+        righe.push({ chiave: d.chiave, etichetta: d.etichetta || d.chiave, valore: valore });
+      });
+      if (righe.length) gruppi.push({ id: s.id || "", titolo: titoloSezione(s, indice), righe: righe });
+    });
+    return gruppi;
+  }
+
+  /* caselle di consenso usate se la configurazione non ne dichiara nessuna */
+  var CONSENSI_BASE = [
+    { chiave: "consensoPrivacy", etichetta: "Informativa sulla Privacy Policy" },
+    { chiave: "consensoTermini", etichetta: "Termini e Condizioni" },
+    { chiave: "consensoMarketing", etichetta: "Aggiornamenti e proposte Webnix" }
+  ];
+
+  /* tutte le caselle presenti nel modulo, con il testo mostrato all'utente */
+  function vociConsensi() {
+    var voci = [];
+    var viste = {};
+    (stato.config.step || []).forEach(function (s) {
+      (s.domande || []).forEach(function (d) {
+        if (!d || d.tipo !== "consenso" || !d.chiave || viste[d.chiave]) return;
+        viste[d.chiave] = true;
+        voci.push({ chiave: d.chiave, etichetta: d.etichetta || d.chiave });
       });
     });
-    righe.push("");
-    righe.push("— Consensi");
-    righe.push("Privacy: " + (stato.risposte.consensoPrivacy === true ? "accettato" : "non accettato"));
-    righe.push("Termini: " + (stato.risposte.consensoTermini === true ? "accettato" : "non accettato"));
-    if (stato.risposte.consensoMarketing === true) righe.push("Marketing: accettato");
-    righe.push("");
-    righe.push("Pagina: " + location.pathname + location.search);
-    righe.push("Copiato il: " + new Date().toLocaleString("it-IT"));
+    CONSENSI_BASE.forEach(function (v) {
+      if (!viste[v.chiave]) voci.push(v);
+    });
+    return voci;
+  }
+
+  /* una riga per casella: testo completo + «Acconsentito» / «Non acconsentito» */
+  function testoConsensi() {
+    return vociConsensi().map(function (v) {
+      var ok = stato.risposte[v.chiave] === true;
+      return "• " + v.etichetta + " — " + (ok ? "Acconsentito" : "Non acconsentito");
+    }).join("\n");
+  }
+
+  /* solo le risposte del progetto: nome ed email sono già campi separati */
+  function testoDettagli() {
+    var righe = [];
+    gruppiRisposte().forEach(function (g) {
+      var dettagli = g.righe.filter(function (r) {
+        return r.chiave !== "nome" && r.chiave !== "email";
+      });
+      if (!dettagli.length) return;
+      if (righe.length) righe.push("");
+      righe.push(g.titolo.toUpperCase());
+      dettagli.forEach(function (r) {
+        righe.push("• " + r.etichetta + ": " + r.valore);
+      });
+    });
+    return righe.length ? righe.join("\n") : "Nessun dettaglio inserito.";
+  }
+
+  /* testo completo: per la copia include i consensi, per l'email no
+     (l'email li mostra a parte, nel parametro {{consensi}}) */
+  function testoRichiesta(dati, senzaConsensi) {
+    dati = dati || {};
+    var righe = ["RICHIESTA BOZZA GRATUITA — WEBNIX"];
+    if (dati.riferimento) righe.push("Riferimento: " + dati.riferimento);
+    righe.push("Ricevuta il: " + new Date().toLocaleString("it-IT"));
+    righe.push("Pagina: " + (dati.pagina || (location.pathname + location.search)));
+
+    gruppiRisposte().forEach(function (g) {
+      righe.push("");
+      righe.push(g.titolo.toUpperCase());
+      g.righe.forEach(function (r) {
+        righe.push("• " + r.etichetta + ": " + r.valore);
+      });
+    });
+
+    if (!senzaConsensi) {
+      righe.push("");
+      righe.push("CONSENSI");
+      righe.push(testoConsensi());
+    }
     return righe.join("\n");
   }
 
@@ -1197,8 +1340,8 @@
           inviatoIl: new Date(adesso).toISOString()
         };
 
-        /* Formspree invia l'email anche se Firestore non risponde */
-        var invioEmail = inviaFormspree(riepilogo);
+        /* EmailJS (o Formspree) invia l'email anche se Firestore non risponde */
+        var invioEmail = notificaEmail(riepilogo);
 
         if (!ATTIVO) {
           return invioEmail.then(function (emailOk) {

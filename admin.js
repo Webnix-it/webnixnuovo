@@ -1174,6 +1174,25 @@ function endpointFormspree(valore) {
   return /^https:\/\/formspree\.io\/f\/[a-z0-9]+$/i.test(String(valore || "").trim());
 }
 
+function canaliEmail() {
+  var n = (configModulo && configModulo.notifica) || {};
+  var canali = [];
+  if (String(((n.emailjs || {}).serviceId) || "").trim()) canali.push("EmailJS");
+  if (endpointFormspree(n.formspree)) canali.push("Formspree");
+  return canali;
+}
+
+/* Il vecchio campo "Allega materiale utile" è stato rimosso. */
+function pulisciModulo(config) {
+  (config.step || []).forEach(function (s) {
+    if (!s || !Array.isArray(s.domande)) return;
+    s.domande = s.domande.filter(function (d) {
+      return !(d && d.chiave === "allegati");
+    });
+  });
+  return config;
+}
+
 /* ---------- elementi dell'editor ---------- */
 function campoEditor(nome, etichetta, valore, tipo, aiuto, onInput) {
   var label = document.createElement("label");
@@ -1290,9 +1309,11 @@ function disegnaBarraModulo() {
   box.innerHTML = "";
 
   var email = document.createElement("span");
-  var attiva = endpointFormspree(configModulo.notifica.formspree);
-  email.className = "chip-modulo " + (attiva ? "ok" : "attenzione");
-  email.textContent = attiva ? "Email attive su Formspree" : "Nessuna email configurata";
+  var canali = canaliEmail();
+  email.className = "chip-modulo " + (canali.length ? "ok" : "attenzione");
+  email.textContent = canali.length
+    ? "Email attive: " + canali.join(" + ")
+    : "Nessun canale email configurato";
   box.appendChild(email);
 
   var numStep = (configModulo.step || []).filter(function (s) { return s.attivo !== false; }).length;
@@ -1328,13 +1349,26 @@ function segnaModifiche() {
 function aggiornaNotaInvio() {
   var nota = document.getElementById("nota-invio");
   if (!nota) return;
-  var url = String(configModulo.notifica.formspree || "").trim();
-  if (endpointFormspree(url)) {
-    nota.textContent = "Ogni invio arriva a " + (configModulo.notifica.emailAdmin || "l'email dell'amministratore") +
-      " tramite Formspree (" + url.replace(/^https:\/\//, "") + "). Gli allegati vengono inviati come link a Firebase Storage.";
+  var n = configModulo.notifica || {};
+  var ej = n.emailjs || {};
+  var canali = canaliEmail();
+  var testi = [];
+
+  if (canali.length) {
+    testi.push("Le richieste arrivano a " + (n.emailAdmin || "l'email dell'amministratore") +
+      " tramite " + canali.join(" + ") + ".");
   } else {
-    nota.textContent = "Senza endpoint Formspree non parte nessuna email: incolla l'indirizzo https://formspree.io/f/… per ricevere le richieste.";
+    testi.push("Nessun canale email attivo: compila i dati EmailJS oppure incolla un endpoint Formspree per ricevere le richieste.");
   }
+
+  if (canali.indexOf("EmailJS") === -1 && String(ej.templateId || "").trim()) {
+    testi.push("EmailJS è quasi pronto: manca il Service ID (EmailJS → Email Services, es. service_abc123).");
+  }
+  if (canali.indexOf("EmailJS") !== -1) {
+    testi.push("Nel template «" + ej.templateId + "» usa {{messaggio}} per il testo completo della richiesta e {{consensi}} per l'elenco delle caselle con «Acconsentito» o «Non acconsentito»; sono disponibili anche {{nome}}, {{email}}, {{attivita}}, {{budget}}, {{riferimento}}, {{pagina}}, {{subject}}, {{to_email}} e {{reply_to}}. Il modello pronto è in templateemailjs.txt: incollalo in EmailJS e aggiungi il dominio del sito tra gli Allowed origins.");
+  }
+  testi.push("Il logo caricato dal cliente viene inviato come link a Firebase Storage.");
+  nota.textContent = testi.join(" ");
 }
 
 /* ---------- editor configurazione ---------- */
@@ -1389,11 +1423,22 @@ function disegnaEditorModulo() {
   ]);
   form.appendChild(aspetto);
 
-  var notifiche = bloccoEditor("Invio e notifiche", "Dove arrivano le richieste", false);
+  var notifiche = bloccoEditor("Invio e notifiche", "EmailJS, Formspree e webhook", false);
+  configModulo.notifica.emailjs = configModulo.notifica.emailjs || {};
+  var emailjs = configModulo.notifica.emailjs;
   aggiungiCampi(notifiche.__corpo, [
     ["notifica.emailAdmin", "Email amministratore", configModulo.notifica.emailAdmin, "email"],
-    ["notifica.formspree", "Endpoint Formspree", configModulo.notifica.formspree, "url",
-      "Es. https://formspree.io/f/xyewdvda. Vuoto = nessuna email automatica.",
+    ["notifica.emailjs.serviceId", "EmailJS · Service ID", emailjs.serviceId, "text",
+      "EmailJS → Email Services → Service ID (es. service_abc123).",
+      function (v) { emailjs.serviceId = v.trim(); aggiornaNotaInvio(); disegnaBarraModulo(); }],
+    ["notifica.emailjs.templateId", "EmailJS · Template ID", emailjs.templateId, "text",
+      "Es. template_oafiwle.",
+      function (v) { emailjs.templateId = v.trim(); aggiornaNotaInvio(); }],
+    ["notifica.emailjs.publicKey", "EmailJS · Chiave pubblica", emailjs.publicKey, "text",
+      "Account EmailJS → General → Public Key.",
+      function (v) { emailjs.publicKey = v.trim(); aggiornaNotaInvio(); }],
+    ["notifica.formspree", "Endpoint Formspree (riserva)", configModulo.notifica.formspree, "url",
+      "Usato se EmailJS non è configurato o non risponde. Es. https://formspree.io/f/xyewdvda",
       function (v) { configModulo.notifica.formspree = v.trim(); aggiornaNotaInvio(); disegnaBarraModulo(); }],
     ["notifica.webhook", "Webhook notifica (facoltativo)", configModulo.notifica.webhook, "url",
       "URL che riceve un JSON a ogni richiesta (Zapier, Make, ecc.)."]
@@ -1402,6 +1447,12 @@ function disegnaEditorModulo() {
   nota.className = "nota-modulo";
   nota.id = "nota-invio";
   notifiche.__corpo.appendChild(nota);
+  notifiche.__corpo.appendChild(interruttoreEditor(
+    "Usa EmailJS per inviare le richieste",
+    emailjs.attivo !== false,
+    function (v) { emailjs.attivo = v; aggiornaNotaInvio(); disegnaBarraModulo(); },
+    "Se disattivato o non configurato si usa Formspree."
+  ));
   notifiche.__corpo.appendChild(interruttoreEditor(
     "Invia email di conferma al cliente",
     configModulo.notifica.emailCliente !== false,
@@ -1849,9 +1900,9 @@ function initModuloAdmin() {
 async function caricaModuloAdmin() {
   try {
     var snap = await getDoc(doc(db, "impostazioni", "modulo-bozza"));
-    configModulo = fondiModulo(clonaModulo(MODULO_DEFAULT), snap.exists() ? snap.data() : {});
+    configModulo = pulisciModulo(fondiModulo(clonaModulo(MODULO_DEFAULT), snap.exists() ? snap.data() : {}));
   } catch (err) {
-    configModulo = clonaModulo(MODULO_DEFAULT);
+    configModulo = pulisciModulo(clonaModulo(MODULO_DEFAULT));
     errore("Modulo non leggibile: " + descriviErrore(err));
   }
   disegnaEditorModulo();
