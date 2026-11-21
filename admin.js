@@ -1182,12 +1182,14 @@ function canaliEmail() {
   return canali;
 }
 
-/* Il vecchio campo "Allega materiale utile" è stato rimosso. */
+/* I campi di caricamento file sono stati rimossi dal modulo. */
+var CAMPI_MODULO_RIMOSSI = ["allegati", "logoFile"];
+
 function pulisciModulo(config) {
   (config.step || []).forEach(function (s) {
     if (!s || !Array.isArray(s.domande)) return;
     s.domande = s.domande.filter(function (d) {
-      return !(d && d.chiave === "allegati");
+      return !(d && CAMPI_MODULO_RIMOSSI.indexOf(d.chiave) !== -1);
     });
   });
   return config;
@@ -1367,7 +1369,6 @@ function aggiornaNotaInvio() {
   if (canali.indexOf("EmailJS") !== -1) {
     testi.push("Nel template «" + ej.templateId + "» usa {{messaggio}} per il testo completo della richiesta e {{consensi}} per l'elenco delle caselle con «Acconsentito» o «Non acconsentito»; sono disponibili anche {{nome}}, {{email}}, {{attivita}}, {{budget}}, {{riferimento}}, {{pagina}}, {{subject}}, {{to_email}} e {{reply_to}}. Il modello pronto è in templateemailjs.txt: incollalo in EmailJS e aggiungi il dominio del sito tra gli Allowed origins.");
   }
-  testi.push("Il logo caricato dal cliente viene inviato come link a Firebase Storage.");
   nota.textContent = testi.join(" ");
 }
 

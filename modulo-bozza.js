@@ -8,7 +8,7 @@
    - La struttura degli step arriva da Firestore
      (impostazioni/modulo-bozza) e si modifica dalla dashboard.
    - Le richieste vengono salvate in richieste-bozza con stato
-     iniziale "Nuova"; il logo caricato va su Firebase Storage.
+     iniziale "Nuova".
    - Le email partono da EmailJS (se configurato) oppure da Formspree.
    - JavaScript puro, nessuna dipendenza.
    ============================================================ */
@@ -95,13 +95,16 @@
     return dati;
   }
 
-  /* Il vecchio campo "Allega materiale utile" è stato rimosso: se una
-     configurazione salvata lo contiene ancora, viene ignorato. */
+  /* I campi di caricamento file ("Allega materiale utile" e "Carica il
+     tuo logo") sono stati rimossi: se una configurazione salvata li
+     contiene ancora, vengono ignorati. */
+  var CAMPI_RIMOSSI = ["allegati", "logoFile"];
+
   function pulisciConfig(config) {
     (config.step || []).forEach(function (s) {
       if (!s || !Array.isArray(s.domande)) return;
       s.domande = s.domande.filter(function (d) {
-        return !(d && d.chiave === "allegati");
+        return !(d && CAMPI_RIMOSSI.indexOf(d.chiave) !== -1);
       });
     });
     return config;
@@ -1365,9 +1368,7 @@
         });
       })
       .then(function (risposta) {
-        var nomeDoc = (risposta && risposta.name) || "";
-        var riferimento = nomeDoc.split("/").pop();
-        mostraSuccesso(riferimento && riferimento !== "locale" ? riferimento : null);
+        mostraSuccesso();
       })
       .catch(function (err) {
         console.error("[Webnix modulo]", err);
@@ -1419,7 +1420,7 @@
       });
   }
 
-  function mostraSuccesso(riferimento) {
+  function mostraSuccesso() {
     stato.inviato = true;
     stato.invio = false;
     card.classList.add("wb-finito");
@@ -1436,7 +1437,6 @@
     box.appendChild(anello);
     box.appendChild(crea("h3", "", "Richiesta inviata!"));
     box.appendChild(crea("p", "", stato.config.messaggioSuccesso || "Ti ricontattiamo entro 48 ore."));
-    if (riferimento) box.appendChild(crea("p", "wb-successo-rif", "Riferimento richiesta: " + riferimento));
 
     var chiudi = crea("button", "wb-avanti", "Chiudi");
     chiudi.type = "button";

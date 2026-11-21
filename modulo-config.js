@@ -212,15 +212,6 @@ window.WEBNIX_MODULO_DEFAULT = {
           ]
         },
         {
-          chiave: "logoFile",
-          etichetta: "Carica il tuo logo",
-          tipo: "file",
-          obbligatorio: false,
-          multiplo: false,
-          aiuto: "PNG, JPG, SVG o PDF.",
-          mostraSe: "logo=si"
-        },
-        {
           chiave: "logoNota",
           tipo: "nota",
           testo: "Nessun problema: registriamo il tuo interesse per il servizio di logo e brand identity e ne parliamo insieme.",
