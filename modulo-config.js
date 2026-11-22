@@ -53,7 +53,7 @@ window.WEBNIX_MODULO_DEFAULT = {
   notifica: {
     emailjs: {
       attivo: true,
-      serviceId: "service_86m30za",
+      serviceId: "service_cx96c1f",
       templateId: "template_oafiwle",
       publicKey: "ncCVMSvwgYoXtlD0x"
     },
