@@ -143,136 +143,96 @@
           </div>
         </div>
         <div id="demo-hero" reveal delay="2">
-          <!-- Demo animata in loop: barra di ricerca centrata → si scrive "la mia attività"
-               → compare la mappa → pin → scheda dell'attività. Ciclo gestito da script.js -->
-          <div id="palcoscenico-telefono" aria-hidden="true">
-            <div id="cornice-telefono">
-              <span class="tel-tasto tel-tasto--suono"></span>
-              <span class="tel-tasto tel-tasto--volume-alto"></span>
-              <span class="tel-tasto tel-tasto--volume-basso"></span>
-              <span class="tel-tasto tel-tasto--accensione"></span>
-              <div id="telefono-demo">
-                <div class="tel-stato">
-                  <span>9:41</span><span class="tel-isola"></span>
-                  <span class="tel-icone">
-                    <svg width="17" height="14" viewBox="0 0 17 14"><path d="M1 4.5C5.2.8 11.8.8 16 4.5M3.5 7C6.3 4.6 10.7 4.6 13.5 7M6.2 9.5c1.3-1.1 3.3-1.1 4.6 0M8.5 12h.01" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
-                    <svg width="16" height="14" viewBox="0 0 16 14"><path d="M1 12V9.5h2V12M5 12V7h2v5M9 12V4h2v8M13 12V1h2v11" fill="currentColor"/></svg>
-                    <svg width="25" height="14" viewBox="0 0 25 14"><rect x="1" y="1.5" width="20" height="11" rx="3" fill="none" stroke="currentColor" stroke-width="1.3"/><rect x="3" y="3.5" width="15.5" height="7" rx="1.5" fill="currentColor"/><path d="M22.5 5v4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
-                  </span>
-                </div>
+          <!-- Demo animata in loop (guidata da script.js): la barra di ricerca
+               scrive "La Mia Attività" → compare la scheda dell'attività →
+               Google Maps entra in 2D → la mappa si inclina e diventa 3D. -->
+          <div id="palcoscenico-hero" aria-hidden="true">
+            <div id="scena-hero">
 
-                <div class="tel-scena">
-                  <div class="tel-mappa anim-lunga">
-                    <svg viewBox="0 0 390 780" preserveAspectRatio="xMidYMid slice" aria-hidden="true" focusable="false">
-                      <rect width="390" height="780" fill="#e9edeb"/>
-                      <path d="M0 40 105 0 155 80 100 180 0 160Z" fill="#c8e4d0"/>
-                      <path d="M265 0 390 0 390 180 320 205 260 125Z" fill="#bfe0c8"/>
-                      <path d="M0 455 90 415 145 510 90 610 0 590Z" fill="#c4e3ce"/>
-                      <path d="M260 515 390 460 390 680 300 700 240 610Z" fill="#c7e5d0"/>
-                      <path d="M-30 330C65 300 85 350 160 320S280 282 430 326" fill="none" stroke="#a9d1e9" stroke-width="30"/>
-                      <path d="M-30 330C65 300 85 350 160 320S280 282 430 326" fill="none" stroke="#d4e8f3" stroke-width="3"/>
-                      <path d="M-20 590C70 560 120 590 180 565S310 540 420 560" fill="none" stroke="#a9d1e9" stroke-width="13"/>
-                      <path d="M45 -30 125 160 175 300 245 470 340 810" fill="none" stroke="#f1d77e" stroke-width="27"/>
-                      <path d="M45 -30 125 160 175 300 245 470 340 810" fill="none" stroke="#fff0b8" stroke-width="17"/>
-                      <path d="M-20 215 110 190 235 150 420 110" fill="none" stroke="#f2d77e" stroke-width="21"/>
-                      <path d="M-20 215 110 190 235 150 420 110" fill="none" stroke="#fff0b8" stroke-width="13"/>
-                      <g fill="none" stroke="#fff" stroke-width="7">
-                        <path d="M-10 90 115 260 205 245 330 210 420 235"/>
-                        <path d="M-10 275 95 260 170 360 280 390 420 360"/>
-                        <path d="M-10 405 100 370 175 440 280 465 420 425"/>
-                        <path d="M-10 520 90 490 175 545 280 540 420 510"/>
-                        <path d="M-10 650 95 620 190 680 290 650 420 700"/>
-                        <path d="M70 -20 100 130 80 280 110 420 75 580 105 800"/>
-                        <path d="M160 -20 195 130 175 280 210 420 190 580 230 800"/>
-                        <path d="M260 -20 245 130 285 270 260 420 310 580 285 800"/>
-                        <path d="M350 -20 325 130 365 270 340 420 380 580 360 800"/>
-                      </g>
-                      <g fill="none" stroke="#d1d7d5" stroke-width="1.6">
-                        <path d="M-10 90 115 260 205 245 330 210 420 235M-10 275 95 260 170 360 280 390 420 360M-10 405 100 370 175 440 280 465 420 425M-10 520 90 490 175 545 280 540 420 510M-10 650 95 620 190 680 290 650 420 700"/>
-                        <path d="M70 -20 100 130 80 280 110 420 75 580 105 800M160 -20 195 130 175 280 210 420 190 580 230 800M260 -20 245 130 285 270 260 420 310 580 285 800M350 -20 325 130 365 270 340 420 380 580 360 800"/>
-                      </g>
-                      <g fill="#f8f9f7" stroke="#d6dcda" stroke-width="1">
-                        <path d="M18 175 75 158 104 206 50 238 8 220Z"/>
-                        <path d="M210 190 267 170 294 225 238 250Z"/>
-                        <path d="M120 390 170 370 195 420 145 450Z"/>
-                        <path d="M285 430 350 405 378 460 315 480Z"/>
-                        <path d="M130 570 185 550 215 610 155 635Z"/>
-                        <path d="M30 690 90 660 125 720 55 750Z"/>
-                      </g>
-                      <g fill="#a7d3b3" opacity=".85">
-                        <circle cx="38" cy="475" r="10"/><circle cx="58" cy="490" r="8"/><circle cx="76" cy="470" r="9"/>
-                        <circle cx="292" cy="80" r="10"/><circle cx="315" cy="95" r="8"/><circle cx="338" cy="75" r="11"/>
-                        <circle cx="310" cy="590" r="9"/><circle cx="330" cy="610" r="10"/><circle cx="355" cy="585" r="8"/>
-                      </g>
-                      <g fill="#82908b" font-family="Arial" font-size="10">
-                        <text x="28" y="300">Centro</text><text x="270" y="270">Via Roma</text>
-                        <text x="25" y="625">Parco</text><text x="270" y="735">Piazza</text>
-                      </g>
-                    </svg>
-                    <div class="tel-velo"></div>
-                  </div>
-
-                  <div class="tel-area-ricerca anim-lunga">
-                    <div class="tel-ricerca anim-lunga">
-                      <span class="tel-testo" id="tel-testo">la mia attività</span><span class="tel-caret" id="tel-caret"></span>
-                      <svg class="tel-lente" viewBox="0 0 28 28"><circle cx="12" cy="12" r="8.5"/><path d="m18.5 18.5 7 7"/></svg>
-                    </div>
-                  </div>
-
-                  <div class="tel-controlli anim-lunga">
-                    <div class="tel-controllo">▱</div><div class="tel-controllo tel-controllo--rosso">◈</div>
-                  </div>
-
-                  <div class="tel-pin anim-lunga">
-                    <svg viewBox="0 0 60 74">
-                      <path d="M30 1C13 1 2 13 2 29c0 20 28 44 28 44s28-24 28-44C58 13 47 1 30 1Z" fill="#d83d36"/>
-                      <rect x="14" y="23" width="32" height="22" rx="2" fill="#fff"/>
-                      <path d="M12 24 17 15h26l5 9z" fill="#fff"/>
-                      <path d="M20 15v9m10-9v9m10-9v9" stroke="#d83d36" stroke-width="2"/>
-                      <rect x="25" y="33" width="10" height="12" fill="#d83d36"/>
-                    </svg>
-                  </div>
-
-                  <div class="tel-etichetta anim-lunga">● &nbsp;La Mia Attività<br>&nbsp;&nbsp;&nbsp;&nbsp;Eos Gonocorato</div>
-
-                  <section class="tel-scheda anim-lunga">
-                    <div class="tel-presa"></div>
-                    <div class="tel-testa">
-                      <div class="tel-copia">
-                        <div class="tel-nome">La Mia Attività</div>
-                        <div class="tel-voto">4,9 <span class="tel-stelle">★★★★★</span> <span class="tel-recensioni">(128 recensioni)</span></div>
-                        <div class="tel-categoria">Ristorante · <span class="tel-aperto">Aperto</span> · $$</div>
-                      </div>
-                      <div class="tel-foto">
-                        <svg viewBox="0 0 80 80" preserveAspectRatio="xMidYMid slice">
-                          <defs><linearGradient id="tel-sala" x2="0" y2="1"><stop stop-color="#9d7952"/><stop offset="1" stop-color="#28221d"/></linearGradient></defs>
-                          <rect width="80" height="80" fill="url(#tel-sala)"/>
-                          <rect x="7" y="7" width="66" height="40" fill="#c6b18d"/>
-                          <rect x="12" y="11" width="56" height="31" fill="#463b30"/>
-                          <path d="M15 12h50v28H15z" fill="#7d6b52"/>
-                          <path d="M18 15v23m14-23v23m14-23v23m14-23v23" stroke="#d9c8a5" stroke-width="2"/>
-                          <rect x="5" y="50" width="70" height="25" fill="#302a24"/>
-                          <path d="M12 55h56M18 64h44" stroke="#a78b65" stroke-width="3"/>
-                          <circle cx="40" cy="53" r="7" fill="#dfd0ad"/>
-                        </svg>
-                      </div>
-                    </div>
-                    <div class="tel-azioni">
-                      <div class="tel-azione"><span class="tel-cerchio"><svg viewBox="0 0 24 24"><path d="M5 3h4l2 5-3 2a15 15 0 0 0 6 6l2-3 5 2v4c0 1-1 2-2 2C10 20 4 14 3 5c0-1 1-2 2-2z"/></svg></span>Chiama</div>
-                      <div class="tel-azione"><span class="tel-cerchio"><svg viewBox="0 0 24 24"><path d="M12 2 3 11h5v9h8v-9h5z"/><path d="m9 11 3-3 3 3"/></svg></span>Indicazioni</div>
-                      <div class="tel-azione"><span class="tel-cerchio"><svg viewBox="0 0 24 24"><path d="M6 3h12v18l-6-4-6 4z"/></svg></span>Salva</div>
-                      <div class="tel-azione"><span class="tel-cerchio"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c3 3 3 15 0 18M12 3c-3 3-3 15 0 18"/></svg></span>Sito web</div>
-                    </div>
-                    <div class="tel-righe"><div class="tel-riga"></div><div class="tel-riga"></div><div class="tel-riga"></div></div>
-                  </section>
-
-                  <div class="tel-puntatore anim-lunga">
-                    <svg viewBox="0 0 35 49"><path d="M2 1 32 30 19 31 14 46Z" fill="#fff" stroke="#15191c" stroke-width="1.7"/><path d="m14 46-4-13 8 1" fill="#dfe3e5"/></svg>
-                  </div>
-                </div>
-
-                <div class="tel-home"></div>
+              <!-- 1. barra di ricerca che digita da sola -->
+              <div id="hero-barra">
+                <svg class="hero-lente" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" focusable="false">
+                  <circle cx="10.5" cy="10.5" r="6.5"/><path d="m15.5 15.5 4.5 4.5"/>
+                </svg>
+                <span id="hero-campo"><span id="hero-testo"></span><span id="hero-caret"></span></span>
+                <i class="fa-solid fa-microphone hero-microfono" aria-hidden="true"></i>
               </div>
+
+              <!-- 2. scheda dell'attività -->
+              <div id="hero-scheda">
+                <span class="hero-sch-foto"></span>
+                <span class="hero-sch-testi">
+                  <strong>La Mia Attività</strong>
+                  <span class="hero-sch-voto">4,9 <em>★★★★★</em> <i>(128 recensioni)</i></span>
+                  <small>Ristorante · <b>Aperto</b> · $$</small>
+                </span>
+                <span class="hero-sch-badge"><i class="fa-solid fa-map-location-dot" aria-hidden="true"></i></span>
+              </div>
+
+              <!-- 3. Google Maps: prima in 2D, poi inclinata in 3D -->
+              <div id="hero-mappa">
+                <div id="hero-mappa-scena">
+                  <div id="hero-mappa-piano">
+                    <svg class="hero-mappa-disegno" viewBox="0 0 420 260" preserveAspectRatio="none" focusable="false">
+                      <rect width="420" height="260" fill="#eef2f5"/>
+                      <path d="M0 0h118v52H0z" fill="#e3ecdb"/>
+                      <path d="M302 182h118v78H302z" fill="#e3ecdb"/>
+                      <path d="M0 200h64v60H0z" fill="#dcebf8"/>
+                      <path d="M352 0h68v46h-68z" fill="#e6ebf0"/>
+                      <g stroke="#e0e6ec" fill="none" stroke-width="22" stroke-linecap="round">
+                        <path d="M-20 208 112 192 238 204 440 180"/>
+                        <path d="M152 -20 164 92 152 280"/>
+                      </g>
+                      <g stroke="#fff" fill="none" stroke-width="17" stroke-linecap="round">
+                        <path d="M-20 208 112 192 238 204 440 180"/>
+                        <path d="M152 -20 164 92 152 280"/>
+                      </g>
+                      <g stroke="#fff" fill="none" stroke-width="11" stroke-linecap="round">
+                        <path d="M-20 76 100 68 212 82 440 60"/>
+                        <path d="M270 -20 254 96 270 280"/>
+                        <path d="M-20 140 96 132 220 142 440 128"/>
+                        <path d="M360 -20 372 100 356 280"/>
+                      </g>
+                      <g fill="#e8edf2">
+                        <path d="M38 96h42v24H38z"/>
+                        <path d="M186 94h48v26h-48z"/>
+                        <path d="M296 96h44v24h-44z"/>
+                      </g>
+                    </svg>
+
+                    <!-- edifici: piatti in 2D, si alzano in 3D -->
+                    <div class="hero-palazzi">
+                      <i style="--x:21%;--y:29%;--w:34px;--b:26px;--z:26px"></i>
+                      <i style="--x:28%;--y:28%;--w:22px;--b:18px;--z:16px"></i>
+                      <i style="--x:37%;--y:26%;--w:30px;--b:24px;--z:32px"></i>
+                      <i style="--x:45%;--y:27%;--w:24px;--b:20px;--z:20px"></i>
+                      <i style="--x:54%;--y:29%;--w:34px;--b:26px;--z:34px"></i>
+                      <i style="--x:63%;--y:27%;--w:24px;--b:20px;--z:22px"></i>
+                      <i style="--x:19%;--y:46%;--w:30px;--b:24px;--z:22px"></i>
+                      <i style="--x:30%;--y:45%;--w:22px;--b:18px;--z:14px"></i>
+                      <i style="--x:43%;--y:44%;--w:32px;--b:26px;--z:28px"></i>
+                      <i style="--x:56%;--y:45%;--w:26px;--b:22px;--z:18px"></i>
+                      <i style="--x:24%;--y:59%;--w:30px;--b:24px;--z:20px"></i>
+                      <i style="--x:40%;--y:58%;--w:26px;--b:20px;--z:16px"></i>
+                      <i style="--x:56%;--y:57%;--w:28px;--b:22px;--z:24px"></i>
+                    </div>
+
+                    <span id="hero-pin">
+                      <svg viewBox="0 0 32 42" focusable="false">
+                        <defs>
+                          <linearGradient id="hero-pin-grad" x1="0" y1="1" x2="1" y2="0">
+                            <stop stop-color="#e81cff"/><stop offset="1" stop-color="#40c9ff"/>
+                          </linearGradient>
+                        </defs>
+                        <path d="M16 1C7.7 1 1 7.7 1 16c0 10.6 15 25 15 25s15-14.4 15-25C31 7.7 24.3 1 16 1Z" fill="url(#hero-pin-grad)"/>
+                        <circle cx="16" cy="16" r="5.6" fill="#fff"/>
+                      </svg>
+                    </span>
+                  </div>
+                </div>
+                <span id="hero-etichetta">La Mia Attività</span>
+              </div>
+
             </div>
           </div>
         </div>
@@ -678,7 +638,7 @@
             allowfullscreen></iframe>
         </div>
       </div>
-      <a id="link-whatsapp-hero" href="https://wa.me/14132259397" target="_blank" rel="noopener" reveal delay="3">
+      <a id="link-whatsapp-hero" href="#" data-webnix-bozza="bozza" aria-haspopup="dialog" reveal delay="3">
         <button id="glow-button" type="button">
           <div id="glow-top"></div><div id="glow-bottom"></div>
           <div id="glow-left"></div><div id="glow-right"></div>

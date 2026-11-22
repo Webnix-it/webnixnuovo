@@ -866,87 +866,116 @@
   });
 })();
 
-/* ============ HERO: demo iPhone in loop ============
-   Timeline CSS di 14s: la barra di ricerca compare al centro, si scrive
-   "la mia attività", la barra sale, arriva la mappa, cade il pin e infine
-   sale la scheda dell'attività. Qui gestiamo solo la digitazione. */
+/* ============ HERO: demo Google in loop (scheda + mappa 2D → 3D) ============
+   Una timeline lenta e continua, disegnata a ogni frame con
+   requestAnimationFrame (niente setTimeout in cascata e niente salti):
+   0,35s barra di ricerca · 1,25s si scrive "La Mia Attività" · 4,6s scheda
+   dell'attività · 6,6s mappa in 2D · 9,2s la mappa si inclina e diventa 3D ·
+   14,2s tutto sfuma · 15,8s si riparte. Le animazioni vere sono in CSS
+   (solo transform/opacity): qui si cambiano soltanto le classi delle fasi.
+   Il ciclo gira solo mentre l'hero è nello schermo: fuori vista il frame loop
+   viene fermato (niente CPU sprecata scorrendo il resto della pagina) e, quando
+   l'hero torna visibile, la demo riparte da capo. */
 (function () {
-  var testo = document.getElementById("tel-testo");
-  var cursore = document.getElementById("tel-caret");
-  if (!testo || !cursore) return;
+  var pannello = document.getElementById("demo-hero");
+  var scena = document.getElementById("scena-hero");
+  var testo = document.getElementById("hero-testo");
+  if (!pannello || !scena || !testo) return;
 
-  var FRASE = "la mia attività";
-  var CICLO = 14000;          /* stessa durata delle animazioni CSS */
-  var INIZIO = 1400;          /* la barra è già comparsa */
-  var PER_LETTERA = 145;
+  var FRASE = "La Mia Attività";
+  var INIZIO_SCRITTURA = 1250;
+  var PER_LETTERA = 135;
+  var RIAVVIO = 15800;
 
-  var ultimo = null;
-  var ultimoCursore = null;
+  var FASI = [
+    [350, "fase-barra"],
+    [4600, "fase-scheda"],
+    [6600, "fase-mappa"],
+    [9200, "fase-3d"],
+    [14200, "fase-fine"]
+  ];
 
-  function disegna(ora) {
-    var t = ora % CICLO;
-    var visibile = "0";
-    var parziale;
-    if (t < INIZIO) {
-      parziale = "";
-    } else if (t < INIZIO + FRASE.length * PER_LETTERA) {
-      parziale = FRASE.slice(0, Math.floor((t - INIZIO) / PER_LETTERA));
-      visibile = Math.floor(ora / 480) % 2 === 0 ? "1" : "0";
-    } else {
-      parziale = FRASE;
+  var ultimo = -1;
+  var fatte = [];
+  var t = 0;
+  var prec = 0;
+  var inCorso = false;
+
+  function azzera() {
+    for (var i = 0; i < FASI.length; i++) {
+      scena.classList.remove(FASI[i][1]);
+      fatte[i] = false;
     }
-    /* si tocca il DOM solo quando cambia qualcosa */
-    if (parziale !== ultimo) { testo.textContent = parziale; ultimo = parziale; }
-    if (visibile !== ultimoCursore) { cursore.style.opacity = visibile; ultimoCursore = visibile; }
-    window.requestAnimationFrame(disegna);
-  }
-  window.requestAnimationFrame(disegna);
-})();
-
-/* ============ HERO: scala il telefono sulla colonna disponibile ============
-   Il telefono è disegnato a 406x796 px fissi: qui calcoliamo --scala così
-   resta grande ma entra sempre nello spazio (desktop e mobile). */
-(function () {
-  var palco = document.getElementById("palcoscenico-telefono");
-  var cornice = document.getElementById("cornice-telefono");
-  var colonna = document.getElementById("demo-hero");
-  if (!palco || !cornice || !colonna) return;
-
-  var BASE_L = 406;
-  var BASE_A = 796;
-
-  var attuale = "";
-  var inCoda = false;
-
-  function misura() {
-    inCoda = false;
-    var larghezza = colonna.clientWidth;
-    var altezza = window.innerHeight - 120;
-    if (larghezza < 140) larghezza = 140;
-    if (altezza < 320) altezza = 320;
-    var scala = Math.min(larghezza / BASE_L, altezza / BASE_A, 1.25).toFixed(3);
-    if (scala === attuale) return;
-    attuale = scala;
-
-    var s = parseFloat(scala);
-    /* dimensioni e rotazione scritte direttamente: la stessa scala serve
-       per lo spazio occupato (palco) e per il telefono (transform) */
-    palco.style.width = Math.round(BASE_L * s) + "px";
-    palco.style.height = Math.round(BASE_A * s) + "px";
-    palco.style.setProperty("--scala", scala);
-    cornice.style.transform = "rotateY(328deg) rotateZ(6deg) scale(" + s + ")";
+    testo.textContent = "";
+    ultimo = -1;
   }
 
-  /* un solo misuraggio per frame, mai in cascata */
-  function pianifica() {
-    if (inCoda) return;
-    inCoda = true;
-    window.requestAnimationFrame(misura);
+  function frame(ora) {
+    if (!inCorso) return;
+    if (!prec) prec = ora;
+    var dt = ora - prec;
+    prec = ora;
+    /* se la scheda del browser era in background non si salta avanti */
+    if (dt > 120) dt = 120;
+    t += dt;
+
+    if (t >= RIAVVIO) { azzera(); t = 0; }
+
+    var n = Math.floor((t - INIZIO_SCRITTURA) / PER_LETTERA);
+    if (n < 0) n = 0;
+    if (n > FRASE.length) n = FRASE.length;
+    if (n !== ultimo) {
+      testo.textContent = FRASE.slice(0, n);
+      ultimo = n;
+    }
+
+    for (var i = 0; i < FASI.length; i++) {
+      if (!fatte[i] && t >= FASI[i][0]) {
+        scena.classList.add(FASI[i][1]);
+        fatte[i] = true;
+      }
+    }
+
+    window.requestAnimationFrame(frame);
   }
 
-  misura();
-  window.addEventListener("resize", pianifica);
-  window.addEventListener("load", pianifica);
+  /* avvio da zero: si azzerano classi e testo, poi riparte la timeline */
+  function avvia() {
+    if (inCorso) return;
+    azzera();
+    t = 0;
+    prec = 0;
+    inCorso = true;
+    window.requestAnimationFrame(frame);
+  }
+
+  /* il callback in coda esce subito, quindi basta togliere il permesso */
+  function ferma() {
+    inCorso = false;
+  }
+
+  azzera();
+
+  /* con "movimento ridotto" attivo la demo resta ferma e leggibile */
+  var ridotto = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  if (ridotto) {
+    testo.textContent = FRASE;
+    for (var k = 0; k < FASI.length - 1; k++) scena.classList.add(FASI[k][1]);
+    return;
+  }
+
+  /* il ciclo è vivo solo con l'hero in vista: fuori schermo nessun frame */
+  if ("IntersectionObserver" in window) {
+    var osservatore = new IntersectionObserver(function (voci) {
+      for (var i = 0; i < voci.length; i++) {
+        if (voci[i].isIntersecting) avvia();
+        else ferma();
+      }
+    }, { threshold: 0.05 });
+    osservatore.observe(pannello);
+  } else {
+    avvia();
+  }
 })();
 
 /* ============ SEZIONE PROBLEMA: animazione automatica dei fotogrammi ============

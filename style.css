@@ -510,217 +510,243 @@ button, input, textarea, select { font: inherit; color: inherit; }
 #testo-hero { min-width: 0; }
 #demo-hero { display: flex; align-items: center; justify-content: center; min-width: 0; }
 
-/* ---------- DEMO IPHONE IN LOOP (colonna destra dell'hero) ----------
-   Schermo da 390x780 dentro una cornice da 406x796, inclinata e scalata
-   per riempire la colonna (--scala la calcola script.js). Ciclo di 14s:
-   barra di ricerca centrata -> si scrive "la mia attività" -> mappa ->
-   pin -> scheda dell'attività. Tutto in CSS, solo la digitazione è in JS. */
-#palcoscenico-telefono {
-  perspective: 1800px;
-  display: grid; place-items: center;
-  width: calc(406px * var(--scala, 1));
-  height: calc(796px * var(--scala, 1));
-  max-width: 100%;
+/* ---------- DEMO GOOGLE IN LOOP (colonna destra dell'hero) ----------
+   Sequenza lenta e continua: la barra di ricerca scrive "La Mia Attività",
+   compare la scheda dell'attività, Google Maps entra in 2D e poi si inclina
+   in 3D con gli edifici che si alzano. Le fasi le aggiunge script.js
+   (#scena-hero.fase-barra / fase-scheda / fase-mappa / fase-3d / fase-fine).
+   Si animano solo transform e opacity: nessun ricalcolo di layout, quindi
+   nessuno scatto anche su computer modesti. */
+#palcoscenico-hero {
+  width: 100%;
+  max-width: 460px;
+  min-width: 0;
 }
-#cornice-telefono {
-  position: relative;
-  width: 406px; height: 796px;
-  border: 8px solid #17191b;
-  border-radius: 60px;
-  background: #0f1113;
-  box-shadow: 0 30px 70px rgba(0, 0, 0, .5);
-  transform: rotateY(328deg) rotateZ(6deg) scale(var(--scala, 1));
-  transform-origin: 50% 50%;
-  backface-visibility: hidden;
-  will-change: transform;
-}
-/* Gli elementi del ciclo vivono su un livello a parte: le animazioni
-   (soprattutto la mappa, che è un SVG grande) non vengono ri-rasterizzate
-   a ogni fotogramma. Senza questo il telefono divora la CPU. */
-#telefono-demo .anim-lunga {
-  will-change: transform, opacity;
-  backface-visibility: hidden;
-}
-/* tasti fisici: si vedono grazie all'inclinazione del telefono */
-.tel-tasto {
-  position: absolute;
-  border-radius: 3px;
-  background: linear-gradient(90deg, #4b5259, #1b1e21);
-  box-shadow: 0 1px 2px rgba(0, 0, 0, .6);
-}
-.tel-tasto--suono { left: -11px; top: 138px; width: 5px; height: 26px; }
-.tel-tasto--volume-alto { left: -11px; top: 194px; width: 5px; height: 56px; }
-.tel-tasto--volume-basso { left: -11px; top: 264px; width: 5px; height: 56px; }
-.tel-tasto--accensione { right: -11px; top: 224px; width: 5px; height: 86px; }
 
-#telefono-demo {
-  position: relative;
-  width: 390px; height: 780px;
-  border-radius: 52px;
-  overflow: hidden;
-  background: #f8f9f8;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
+#scena-hero {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: clamp(14px, 2vw, 18px);
+  border-radius: 26px;
+  background: linear-gradient(158deg, rgba(255, 255, 255, .16), rgba(9, 12, 18, .46));
+  border: 1px solid rgba(255, 255, 255, .2);
+  box-shadow: 0 28px 68px rgba(0, 0, 0, .45), inset 0 1px 0 rgba(255, 255, 255, .22);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
 }
-.tel-stato {
-  position: absolute; z-index: 30; top: 0; left: 0; right: 0; height: 43px;
-  padding: 0 23px;
-  display: flex; align-items: center; justify-content: space-between;
-  font-size: 14px; font-weight: 700; color: #202326;
-  pointer-events: none;
-  background: linear-gradient(#f9faf9 70%, transparent);
-}
-.tel-isola { position: absolute; left: 50%; top: 7px; transform: translateX(-50%); width: 112px; height: 29px; border-radius: 20px; background: #050505; }
-.tel-icone { display: flex; align-items: center; gap: 5px; }
-.tel-icone svg { display: block; }
-.tel-home { position: absolute; z-index: 40; bottom: 7px; left: 50%; transform: translateX(-50%); width: 128px; height: 5px; border-radius: 8px; background: #191b1d; }
 
-.tel-scena { position: absolute; inset: 0; overflow: hidden; background: #f4f6f4; }
-
-/* --- mappa --- */
-.tel-mappa { position: absolute; inset: 0; opacity: 0; transform: scale(1.12); animation: telMappa 14s ease-in-out infinite; }
-.tel-mappa svg { display: block; width: 100%; height: 100%; }
-.tel-velo { position: absolute; inset: 0; background: linear-gradient(180deg, rgba(250,251,250,.05), rgba(250,251,250,.05) 52%, rgba(245,247,246,.32)); }
-
-/* --- barra di ricerca: parte al centro, poi sale --- */
-.tel-area-ricerca {
-  position: absolute; z-index: 10; left: 22px; right: 22px; top: 44%;
-  display: flex; justify-content: center;
-  transform: translateY(-50%);
-  animation: telBarraSu 14s cubic-bezier(.22,.75,.2,1) infinite;
-}
-.tel-ricerca {
-  width: 100%; height: 59px; border-radius: 32px;
+/* --- 1. barra di ricerca --- */
+#hero-barra {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  height: 54px;
+  padding: 0 16px 0 18px;
+  border-radius: 30px;
   background: #fff;
-  display: flex; align-items: center;
-  padding: 0 16px 0 20px; gap: 12px;
-  box-shadow: 0 8px 24px rgba(29,38,42,.18);
-  border: 1px solid #e4e7e5;
-  opacity: 0; transform: translateY(18px) scale(.94);
-  animation: telBarra 14s ease-in-out infinite;
-}
-.tel-testo { flex: 1; font-size: 21px; white-space: nowrap; overflow: hidden; color: #303538; letter-spacing: .1px; }
-.tel-caret { display: inline-block; width: 1.5px; height: 23px; background: #3978c8; vertical-align: -4px; opacity: 0; }
-.tel-lente { flex: none; width: 27px; height: 27px; stroke: #737b7f; stroke-width: 2.5; fill: none; }
-
-/* --- pin, etichetta, controlli --- */
-.tel-pin {
-  position: absolute; z-index: 5; left: 50%; top: 43%; width: 58px; height: 70px;
-  transform: translate(-50%, -90%) scale(.15);
+  border: 1px solid #e3e7e6;
+  box-shadow: 0 10px 26px rgba(10, 20, 28, .22);
+  color: #3a4145;
   opacity: 0;
-  animation: telPin 14s cubic-bezier(.2,.8,.2,1) infinite;
+  transform: translateY(16px) scale(.97);
+  transition: opacity .9s ease, transform 1.1s cubic-bezier(.16, 1, .3, 1);
 }
-.tel-pin svg { width: 100%; height: 100%; }
-.tel-etichetta {
-  position: absolute; left: 13%; top: 49%;
-  font-size: 10px; color: #52605d; line-height: 1.05;
-  opacity: 0;
-  animation: telEtichetta 14s ease-in-out infinite;
-}
-.tel-controlli {
-  position: absolute; right: 17px; top: 16%;
-  display: flex; flex-direction: column; gap: 13px;
-  opacity: 0;
-  animation: telControlli 14s ease-in-out infinite;
-}
-.tel-controllo {
-  width: 39px; height: 39px; border-radius: 50%;
-  background: #fff; box-shadow: 0 2px 8px rgba(0,0,0,.13);
-  display: grid; place-items: center;
-  color: #5e686b; font-size: 19px;
-}
-.tel-controllo--rosso { color: #d04b45; }
-
-/* --- scheda attività --- */
-.tel-scheda {
-  position: absolute; z-index: 15; left: 12px; right: 12px; bottom: 23px;
-  border-radius: 22px; background: #fff;
-  box-shadow: 0 13px 30px rgba(28,39,43,.2);
+#scena-hero.fase-barra #hero-barra { opacity: 1; transform: none; }
+.hero-lente { flex: none; width: 22px; height: 22px; color: #6b7479; }
+.hero-microfono { flex: none; font-size: .9rem; color: #8b9498; }
+#hero-campo {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  align-items: center;
   overflow: hidden;
-  opacity: 0; transform: translateY(115%) scale(.98);
-  animation: telScheda 14s cubic-bezier(.2,.75,.2,1) infinite;
 }
-.tel-presa { width: 34px; height: 4px; border-radius: 5px; background: #d8dcda; margin: 7px auto 9px; }
-.tel-testa { display: flex; gap: 12px; align-items: center; padding: 0 15px 11px; }
-.tel-copia { min-width: 0; flex: 1; }
-.tel-nome { font-size: 18px; font-weight: 650; color: #292e31; margin-bottom: 3px; }
-.tel-voto { font-size: 12px; color: #555; white-space: nowrap; }
-.tel-stelle { color: #f2b51b; font-size: 15px; letter-spacing: -1px; }
-.tel-recensioni { color: #526f91; text-decoration: underline; }
-.tel-categoria { font-size: 12px; color: #747b7e; margin-top: 4px; }
-.tel-aperto { color: #4d9860; font-weight: 600; }
-.tel-foto { flex: none; width: 69px; height: 67px; border-radius: 9px; overflow: hidden; background: linear-gradient(135deg, #8c806e, #d6c5a7 48%, #594b3d); }
-.tel-foto svg { display: block; width: 100%; height: 100%; }
-.tel-azioni {
-  display: grid; grid-template-columns: repeat(4, 1fr);
-  padding: 11px 7px 10px;
-  border-top: 1px solid #e6e8e8; border-bottom: 1px solid #e6e8e8;
+#hero-testo {
+  font-size: clamp(1rem, 1.5vw, 1.12rem);
+  white-space: nowrap;
+  color: #2f3538;
+  letter-spacing: .1px;
 }
-.tel-azione { display: flex; flex-direction: column; align-items: center; gap: 4px; color: #376f9e; font-size: 11px; font-weight: 500; }
-.tel-cerchio {
-  width: 38px; height: 38px;
-  border: 1.4px solid #9bb5ca; border-radius: 50%;
-  display: grid; place-items: center;
-  color: #3978a8;
+#hero-caret {
+  flex: none;
+  width: 2px;
+  height: 22px;
+  margin-left: 2px;
+  border-radius: 2px;
+  background: var(--viola);
+  animation: heroCaret 1.1s steps(1, end) infinite;
 }
-.tel-cerchio svg { width: 19px; height: 19px; stroke: currentColor; fill: none; stroke-width: 1.9; }
-.tel-righe { padding: 13px 15px 17px; display: flex; flex-direction: column; gap: 7px; }
-.tel-riga { height: 8px; border-radius: 8px; background: #eceeed; }
-.tel-riga:nth-child(1) { width: 42%; }
-.tel-riga:nth-child(2) { width: 82%; }
-.tel-riga:nth-child(3) { width: 65%; }
+@keyframes heroCaret { 0%, 49% { opacity: 1; } 50%, 100% { opacity: 0; } }
 
-/* --- puntatore che clicca "Sito web" --- */
-.tel-puntatore {
-  position: absolute; z-index: 25; right: 48px; bottom: 4px; width: 35px; height: 49px;
-  opacity: 0; transform: translate(20px, 20px);
-  animation: telPuntatore 14s ease-in-out infinite;
+/* --- 2. scheda dell'attività --- */
+#hero-scheda {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px;
+  border-radius: 16px;
+  background: #fff;
+  border: 1px solid #e6eaea;
+  box-shadow: 0 12px 28px rgba(10, 20, 28, .2);
+  opacity: 0;
+  transform: translateY(24px) scale(.96);
+  transition: opacity 1s ease, transform 1.2s cubic-bezier(.16, 1, .3, 1);
 }
-.tel-puntatore svg { width: 100%; height: 100%; }
-
-/* --- timeline del ciclo --- */
-@keyframes telBarra {
-  0%, 5%   { opacity: 0; transform: translateY(18px) scale(.94); }
-  9%, 25%  { opacity: 1; transform: translateY(0) scale(1); }
-  31%, 100%{ opacity: 0; transform: translateY(-12px) scale(.97); }
+#scena-hero.fase-scheda #hero-scheda { opacity: 1; transform: none; }
+.hero-sch-foto {
+  flex: none;
+  width: 54px;
+  height: 54px;
+  border-radius: 10px;
+  background: linear-gradient(135deg, #9d7952, #d6b98d 45%, #3a2f26);
 }
-/* salita della barra: solo transform, cosi' non ricalcola il layout */
-@keyframes telBarraSu {
-  0%, 26%  { transform: translateY(-50%); }
-  34%, 100%{ transform: translateY(calc(-50% - 226px)); }
-}
-@keyframes telMappa {
-  0%, 28%  { opacity: 0; transform: scale(1.12); }
-  36%, 100%{ opacity: 1; transform: scale(1); }
-}
-@keyframes telPin {
-  0%, 39%  { opacity: 0; transform: translate(-50%, -90%) scale(.15); }
-  45%      { opacity: 1; transform: translate(-50%, -5%) scale(1.12); }
-  49%, 85% { opacity: 1; transform: translate(-50%, 0) scale(1); }
-  91%, 100%{ opacity: 0; transform: translate(-50%, 0) scale(.9); }
-}
-@keyframes telEtichetta {
-  0%, 48%  { opacity: 0; transform: translateY(5px); }
-  55%, 85% { opacity: 1; transform: translateY(0); }
-  92%, 100%{ opacity: 0; }
-}
-@keyframes telControlli {
-  0%, 40%  { opacity: 0; transform: translateX(8px); }
-  48%, 86% { opacity: 1; transform: translateX(0); }
-  93%, 100%{ opacity: 0; }
-}
-@keyframes telScheda {
-  0%, 53%  { opacity: 0; transform: translateY(115%) scale(.98); }
-  61%      { opacity: 1; transform: translateY(-5px) scale(1); }
-  65%, 87% { opacity: 1; transform: translateY(0) scale(1); }
-  94%, 100%{ opacity: 0; transform: translateY(115%) scale(.98); }
-}
-@keyframes telPuntatore {
-  0%, 67%  { opacity: 0; transform: translate(20px, 20px); }
-  72%, 84% { opacity: 1; transform: translate(0, 0); }
-  91%, 100%{ opacity: 0; transform: translate(20px, 20px); }
+.hero-sch-testi { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+.hero-sch-testi strong { font-size: 1rem; color: #22282b; letter-spacing: -.01em; }
+.hero-sch-voto { font-size: .8rem; color: #5c666b; }
+.hero-sch-voto em { font-style: normal; color: #f0b429; letter-spacing: -1px; }
+.hero-sch-voto i { font-style: normal; color: #5f7f9e; }
+.hero-sch-testi small { font-size: .78rem; color: #798286; }
+.hero-sch-testi b { color: #47925c; font-weight: 600; }
+.hero-sch-badge {
+  flex: none;
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  background: #eef4f8;
+  color: #5f7f9e;
+  font-size: .95rem;
 }
 
-/* gli angoli li scrive script.js (rotateY 328deg / rotateZ 6deg) insieme alla scala */
+/* --- 3. mappa: piano 2D che si inclina in 3D --- */
+#hero-mappa {
+  position: relative;
+  height: clamp(168px, 20vw, 214px);
+  border-radius: 16px;
+  overflow: hidden;
+  background: #eef2f5;
+  border: 1px solid #e2e8ea;
+  box-shadow: 0 14px 30px rgba(10, 20, 28, .22);
+  perspective: 900px;
+  opacity: 0;
+  transform: translateY(26px) scale(.97);
+  transition: opacity 1s ease, transform 1.3s cubic-bezier(.16, 1, .3, 1);
+}
+#scena-hero.fase-mappa #hero-mappa { opacity: 1; transform: none; }
+/* il piano è più largo del riquadro: inclinandosi non scopre i bordi */
+#hero-mappa-scena {
+  position: absolute;
+  inset: -30% -18%;
+  transform-style: preserve-3d;
+}
+#hero-mappa-piano {
+  position: absolute;
+  inset: 0;
+  background: #eef2f5;
+  transform-style: preserve-3d;
+  transform-origin: 50% 52%;
+  transform: rotateX(0deg) rotateZ(0deg) scale(1.02);
+  transition: transform 2.2s cubic-bezier(.22, .82, .2, 1);
+}
+#scena-hero.fase-3d #hero-mappa-piano {
+  transform: rotateX(56deg) rotateZ(-16deg) scale(1.2);
+}
+.hero-mappa-disegno { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+
+.hero-palazzi { position: absolute; inset: 0; transform-style: preserve-3d; pointer-events: none; }
+.hero-palazzi i {
+  position: absolute;
+  left: var(--x);
+  top: var(--y);
+  width: var(--w);
+  height: var(--b);
+  border-radius: 2px;
+  background: #dfe7ee;
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, .75);
+  transform: translateZ(0);
+  opacity: 0;
+  transition: transform 1.5s cubic-bezier(.22, .82, .2, 1), opacity .9s ease;
+}
+/* la facciata: dal tetto risale fino al piano della mappa */
+.hero-palazzi i::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 100%;
+  width: 100%;
+  height: var(--z);
+  transform-origin: 50% 0;
+  transform: rotateX(-90deg);
+  background: linear-gradient(180deg, #ccd8e2, #b4c3d0);
+  border-radius: 0 0 1px 1px;
+}
+#scena-hero.fase-3d .hero-palazzi i { opacity: 1; transform: translateZ(var(--z)); }
+
+#hero-pin {
+  position: absolute;
+  left: 50%;
+  top: 44%;
+  width: 34px;
+  height: 44px;
+  transform-origin: 50% 100%;
+  transform: translate(-50%, -100%) scale(.25);
+  opacity: 0;
+  transition: transform 1.2s cubic-bezier(.2, .9, .2, 1) .15s, opacity .7s ease;
+}
+#scena-hero.fase-mappa #hero-pin { opacity: 1; transform: translate(-50%, -100%) scale(1); }
+/* in 3D il pin resta in piedi, come su Google Maps */
+#scena-hero.fase-3d #hero-pin {
+  transform: translate(-50%, -100%) rotateZ(16deg) rotateX(-56deg) scale(.92);
+}
+#hero-pin svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  filter: drop-shadow(0 6px 8px rgba(0, 0, 0, .28));
+}
+
+#hero-etichetta {
+  position: absolute;
+  left: 12px;
+  bottom: 12px;
+  z-index: 3;
+  padding: 5px 10px;
+  border-radius: 20px;
+  background: rgba(255, 255, 255, .94);
+  color: #2f3538;
+  font-size: .72rem;
+  font-weight: 600;
+  box-shadow: 0 6px 14px rgba(10, 20, 28, .18);
+  opacity: 0;
+  transform: translateY(6px);
+  transition: opacity .8s ease .2s, transform .8s cubic-bezier(.16, 1, .3, 1) .2s;
+}
+#scena-hero.fase-mappa #hero-etichetta { opacity: 1; transform: none; }
+
+/* --- fine ciclo: tutto sfuma verso l'alto, poi si riparte --- */
+#scena-hero.fase-fine #hero-barra,
+#scena-hero.fase-fine #hero-scheda,
+#scena-hero.fase-fine #hero-mappa,
+#scena-hero.fase-fine #hero-etichetta {
+  opacity: 0;
+  transform: translateY(-10px) scale(.985);
+  transition: opacity 1.2s ease, transform 1.2s cubic-bezier(.4, 0, .2, 1);
+}
+
+/* niente animazioni con "movimento ridotto": resta lo stato finale leggibile */
+@media (prefers-reduced-motion: reduce) {
+  #hero-barra, #hero-scheda, #hero-mappa, #hero-etichetta, #hero-pin,
+  .hero-palazzi i, #hero-mappa-piano { transition: none !important; }
+  #hero-caret { animation: none !important; opacity: 0 !important; }
+}
+
+@media (max-width: 900px) {
+  #palcoscenico-hero { max-width: 100%; }
+  #scena-hero { gap: 12px; }
+  #hero-mappa { height: clamp(150px, 42vw, 200px); }
+}
 
 #titolo-hero { font-size: clamp(1.85rem, 4.2vw, 3.35rem); line-height: 1.15; max-width: 24ch; margin: 0 0 22px; text-shadow: 0 4px 30px rgba(0,0,0,.45); }
 #sottotitolo-hero { max-width: 58ch; color: #f2f2f2; font-size: clamp(1rem, 1.7vw, 1.15rem); margin: 0 0 36px; text-shadow: 0 2px 16px rgba(0,0,0,.4); }
@@ -2039,8 +2065,6 @@ details.domanda[open] summary { color: var(--ciano); }
      attivo nel sistema (freccia su/giù e cursore della demo Google). */
   #freccia-scroll > .fa-chevron-down,
   #freccia-scroll i { animation-duration: 2.5s !important; animation-iteration-count: infinite !important; }
-  /* Demo iPhone: il ciclo del telefono resta animato */
-  #telefono-demo .anim-lunga { animation-duration: 14s !important; animation-iteration-count: infinite !important; }
   /* Sezione "Cosa facciamo": testi e scena restano animati */
   #cosa-facciamo.demo-attiva .entra-cosa,
   #cosa-facciamo.demo-attiva #punti-cosa-facciamo li { animation-duration: .7s !important; }
@@ -4033,11 +4057,12 @@ body:has(#esplora-sito) #footer { margin-top: 0; }
   color: var(--viola);
 }
 
-/* hover su una card: le altre sfumano e diventano sfocate */
+/* hover su una card: le altre sfumano soltanto. Il blur su card grandi
+   costringe il browser a ridisegnarle a ogni fotogramma e rendeva l'hover
+   a scatti: con la sola opacità la transizione resta fluida. */
 .griglia-esplora:has(.scheda-esplora:hover) .scheda-esplora:not(:hover),
 .griglia-esplora:has(.scheda-esplora:focus-visible) .scheda-esplora:not(:focus-visible) {
-  filter: blur(3px);
-  opacity: .5;
+  opacity: .55;
 }
 
 /* clic: la card scelta si apre e svanisce, il resto sfuma, poi parte la pagina */
