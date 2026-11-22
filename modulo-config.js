@@ -51,10 +51,9 @@ window.WEBNIX_MODULO_DEFAULT = {
     testo: "Importo puramente indicativo, modificabile dall'utente. Non costituisce un preventivo o un impegno di spesa."
   },
   notifica: {
-    formspree: "https://formspree.io/f/xyewdvda",
     emailjs: {
       attivo: true,
-      serviceId: "",
+      serviceId: "service_86m30za",
       templateId: "template_oafiwle",
       publicKey: "ncCVMSvwgYoXtlD0x"
     },

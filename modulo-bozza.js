@@ -9,7 +9,8 @@
      (impostazioni/modulo-bozza) e si modifica dalla dashboard.
    - Le richieste vengono salvate in richieste-bozza con stato
      iniziale "Nuova".
-   - Le email partono da EmailJS (se configurato) oppure da Formspree.
+   - Le email partono sempre da EmailJS (Service ID, Template ID e
+     chiave pubblica si impostano dalla dashboard).
    - JavaScript puro, nessuna dipendenza.
    ============================================================ */
 
@@ -110,6 +111,20 @@
     return config;
   }
 
+  /* Se la configurazione salvata non ha ancora il Service ID di EmailJS
+     (campo vuoto salvato prima di averlo creato), si riprende quello
+     dei valori di default: cosí l'invio non resta bloccato. */
+  function normalizzaNotifica(config) {
+    var emailjs = ((config.notifica || {}).emailjs) || {};
+    var base = (((window.WEBNIX_MODULO_DEFAULT || {}).notifica || {}).emailjs) || {};
+    config.notifica = config.notifica || {};
+    config.notifica.emailjs = emailjs;
+    if (!String(emailjs.serviceId || "").trim() && String(base.serviceId || "").trim()) {
+      emailjs.serviceId = base.serviceId;
+    }
+    return config;
+  }
+
   function leggiConfig() {
     if (!ATTIVO) return Promise.resolve(copia(window.WEBNIX_MODULO_DEFAULT));
     var url = RADICE + "/impostazioni/modulo-bozza?key=" + encodeURIComponent(API_KEY);
@@ -122,7 +137,7 @@
         return res.json();
       })
       .then(function (json) {
-        return pulisciConfig(fondi(copia(window.WEBNIX_MODULO_DEFAULT), documento(json)));
+        return normalizzaNotifica(pulisciConfig(fondi(copia(window.WEBNIX_MODULO_DEFAULT), documento(json))));
       })
       .catch(function () {
         if (timer) clearTimeout(timer);
@@ -159,7 +174,8 @@
     inviato: false,
     invio: false,
     provenienza: "",
-    fuocoPrecedente: null
+    fuocoPrecedente: null,
+    inizioInvio: 0
   };
 
   var radice = null;
@@ -172,6 +188,20 @@
   var passoEl = null;
   var aperto = false;
   var chiusuraInCorso = false;
+
+  /* strato di invio: l'animazione dura almeno INVIO_DURATA ms,
+     così resta lenta e fluida anche se la rete risponde subito */
+  var invioLayer = null;
+  var invioTitolo = null;
+  var invioNota = null;
+  var invioBarra = null;
+  var timerInvio = [];
+  var INVIO_DURATA = 2600;
+  var PASSI_INVIO = [
+    { dopo: 0, titolo: "Invio della richiesta…", nota: "Collegamento sicuro del modulo con EmailJS." },
+    { dopo: 900, titolo: "Prepariamo l'email per il team…", nota: "Raccogliamo le tue risposte in un unico riepilogo." },
+    { dopo: 1800, titolo: "Ultimi controlli…", nota: "Stiamo consegnando la richiesta: un attimo di pazienza." }
+  ];
 
   /* ============================================================
      COSTRUZIONE DEL POPUP (una sola volta)
@@ -266,6 +296,28 @@
     card.appendChild(avanzamento);
     card.appendChild(corpo);
     card.appendChild(piede);
+
+    /* strato di invio: copre la card con l'animazione lenta */
+    invioLayer = crea("div", "wb-invio");
+    invioLayer.hidden = true;
+    invioLayer.setAttribute("role", "status");
+    invioLayer.setAttribute("aria-live", "polite");
+
+    var invioCentro = crea("div", "wb-invio-centro");
+    var invioOrbita = crea("div", "wb-invio-orbita");
+    invioOrbita.innerHTML = '<span class="wb-invio-nucleo"></span>';
+    invioTitolo = crea("p", "wb-invio-titolo", PASSI_INVIO[0].titolo);
+    invioNota = crea("p", "wb-invio-nota", PASSI_INVIO[0].nota);
+    var invioBarraBox = crea("div", "wb-invio-barra");
+    invioBarra = crea("span");
+    invioBarraBox.appendChild(invioBarra);
+
+    invioCentro.appendChild(invioOrbita);
+    invioCentro.appendChild(invioTitolo);
+    invioCentro.appendChild(invioNota);
+    invioCentro.appendChild(invioBarraBox);
+    invioLayer.appendChild(invioCentro);
+    card.appendChild(invioLayer);
 
     radice.appendChild(sfondo);
     radice.appendChild(card);
@@ -1049,38 +1101,7 @@
     });
   }
 
-  /* ---------- Formspree: invia la richiesta per email ---------- */
-  function inviaFormspree(dati) {
-    var endpoint = String(((stato.config.notifica || {}).formspree) || "").trim();
-    if (!/^https:\/\/formspree\.io\/f\/[a-z0-9]+$/i.test(endpoint)) return Promise.resolve(false);
-
-    var corpo = {
-      _subject: "Nuova richiesta bozza — " + (dati.nome || "senza nome") + " (" + dati.riferimento + ")",
-      nome: dati.nome || "",
-      email: dati.email || "",
-      attivita: dati.attivita || "",
-      budget: dati.budget || "",
-      riferimento: dati.riferimento || "",
-      pagina: location.pathname + location.search,
-      consensi: testoConsensi(),
-      messaggio: testoDettagli()
-    };
-    if (dati.email) corpo._replyto = dati.email;
-
-    return fetch(endpoint, {
-      method: "POST",
-      headers: { "Content-Type": "application/json", "Accept": "application/json" },
-      body: JSON.stringify(corpo)
-    }).then(function (res) {
-      if (!res.ok) throw new Error("HTTP " + res.status);
-      return true;
-    }).catch(function (err) {
-      console.warn("[Webnix modulo] email non inviata", err);
-      return false;
-    });
-  }
-
-  /* ---------- EmailJS: canale principale quando è configurato ---------- */
+  /* ---------- EmailJS: unico canale di invio delle email ---------- */
   function emailjsConfigurato() {
     var c = (stato.config.notifica || {}).emailjs || {};
     return c.attivo !== false &&
@@ -1126,10 +1147,11 @@
   }
 
   function notificaEmail(dati) {
-    if (!emailjsConfigurato()) return inviaFormspree(dati);
-    return inviaEmailJS(dati).then(function (ok) {
-      return ok ? true : inviaFormspree(dati);
-    });
+    if (!emailjsConfigurato()) {
+      console.warn("[Webnix modulo] EmailJS non configurato: mancano Service ID, Template ID o chiave pubblica.");
+      return Promise.resolve(false);
+    }
+    return inviaEmailJS(dati);
   }
 
   function notificaWebhook(dati) {
@@ -1208,9 +1230,9 @@
 
   /* caselle di consenso usate se la configurazione non ne dichiara nessuna */
   var CONSENSI_BASE = [
-    { chiave: "consensoPrivacy", etichetta: "Informativa sulla Privacy Policy" },
-    { chiave: "consensoTermini", etichetta: "Termini e Condizioni" },
-    { chiave: "consensoMarketing", etichetta: "Aggiornamenti e proposte Webnix" }
+    { chiave: "consensoPrivacy", etichetta: "Acconsento al trattamento dei miei dati personali secondo quanto indicato nell'Informativa sulla Privacy Policy. Privacy Policy" },
+    { chiave: "consensoTermini", etichetta: "Ho letto e accetto i Termini e Condizioni e la Privacy Policy. Termini e Condizioni" },
+    { chiave: "consensoMarketing", etichetta: "Desidero ricevere aggiornamenti e proposte Webnix (facoltativo)." }
   ];
 
   /* tutte le caselle presenti nel modulo, con il testo mostrato all'utente */
@@ -1290,6 +1312,68 @@
     return righe.join("\n");
   }
 
+  /* ---------- animazione di invio (lenta e fluida) ---------- */
+  function cambiaTestoInvio(titolo, nota) {
+    if (!invioTitolo || !invioNota) return;
+    invioTitolo.textContent = titolo;
+    invioNota.textContent = nota;
+    [invioTitolo, invioNota].forEach(function (el) {
+      el.classList.remove("wb-testo-cambia");
+      void el.offsetWidth; /* riavvia l'animazione del testo */
+      el.classList.add("wb-testo-cambia");
+    });
+  }
+
+  function mostraInvio() {
+    if (!invioLayer) return;
+    timerInvio.forEach(function (id) { clearTimeout(id); });
+    timerInvio = [];
+
+    invioLayer.hidden = false;
+    invioLayer.classList.remove("wb-invio-esce");
+    card.setAttribute("aria-busy", "true");
+    cambiaTestoInvio(PASSI_INVIO[0].titolo, PASSI_INVIO[0].nota);
+
+    invioBarra.style.transition = "none";
+    invioBarra.style.width = "0%";
+    void invioBarra.offsetWidth;
+    invioBarra.style.transition = "width " + (INVIO_DURATA - 260) + "ms cubic-bezier(.3, .02, .22, 1)";
+    invioBarra.style.width = "100%";
+
+    stato.inizioInvio = Date.now();
+    PASSI_INVIO.slice(1).forEach(function (passo) {
+      timerInvio.push(setTimeout(function () {
+        cambiaTestoInvio(passo.titolo, passo.nota);
+      }, passo.dopo));
+    });
+  }
+
+  function nascondiInvio() {
+    timerInvio.forEach(function (id) { clearTimeout(id); });
+    timerInvio = [];
+    card.removeAttribute("aria-busy");
+    if (!invioLayer || invioLayer.hidden) return Promise.resolve();
+
+    invioLayer.classList.add("wb-invio-esce");
+    return new Promise(function (risolvi) {
+      setTimeout(function () {
+        invioLayer.hidden = true;
+        invioLayer.classList.remove("wb-invio-esce");
+        invioBarra.style.transition = "none";
+        invioBarra.style.width = "0%";
+        risolvi();
+      }, 380);
+    });
+  }
+
+  /* tempo che manca alla fine dell'animazione */
+  function attesaMinima() {
+    var passato = Date.now() - (stato.inizioInvio || Date.now());
+    return new Promise(function (risolvi) {
+      setTimeout(risolvi, Math.max(0, INVIO_DURATA - passato));
+    });
+  }
+
   function invia() {
     if (stato.invio) return;
     if (!validaPasso()) return;
@@ -1297,6 +1381,7 @@
     stato.invio = true;
     bottoneAvanti.disabled = true;
     bottoneAvanti.innerHTML = '<span>Invio in corso…</span><i class="fa-solid fa-circle-notch fa-spin" aria-hidden="true"></i>';
+    mostraInvio();
     var errorePrecedente = form.querySelector(".wb-errore-invio");
     if (errorePrecedente) errorePrecedente.remove();
 
@@ -1343,13 +1428,13 @@
           inviatoIl: new Date(adesso).toISOString()
         };
 
-        /* EmailJS (o Formspree) invia l'email anche se Firestore non risponde */
+        /* EmailJS invia l'email anche se Firestore non risponde */
         var invioEmail = notificaEmail(riepilogo);
 
         if (!ATTIVO) {
           return invioEmail.then(function (emailOk) {
             if (!emailOk) throw new Error("Invio email non riuscito");
-            return { name: "formspree/" + idLocale };
+            return { name: idLocale };
           });
         }
 
@@ -1364,17 +1449,24 @@
           var emailOk = esiti[1] === true;
           if (!db.ok && !emailOk) throw db.errore || new Error("Invio non riuscito");
           if (db.ok) notificaWebhook(riepilogo);
-          return db.ok ? db.risposta : { name: "formspree/" + idLocale };
+          return db.ok ? db.risposta : { name: idLocale };
         });
       })
       .then(function (risposta) {
-        mostraSuccesso();
+        /* la conferma arriva a fine animazione, con dissolvenza */
+        return attesaMinima()
+          .then(function () { return nascondiInvio(); })
+          .then(function () { mostraSuccesso(); });
       })
       .catch(function (err) {
         console.error("[Webnix modulo]", err);
         stato.invio = false;
         bottoneAvanti.disabled = false;
         bottoneAvanti.innerHTML = '<span>' + (stato.config.testoFinale || "Invia la richiesta gratuita") + '</span>';
+
+        /* l'errore si svela quando l'animazione in corso è finita */
+        var restante = Math.max(0, INVIO_DURATA - (Date.now() - (stato.inizioInvio || Date.now())));
+        setTimeout(function () { nascondiInvio(); }, restante);
 
         var box = crea("div", "wb-errore-invio");
         box.appendChild(document.createTextNode(

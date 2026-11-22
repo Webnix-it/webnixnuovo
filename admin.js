@@ -1170,15 +1170,10 @@ function percorsoModulo(obj, sentiero, valore) {
   nodo[parti[parti.length - 1]] = valore;
 }
 
-function endpointFormspree(valore) {
-  return /^https:\/\/formspree\.io\/f\/[a-z0-9]+$/i.test(String(valore || "").trim());
-}
-
 function canaliEmail() {
   var n = (configModulo && configModulo.notifica) || {};
   var canali = [];
   if (String(((n.emailjs || {}).serviceId) || "").trim()) canali.push("EmailJS");
-  if (endpointFormspree(n.formspree)) canali.push("Formspree");
   return canali;
 }
 
@@ -1360,7 +1355,7 @@ function aggiornaNotaInvio() {
     testi.push("Le richieste arrivano a " + (n.emailAdmin || "l'email dell'amministratore") +
       " tramite " + canali.join(" + ") + ".");
   } else {
-    testi.push("Nessun canale email attivo: compila i dati EmailJS oppure incolla un endpoint Formspree per ricevere le richieste.");
+    testi.push("Nessun canale email attivo: compila i dati EmailJS per ricevere le richieste. Finché manca il Service ID le richieste restano solo in archivio, senza email.");
   }
 
   if (canali.indexOf("EmailJS") === -1 && String(ej.templateId || "").trim()) {
@@ -1424,7 +1419,7 @@ function disegnaEditorModulo() {
   ]);
   form.appendChild(aspetto);
 
-  var notifiche = bloccoEditor("Invio e notifiche", "EmailJS, Formspree e webhook", false);
+  var notifiche = bloccoEditor("Invio e notifiche", "EmailJS e webhook", false);
   configModulo.notifica.emailjs = configModulo.notifica.emailjs || {};
   var emailjs = configModulo.notifica.emailjs;
   aggiungiCampi(notifiche.__corpo, [
@@ -1438,9 +1433,6 @@ function disegnaEditorModulo() {
     ["notifica.emailjs.publicKey", "EmailJS · Chiave pubblica", emailjs.publicKey, "text",
       "Account EmailJS → General → Public Key.",
       function (v) { emailjs.publicKey = v.trim(); aggiornaNotaInvio(); }],
-    ["notifica.formspree", "Endpoint Formspree (riserva)", configModulo.notifica.formspree, "url",
-      "Usato se EmailJS non è configurato o non risponde. Es. https://formspree.io/f/xyewdvda",
-      function (v) { configModulo.notifica.formspree = v.trim(); aggiornaNotaInvio(); disegnaBarraModulo(); }],
     ["notifica.webhook", "Webhook notifica (facoltativo)", configModulo.notifica.webhook, "url",
       "URL che riceve un JSON a ogni richiesta (Zapier, Make, ecc.)."]
   ]);
@@ -1452,7 +1444,7 @@ function disegnaEditorModulo() {
     "Usa EmailJS per inviare le richieste",
     emailjs.attivo !== false,
     function (v) { emailjs.attivo = v; aggiornaNotaInvio(); disegnaBarraModulo(); },
-    "Se disattivato o non configurato si usa Formspree."
+    "Unico canale di invio: senza Service ID, Template ID e chiave pubblica l'email non parte (la richiesta resta in archivio)."
   ));
   notifiche.__corpo.appendChild(interruttoreEditor(
     "Invia email di conferma al cliente",

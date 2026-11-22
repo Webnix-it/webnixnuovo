@@ -216,16 +216,17 @@ Se le regole Storage non sono pubblicate, la richiesta viene salvata
 comunque e la dashboard mostra gli allegati come "file non caricato".
 
 ------------------------------------------------------------
-7) NOTIFICHE EMAIL (EMAILJS E FORMSPREE)
+7) NOTIFICHE EMAIL (EMAILJS)
 ------------------------------------------------------------
-Il modulo invia ogni richiesta per email all'amministratore. Il canale
-principale è EmailJS, configurato in
+Il modulo invia ogni richiesta per email all'amministratore usando
+solo EmailJS, configurato in
 "Modulo richiesta bozza" → "Invio e notifiche":
   - EmailJS · Service ID   (Email Services, es. service_abc123)
   - EmailJS · Template ID  (predefinito: template_oafiwle)
   - EmailJS · Chiave pubblica
-Se EmailJS non è configurato o la chiamata fallisce, la stessa email
-parte da Formspree (https://formspree.io/f/xyewdvda).
+Non esiste un canale di riserva: se Service ID, Template ID o chiave
+pubblica mancano, l'email non parte e la richiesta resta archiviata in
+Firestore (visibile nella dashboard).
 
 Parametri disponibili nel template EmailJS:
   {{messaggio}}  testo completo e ordinato della richiesta
@@ -242,12 +243,11 @@ rifiuta la chiamata.
 
 Ogni email contiene nome, email (rispondi direttamente al cliente),
 attività, budget, riferimento, pagina di provenienza, consensi e le
-risposte raggruppate per step. Il logo caricato dal cliente è un link
-a Firebase Storage: per aprirlo serve l'accesso admin.
+risposte raggruppate per step.
 
 L'invio email è indipendente dal salvataggio in Firestore: se il
 database non risponde l'email parte comunque (e viceversa la richiesta
-resta archiviata anche se nessun canale email risponde).
+resta archiviata anche se EmailJS non risponde).
 
 In alternativa si può usare il campo "Webhook notifica" con un URL di
 Zapier, Make, n8n o una Cloud Function che riceve lo stesso JSON.
