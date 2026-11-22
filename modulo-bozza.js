@@ -1141,10 +1141,15 @@
         template_params: parametri
       })
     }).then(function (res) {
-      if (!res.ok) throw new Error("HTTP " + res.status);
-      return true;
+      if (res.ok) return true;
+      /* EmailJS risponde in testo semplice: il motivo (servizio da
+         riconnettere, template sbagliato, origine non autorizzata)
+         finisce in console, cosí si capisce subito cosa sistemare. */
+      return res.text().then(function (motivo) {
+        throw new Error("HTTP " + res.status + (motivo ? " — " + motivo.trim() : ""));
+      });
     }).catch(function (err) {
-      console.warn("[Webnix modulo] EmailJS non ha inviato", err);
+      console.warn("[Webnix modulo] EmailJS non ha inviato:", err && err.message ? err.message : err);
       return false;
     });
   }
