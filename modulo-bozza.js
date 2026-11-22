@@ -1128,6 +1128,9 @@
       messaggio: testoRichiesta(dati, true)
     };
 
+    /* unico canale di notifica: nessun invio verso altri servizi */
+    console.info("[Webnix modulo] Invio della richiesta tramite EmailJS", c.templateId);
+
     return fetch("https://api.emailjs.com/api/v1.0/email/send", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
