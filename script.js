@@ -866,13 +866,19 @@
   });
 })();
 
-/* ============ HERO: demo Google in loop (scheda + mappa 2D → 3D) ============
-   Una timeline lenta e continua, disegnata a ogni frame con
+/* ============ HERO: sequenza cinematografica in loop ============
+   Una sola storia, continua e lenta, disegnata a ogni frame con
    requestAnimationFrame (niente setTimeout in cascata e niente salti):
-   0,35s barra di ricerca · 1,25s si scrive "La Mia Attività" · 4,6s scheda
-   dell'attività · 6,6s mappa in 2D · 9,2s la mappa si inclina e diventa 3D ·
-   14,2s tutto sfuma · 15,8s si riparte. Le animazioni vere sono in CSS
-   (solo transform/opacity): qui si cambiano soltanto le classi delle fasi.
+   0,4s entra la barra di ricerca · 1,4s si scrive "la mia attività"
+   (165ms a lettera) · 4,65s si preme la ricerca · 5,4s compare la scheda
+   Google un elemento alla volta · 11,8s la scheda si fa da parte e la mappa
+   2D prende la scena con il pin che scende · 16,2s la mappa si inclina e gli
+   edifici si alzano · 20,8s la telecamera si avvicina all'attività · 25,8s il
+   locale prende vita con la vetrina illuminata e il pin che diventa etichetta
+   · 27,4s la telecamera gira lentamente attorno alla facciata · 34,6s tutto
+   sfuma · 36,6s si riparte.
+   Le animazioni sono in CSS (solo transform/opacity): qui si cambiano soltanto
+   le classi delle fasi su #scena-hero.
    Il ciclo gira solo mentre l'hero è nello schermo: fuori vista il frame loop
    viene fermato (niente CPU sprecata scorrendo il resto della pagina) e, quando
    l'hero torna visibile, la demo riparte da capo. */
@@ -882,17 +888,21 @@
   var testo = document.getElementById("hero-testo");
   if (!pannello || !scena || !testo) return;
 
-  var FRASE = "La Mia Attività";
-  var INIZIO_SCRITTURA = 1250;
-  var PER_LETTERA = 135;
-  var RIAVVIO = 15800;
+  var FRASE = "la mia attività";
+  var INIZIO_SCRITTURA = 1400;
+  var PER_LETTERA = 165;
+  var RIAVVIO = 36600;
 
   var FASI = [
-    [350, "fase-barra"],
-    [4600, "fase-scheda"],
-    [6600, "fase-mappa"],
-    [9200, "fase-3d"],
-    [14200, "fase-fine"]
+    [400, "fase-barra"],
+    [4650, "fase-trova"],
+    [5400, "fase-scheda"],
+    [11800, "fase-mappa"],
+    [16200, "fase-3d"],
+    [20800, "fase-zoom"],
+    [25800, "fase-negozio"],
+    [27400, "fase-giro"],
+    [34600, "fase-fine"]
   ];
 
   var ultimo = -1;
@@ -901,13 +911,22 @@
   var prec = 0;
   var inCorso = false;
 
+  /* ritorno allo stato iniziale senza animare all'indietro */
   function azzera() {
+    scena.classList.add("senza-transizioni");
     for (var i = 0; i < FASI.length; i++) {
       scena.classList.remove(FASI[i][1]);
       fatte[i] = false;
     }
+    scena.classList.remove("fase-statica");
     testo.textContent = "";
     ultimo = -1;
+    void scena.offsetWidth;
+    window.requestAnimationFrame(function () {
+      window.requestAnimationFrame(function () {
+        scena.classList.remove("senza-transizioni");
+      });
+    });
   }
 
   function frame(ora) {
@@ -956,11 +975,12 @@
 
   azzera();
 
-  /* con "movimento ridotto" attivo la demo resta ferma e leggibile */
+  /* con "movimento ridotto" attivo la demo resta ferma su un fotogramma
+     completo (scheda + mappa 2D + pin), senza animazioni */
   var ridotto = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   if (ridotto) {
     testo.textContent = FRASE;
-    for (var k = 0; k < FASI.length - 1; k++) scena.classList.add(FASI[k][1]);
+    scena.classList.add("fase-statica");
     return;
   }
 
@@ -977,6 +997,7 @@
     avvia();
   }
 })();
+
 
 /* ============ SEZIONE PROBLEMA: animazione automatica dei fotogrammi ============
    Gli 80 fotogrammi (SVG) si susseguono da soli quando il titolo della sezione
