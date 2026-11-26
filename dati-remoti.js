@@ -622,6 +622,24 @@
   /* ============================================================
      PACCHETTI (pagina Servizi)
      ============================================================ */
+  /* anteprima immagine impostata dalla dashboard: se il campo è vuoto
+     la card resta com'era, senza immagine */
+  function anteprimaPacchetto(p) {
+    var src = typeof p.img === "string" ? p.img.trim() : "";
+    if (!src) return null;
+
+    var figura = document.createElement("figure");
+    figura.className = "pacchetto-anteprima";
+
+    var img = document.createElement("img");
+    img.src = src;
+    img.alt = "Anteprima " + (p.name || "pacchetto");
+    img.loading = "lazy";
+    figura.appendChild(img);
+
+    return figura;
+  }
+
   function disegnaPacchetti(voci) {
     var griglia = document.getElementById("griglia-lavori");
     if (!griglia || !voci.length) return;
@@ -634,6 +652,9 @@
       card.className = "card-lavoro";
       /* il nome del pacchetto viaggia con il click: il modulo lo mostra e lo invia */
       card.setAttribute("data-pacchetto", p.name || "");
+
+      var anteprima = anteprimaPacchetto(p);
+      if (anteprima) card.appendChild(anteprima);
 
       var titolo = document.createElement("h3");
       titolo.textContent = p.name || "";
@@ -685,6 +706,9 @@
       card.setAttribute("data-pacchetto", p.name || "");
       card.setAttribute("reveal", "");
       card.setAttribute("delay", String((i % 3) + 1));
+
+      var anteprima = anteprimaPacchetto(p);
+      if (anteprima) card.appendChild(anteprima);
 
       var titolo = document.createElement("h3");
       titolo.textContent = p.name || "";

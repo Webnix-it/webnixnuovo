@@ -211,6 +211,7 @@ var SEZIONI = {
       { chiave: "price", etichetta: "Prezzo", tipo: "text", placeholder: "Es. da 299 €" },
       { chiave: "cta", etichetta: "Testo del bottone", tipo: "text", placeholder: "Richiedi un preventivo" },
       { chiave: "link", etichetta: "Link del bottone (facoltativo)", tipo: "url", placeholder: "Vuoto = link WhatsApp di base" },
+      { chiave: "img", etichetta: "Immagine di anteprima (URL o percorso)", tipo: "text", placeholder: "assets/pacchetti/sito-web.jpg", aiuto: "Compare sopra il testo della card, sia in home sia nella pagina Servizi. Vuoto = card senza immagine." },
       { chiave: "mostraHome", etichetta: "Mostra in home", tipo: "toggle", valore: false, aiuto: "Se attivo, il pacchetto compare tra i servizi della home." },
       { chiave: "description", etichetta: "Descrizione", tipo: "textarea", largo: true }
     ],
@@ -221,7 +222,8 @@ var SEZIONI = {
       var parti = [d.link ? "Bottone: " + (d.cta || "Apri") + " → " + d.link : "Bottone: link WhatsApp di base"];
       if (d.mostraHome === true || d.mostraHome === "true") parti.push("Visibile in home");
       return parti.join(" · ");
-    }
+    },
+    immagine: function (d) { return d.img || ""; }
   },
 
   faq: {
