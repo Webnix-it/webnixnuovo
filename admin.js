@@ -211,7 +211,8 @@ var SEZIONI = {
       { chiave: "price", etichetta: "Prezzo", tipo: "text", placeholder: "Es. da 299 €" },
       { chiave: "cta", etichetta: "Testo del bottone", tipo: "text", placeholder: "Richiedi un preventivo" },
       { chiave: "link", etichetta: "Link del bottone (facoltativo)", tipo: "url", placeholder: "Vuoto = link WhatsApp di base" },
-      { chiave: "img", etichetta: "Immagine di anteprima (URL o percorso)", tipo: "text", placeholder: "assets/pacchetti/sito-web.jpg", aiuto: "Compare sopra il testo della card, sia in home sia nella pagina Servizi. Vuoto = card senza immagine." },
+      { chiave: "img", etichetta: "Immagine di anteprima principale (URL o percorso)", tipo: "text", placeholder: "assets/pacchetti/sito-web.jpg", aiuto: "Compare sopra il testo della card, sia in home sia nella pagina Servizi. Vuoto = card senza immagine." },
+      { chiave: "imgs", etichetta: "Altre immagini di anteprima (una per riga)", tipo: "textarea", largo: true, placeholder: "assets/pacchetti/sito-web-2.jpg\nassets/pacchetti/sito-web-3.jpg", aiuto: "Ogni riga è un'immagine in più: si vedono cliccando l'anteprima della card, nello stesso popup del portfolio. La card continua a mostrare l'immagine principale." },
       { chiave: "mostraHome", etichetta: "Mostra in home", tipo: "toggle", valore: false, aiuto: "Se attivo, il pacchetto compare tra i servizi della home." },
       { chiave: "description", etichetta: "Descrizione", tipo: "textarea", largo: true }
     ],
@@ -223,7 +224,14 @@ var SEZIONI = {
       if (d.mostraHome === true || d.mostraHome === "true") parti.push("Visibile in home");
       return parti.join(" · ");
     },
-    immagine: function (d) { return d.img || ""; }
+    immagine: function (d) {
+      if (d.img) return d.img;
+      var righe = String(d.imgs || "").split(/\r?\n/);
+      for (var i = 0; i < righe.length; i++) {
+        if (righe[i].trim()) return righe[i].trim();
+      }
+      return "";
+    }
   },
 
   faq: {

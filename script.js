@@ -1524,26 +1524,52 @@
   var fuocoPrecedente = null;
   var inChiusura = false;
 
-  /* colonna di miniature a destra, costruita dai lavori in config.js */
-  if (galleria && cfg && cfg.portfolio) {
+  /* voci della galleria del portfolio: da config.js se c'è, altrimenti
+     dalle miniature già scritte nell'HTML della pagina */
+  var vociPortfolio = [];
+  if (galleria) {
+    if (cfg && cfg.portfolio && cfg.portfolio.length) {
+      cfg.portfolio.forEach(function (p) {
+        if (p.img) vociPortfolio.push({ img: p.img, titolo: p.title || '' });
+      });
+    } else {
+      Array.prototype.forEach.call(galleria.querySelectorAll('.popup-miniatura'), function (b) {
+        vociPortfolio.push({
+          img: b.getAttribute('data-immagine') || '',
+          titolo: b.getAttribute('data-didascalia') || ''
+        });
+      });
+    }
+  }
+
+  /* (ri)costruisce la colonna di miniature a destra nel popup */
+  function disegnaGalleria(voci) {
+    if (!galleria) return;
     galleria.innerHTML = '';
-    cfg.portfolio.forEach(function (p) {
+    miniature = [];
+    (voci || []).forEach(function (v) {
+      if (!v || !v.img) return;
       var b = document.createElement('button');
       b.type = 'button';
       b.className = 'popup-miniatura';
-      b.setAttribute('data-immagine', p.img);
-      b.setAttribute('data-didascalia', p.title);
-      b.setAttribute('aria-label', 'Vedi ' + p.title);
+      b.setAttribute('data-immagine', v.img);
+      b.setAttribute('data-didascalia', v.titolo || '');
+      b.setAttribute('aria-label', 'Vedi ' + (v.titolo || 'l\'anteprima'));
       var img = document.createElement('img');
-      img.src = p.img;
-      img.alt = 'Anteprima ' + p.title;
+      img.src = v.img;
+      img.alt = 'Anteprima ' + (v.titolo || '');
       img.loading = 'lazy';
       b.appendChild(img);
-      b.addEventListener('click', function () { seleziona(p.img, p.title); });
+      b.addEventListener('click', function () { seleziona(v.img, v.titolo); });
       galleria.appendChild(b);
+      miniature.push(b);
     });
-    miniature = Array.prototype.slice.call(galleria.querySelectorAll('.popup-miniatura'));
   }
+
+  disegnaGalleria(vociPortfolio);
+
+  /* true quando la galleria mostra le foto di un pacchetto */
+  var galleriaEsterna = false;
 
   function seleziona(src, testo) {
     if (!immagine || !src) return;
@@ -1556,7 +1582,16 @@
     });
   }
 
-  function apri(src, testo) {
+  /* voci = galleria alternativa (le foto di un pacchetto); senza voci si
+     torna alla galleria del portfolio */
+  function apri(src, testo, voci) {
+    if (voci && voci.length) {
+      disegnaGalleria(voci);
+      galleriaEsterna = true;
+    } else if (galleriaEsterna) {
+      disegnaGalleria(vociPortfolio);
+      galleriaEsterna = false;
+    }
     fuocoPrecedente = document.activeElement;
     seleziona(src, testo);
     popup.classList.remove('chiusura');
@@ -1569,6 +1604,12 @@
   /* apertura dall'esterno (miniature generate da dati-remoti.js) */
   window.__webnixApriAnteprima = apri;
 
+  /* apertura con la galleria di un pacchetto: stesse foto in anteprima */
+  window.__webnixApriGalleriaPacchetto = function (voci, titolo) {
+    if (!voci || !voci.length || !voci[0].img) return;
+    apri(voci[0].img, titolo || voci[0].titolo, voci);
+  };
+
   function chiudi() {
     if (popup.hidden || inChiusura) return;
     inChiusura = true;
@@ -1578,6 +1619,10 @@
       popup.hidden = true;
       popup.classList.remove('chiusura');
       inChiusura = false;
+      if (galleriaEsterna) {
+        disegnaGalleria(vociPortfolio);
+        galleriaEsterna = false;
+      }
       if (fuocoPrecedente && typeof fuocoPrecedente.focus === 'function') fuocoPrecedente.focus();
     }, 300);
   }
@@ -1604,6 +1649,29 @@
       if (!card) return;
       e.preventDefault();
       apriDa(card);
+    });
+  }
+
+  /* card statiche dei pacchetti (servizi.html): il click sull'anteprima
+     apre il popup con tutte le immagini della griglia */
+  var grigliaPacchetti = document.getElementById('griglia-lavori');
+  if (grigliaPacchetti) {
+    grigliaPacchetti.addEventListener('click', function (e) {
+      var link = e.target.closest ? e.target.closest('.anteprima-scorrimento') : null;
+      if (!link) return;
+      e.preventDefault();
+      var carte = Array.prototype.slice.call(grigliaPacchetti.querySelectorAll('.anteprima-scorrimento'));
+      var voci = carte.map(function (a) {
+        var img = a.querySelector('img');
+        var card = a.closest('.card-lavoro');
+        return {
+          img: img ? img.getAttribute('src') || '' : '',
+          titolo: card ? card.getAttribute('data-pacchetto') || '' : ''
+        };
+      });
+      var scelta = voci[carte.indexOf(link)];
+      if (!scelta || !scelta.img) return;
+      apri(scelta.img, scelta.titolo, voci.filter(function (v) { return v.img; }));
     });
   }
 

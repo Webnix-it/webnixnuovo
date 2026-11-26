@@ -3857,20 +3857,72 @@ body:has(#sezione-faq) { background: var(--sfondo); }
 .card-lavoro p { color: var(--testo-3); font-size: .9rem; line-height: 1.5; margin: 0 0 16px; }
 
 /* anteprima immagine del pacchetto (impostata dalla dashboard):
-   a filo con il bordo della card, targhetta del titolo sopra */
+   a filo con il bordo della card, targhetta del titolo sopra.
+   È un bottone: il click apre il popup delle anteprime. */
 .pacchetto-anteprima {
+  appearance: none;
+  position: relative;
+  display: block;
+  width: auto;
   margin: -28px -16px 16px;
+  padding: 0;
   aspect-ratio: 16 / 10;
+  border: 0;
+  border-bottom: 1px solid rgba(255, 255, 255, .07);
   border-radius: 15px 15px 0 0;
   overflow: hidden;
   background: #0b0d13;
-  border-bottom: 1px solid rgba(255, 255, 255, .07);
+  cursor: zoom-in;
+  font: inherit;
+  color: inherit;
 }
 .pacchetto-anteprima img {
   width: 100%; height: 100%; object-fit: cover; display: block;
   transition: transform .5s ease;
 }
 .card-lavoro:hover .pacchetto-anteprima img { transform: scale(1.04); }
+
+/* ombra che sale dal basso verso l'alto al passaggio del mouse */
+.pacchetto-anteprima-ombra {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top,
+    rgba(4, 7, 12, .94) 0%,
+    rgba(4, 7, 12, .62) 34%,
+    rgba(4, 7, 12, 0) 78%);
+  transform: translateY(100%);
+  opacity: 0;
+  pointer-events: none;
+  transition: transform .5s cubic-bezier(.22, 1, .36, 1), opacity .5s ease;
+}
+.pacchetto-anteprima-testo {
+  position: absolute;
+  left: 16px; right: 16px; bottom: 14px;
+  z-index: 1;
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  color: #fff;
+  font-size: .74rem; font-weight: 800; letter-spacing: .14em; text-transform: uppercase;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, .55);
+  transform: translateY(140%);
+  opacity: 0;
+  pointer-events: none;
+  transition: transform .5s cubic-bezier(.22, 1, .36, 1), opacity .35s ease;
+}
+.pacchetto-anteprima-testo i { font-size: .8rem; color: #40c9ff; }
+.pacchetto-anteprima:hover .pacchetto-anteprima-ombra,
+.pacchetto-anteprima:focus-visible .pacchetto-anteprima-ombra { transform: translateY(0); opacity: 1; }
+.pacchetto-anteprima:hover .pacchetto-anteprima-testo,
+.pacchetto-anteprima:focus-visible .pacchetto-anteprima-testo { transform: translateY(0); opacity: 1; }
+
+/* su touch l'ombra e la scritta restano visibili: si capisce che si può toccare */
+@media (hover: none) {
+  .pacchetto-anteprima-ombra { transform: translateY(0); opacity: .9; }
+  .pacchetto-anteprima-testo { transform: translateY(0); opacity: 1; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .pacchetto-anteprima-ombra,
+  .pacchetto-anteprima-testo { transition: none; }
+}
 
 .cta-scorrimento {
   margin-top: auto;

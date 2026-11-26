@@ -622,22 +622,68 @@
   /* ============================================================
      PACCHETTI (pagina Servizi)
      ============================================================ */
-  /* anteprima immagine impostata dalla dashboard: se il campo è vuoto
-     la card resta com'era, senza immagine */
-  function anteprimaPacchetto(p) {
-    var src = typeof p.img === "string" ? p.img.trim() : "";
-    if (!src) return null;
+  /* tutte le anteprime del pacchetto: la principale (img) più le altre
+     indicate in dashboard, una per riga nel campo imgs */
+  function immaginiPacchetto(p) {
+    var elenco = [];
+    var principale = typeof p.img === "string" ? p.img.trim() : "";
+    if (principale) elenco.push(principale);
 
-    var figura = document.createElement("figure");
-    figura.className = "pacchetto-anteprima";
+    String(typeof p.imgs === "string" ? p.imgs : "").split(/\r?\n/).forEach(function (riga) {
+      var src = riga.trim();
+      if (src && elenco.indexOf(src) === -1) elenco.push(src);
+    });
+
+    return elenco;
+  }
+
+  /* anteprima immagine impostata dalla dashboard: se non c'è nessuna
+     immagine la card resta com'era. Al click si apre lo stesso popup
+     del portfolio, con tutte le anteprime del pacchetto */
+  function anteprimaPacchetto(p) {
+    var elenco = immaginiPacchetto(p);
+    if (!elenco.length) return null;
+
+    var bottone = document.createElement("button");
+    bottone.type = "button";
+    bottone.className = "pacchetto-anteprima";
+    bottone.setAttribute("aria-label", "Apri l'anteprima di " + (p.name || "questo pacchetto"));
+    bottone.setAttribute("aria-haspopup", "dialog");
 
     var img = document.createElement("img");
-    img.src = src;
+    img.src = elenco[0];
     img.alt = "Anteprima " + (p.name || "pacchetto");
     img.loading = "lazy";
-    figura.appendChild(img);
+    bottone.appendChild(img);
 
-    return figura;
+    /* ombra che sale dal basso + scritta al passaggio del mouse */
+    var ombra = document.createElement("span");
+    ombra.className = "pacchetto-anteprima-ombra";
+    ombra.setAttribute("aria-hidden", "true");
+    bottone.appendChild(ombra);
+
+    var scritta = document.createElement("span");
+    scritta.className = "pacchetto-anteprima-testo";
+    var icona = document.createElement("i");
+    icona.className = "fa-solid fa-expand";
+    icona.setAttribute("aria-hidden", "true");
+    scritta.appendChild(icona);
+    scritta.appendChild(document.createTextNode("Apri l'anteprima"));
+    bottone.appendChild(scritta);
+
+    bottone.addEventListener("click", function () {
+      if (typeof window.__webnixApriGalleriaPacchetto !== "function") return;
+      var voci = elenco.map(function (src, i) {
+        var nome = p.name || "Pacchetto";
+        return {
+          img: src,
+          titolo: elenco.length > 1 ? nome + " — " + (i + 1) + " di " + elenco.length : nome
+        };
+      });
+      window.__webnixApriGalleriaPacchetto(voci, voci[0].titolo);
+    });
+
+    return bottone;
   }
 
   function disegnaPacchetti(voci) {
