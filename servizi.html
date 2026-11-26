@@ -16,7 +16,7 @@
   <meta property="og:url" content="https://webnixit.netlify.app/servizi.html">
   <link rel="icon" type="image/svg+xml" href="favicon.svg">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
-  <link rel="stylesheet" href="style.css?v=20261126-1">
+  <link rel="stylesheet" href="style.css?v=20261126-2">
   <link rel="stylesheet" href="modulo-bozza.css?v=20261125-9">
 </head>
 <body>
@@ -196,45 +196,6 @@
         </div>
       </div>
 
-      <!-- POPUP ANTEPRIMA: immagine grande al centro + tutte le anteprime a destra -->
-      <div id="popup-lavori" hidden role="dialog" aria-modal="true" aria-label="Anteprima dei lavori">
-        <div class="popup-sfondo" data-chiudi-popup></div>
-        <div class="popup-pannello">
-          <button type="button" class="popup-chiudi" id="popup-chiudi" aria-label="Chiudi l'anteprima">
-            <i class="fa-solid fa-xmark" aria-hidden="true"></i>
-          </button>
-          <div class="popup-principale">
-            <img id="popup-immagine" src="assets/portfolio/sito-vesuvio.png" alt="Anteprima del progetto selezionato">
-            <p id="popup-didascalia" class="popup-didascalia">Sito web — Vesuvio</p>
-          </div>
-          <div class="popup-lato">
-            <p class="popup-lato-titolo">Tutte le anteprime</p>
-            <div class="popup-galleria">
-              <button type="button" class="popup-miniatura" data-immagine="assets/portfolio/sito-vesuvio.png" data-didascalia="Sito web — Vesuvio" aria-label="Vedi Sito web — Vesuvio">
-                <img src="assets/portfolio/sito-vesuvio.png" alt="Anteprima Sito web — Vesuvio" loading="lazy">
-              </button>
-              <button type="button" class="popup-miniatura" data-immagine="assets/portfolio/sito-barber.png" data-didascalia="Sito web — Barber" aria-label="Vedi Sito web — Barber">
-                <img src="assets/portfolio/sito-barber.png" alt="Anteprima Sito web — Barber" loading="lazy">
-              </button>
-              <button type="button" class="popup-miniatura" data-immagine="assets/portfolio/sito-fisio.png" data-didascalia="Sito web — Studio di fisioterapia" aria-label="Vedi Sito web — Studio di fisioterapia">
-                <img src="assets/portfolio/sito-fisio.png" alt="Anteprima Sito web — Studio di fisioterapia" loading="lazy">
-              </button>
-              <button type="button" class="popup-miniatura" data-immagine="assets/portfolio/grafica-foodtruck.png" data-didascalia="Grafica — Food truck" aria-label="Vedi Grafica — Food truck">
-                <img src="assets/portfolio/grafica-foodtruck.png" alt="Anteprima Grafica — Food truck" loading="lazy">
-              </button>
-              <button type="button" class="popup-miniatura" data-immagine="assets/portfolio/logo-atelier.png" data-didascalia="Logo — Atelier" aria-label="Vedi Logo — Atelier">
-                <img src="assets/portfolio/logo-atelier.png" alt="Anteprima Logo — Atelier" loading="lazy">
-              </button>
-              <button type="button" class="popup-miniatura" data-immagine="assets/portfolio/logo-greenbox.png" data-didascalia="Logo — Greenbox" aria-label="Vedi Logo — Greenbox">
-                <img src="assets/portfolio/logo-greenbox.png" alt="Anteprima Logo — Greenbox" loading="lazy">
-              </button>
-              <button type="button" class="popup-miniatura" data-immagine="assets/portfolio/grafica-palefit.png" data-didascalia="Grafica — Palefit" aria-label="Vedi Grafica — Palefit">
-                <img src="assets/portfolio/grafica-palefit.png" alt="Anteprima Grafica — Palefit" loading="lazy">
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
     </section>
 
     <!-- ============ COME FUNZIONA — stesso stile dell'index ============ -->
@@ -473,11 +434,51 @@
         </footer>
   </main>
 
+      <!-- POPUP ANTEPRIMA: immagine grande al centro + tutte le anteprime a destra -->
+      <div id="popup-lavori" hidden role="dialog" aria-modal="true" aria-label="Anteprima dei lavori">
+        <div class="popup-sfondo" data-chiudi-popup></div>
+        <div class="popup-pannello">
+          <button type="button" class="popup-chiudi" id="popup-chiudi" aria-label="Chiudi l'anteprima">
+            <i class="fa-solid fa-xmark" aria-hidden="true"></i>
+          </button>
+          <div class="popup-principale">
+            <img id="popup-immagine" src="assets/portfolio/sito-vesuvio.png" alt="Anteprima del progetto selezionato">
+            <p id="popup-didascalia" class="popup-didascalia">Sito web — Vesuvio</p>
+          </div>
+          <div class="popup-lato">
+            <p class="popup-lato-titolo">Tutte le anteprime</p>
+            <div class="popup-galleria">
+              <button type="button" class="popup-miniatura" data-immagine="assets/portfolio/sito-vesuvio.png" data-didascalia="Sito web — Vesuvio" aria-label="Vedi Sito web — Vesuvio">
+                <img src="assets/portfolio/sito-vesuvio.png" alt="Anteprima Sito web — Vesuvio" loading="lazy">
+              </button>
+              <button type="button" class="popup-miniatura" data-immagine="assets/portfolio/sito-barber.png" data-didascalia="Sito web — Barber" aria-label="Vedi Sito web — Barber">
+                <img src="assets/portfolio/sito-barber.png" alt="Anteprima Sito web — Barber" loading="lazy">
+              </button>
+              <button type="button" class="popup-miniatura" data-immagine="assets/portfolio/sito-fisio.png" data-didascalia="Sito web — Studio di fisioterapia" aria-label="Vedi Sito web — Studio di fisioterapia">
+                <img src="assets/portfolio/sito-fisio.png" alt="Anteprima Sito web — Studio di fisioterapia" loading="lazy">
+              </button>
+              <button type="button" class="popup-miniatura" data-immagine="assets/portfolio/grafica-foodtruck.png" data-didascalia="Grafica — Food truck" aria-label="Vedi Grafica — Food truck">
+                <img src="assets/portfolio/grafica-foodtruck.png" alt="Anteprima Grafica — Food truck" loading="lazy">
+              </button>
+              <button type="button" class="popup-miniatura" data-immagine="assets/portfolio/logo-atelier.png" data-didascalia="Logo — Atelier" aria-label="Vedi Logo — Atelier">
+                <img src="assets/portfolio/logo-atelier.png" alt="Anteprima Logo — Atelier" loading="lazy">
+              </button>
+              <button type="button" class="popup-miniatura" data-immagine="assets/portfolio/logo-greenbox.png" data-didascalia="Logo — Greenbox" aria-label="Vedi Logo — Greenbox">
+                <img src="assets/portfolio/logo-greenbox.png" alt="Anteprima Logo — Greenbox" loading="lazy">
+              </button>
+              <button type="button" class="popup-miniatura" data-immagine="assets/portfolio/grafica-palefit.png" data-didascalia="Grafica — Palefit" aria-label="Vedi Grafica — Palefit">
+                <img src="assets/portfolio/grafica-palefit.png" alt="Anteprima Grafica — Palefit" loading="lazy">
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
   <script src="config.js"></script>
   <script src="script.js?v=20261126-1"></script>
   <script src="firebase-config.js"></script>
   <script src="modulo-config.js?v=20261122-1"></script>
   <script src="modulo-bozza.js?v=20261125-5"></script>
-  <script src="dati-remoti.js?v=20261126-1"></script>
+  <script src="dati-remoti.js?v=20261126-2"></script>
 </body>
 </html>

@@ -2341,7 +2341,8 @@ details.domanda summary:hover {
 #portfolio .punto-portfolio { background: rgba(13, 17, 23, .22); }
 #portfolio .punto-portfolio:hover { background: rgba(13, 17, 23, .42); }
 #portfolio .card-portfolio { box-shadow: 0 12px 28px rgba(13, 17, 23, .12); }
-#portfolio #popup-lavori { color: var(--testo); }
+/* il popup vive fuori dalle sezioni: resta chiaro anche sopra il portfolio */
+#popup-lavori { color: var(--testo); }
 
 .card-portfolio[role="button"] { cursor: pointer; }
 .card-portfolio[role="button"]:focus-visible { outline: 2px solid var(--azione); outline-offset: 3px; }

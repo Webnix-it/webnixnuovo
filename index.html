@@ -23,7 +23,7 @@
   <meta name="twitter:title" content="Webnix Digital Agency">
   <meta name="twitter:description" content="Siti web, brand identity e visibilità online per la tua attività.">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
-  <link rel="stylesheet" href="style.css?v=20261126-1">
+  <link rel="stylesheet" href="style.css?v=20261126-2">
   <link rel="stylesheet" href="modulo-bozza.css?v=20261125-9">
 
   <!-- JSON-LD: Organization + WebSite/WebPage + BreadcrumbList (struttura per i sitelinks di Google) -->
@@ -341,23 +341,6 @@
         </button>
       </div>
 
-      <!-- POPUP ANTEPRIMA: lo stesso popup della pagina Servizi -->
-      <div id="popup-lavori" hidden role="dialog" aria-modal="true" aria-label="Anteprima dei lavori">
-        <div class="popup-sfondo" data-chiudi-popup></div>
-        <div class="popup-pannello">
-          <button type="button" class="popup-chiudi" id="popup-chiudi" aria-label="Chiudi l'anteprima">
-            <i class="fa-solid fa-xmark" aria-hidden="true"></i>
-          </button>
-          <div class="popup-principale">
-            <img id="popup-immagine" src="assets/portfolio/sito-vesuvio.png" alt="Anteprima del progetto selezionato">
-            <p id="popup-didascalia" class="popup-didascalia">Sito web — Vesuvio</p>
-          </div>
-          <div class="popup-lato">
-            <p class="popup-lato-titolo">Tutte le anteprime</p>
-            <div class="popup-galleria"><!-- miniature generate da config.js + script.js --></div>
-          </div>
-        </div>
-      </div>
     </section>
 
     <!-- ============ RECENSIONI (Firebase + fallback demo) ============ -->
@@ -772,11 +755,31 @@
         </footer>
   </main>
 
+  <!-- POPUP ANTEPRIMA: lo stesso popup della pagina Servizi. Sta fuori dalle
+       sezioni (che hanno transform per le animazioni reveal) così si apre
+       sempre al centro dello schermo, dove si è cliccato. -->
+  <div id="popup-lavori" hidden role="dialog" aria-modal="true" aria-label="Anteprima dei lavori">
+    <div class="popup-sfondo" data-chiudi-popup></div>
+    <div class="popup-pannello">
+      <button type="button" class="popup-chiudi" id="popup-chiudi" aria-label="Chiudi l'anteprima">
+        <i class="fa-solid fa-xmark" aria-hidden="true"></i>
+      </button>
+      <div class="popup-principale">
+        <img id="popup-immagine" src="assets/portfolio/sito-vesuvio.png" alt="Anteprima del progetto selezionato">
+        <p id="popup-didascalia" class="popup-didascalia">Sito web — Vesuvio</p>
+      </div>
+      <div class="popup-lato">
+        <p class="popup-lato-titolo">Tutte le anteprime</p>
+        <div class="popup-galleria"><!-- miniature generate da config.js + script.js --></div>
+      </div>
+    </div>
+  </div>
+
   <script src="config.js"></script>
   <script src="script.js?v=20261126-1"></script>
   <script src="firebase-config.js"></script>
   <script src="modulo-config.js?v=20261122-1"></script>
   <script src="modulo-bozza.js?v=20261125-5"></script>
-  <script src="dati-remoti.js?v=20261126-1"></script>
+  <script src="dati-remoti.js?v=20261126-2"></script>
 </body>
 </html>

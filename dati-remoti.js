@@ -594,7 +594,8 @@
       });
     }
 
-    var galleria = scena.querySelector("#popup-lavori .popup-galleria");
+    /* il popup sta fuori dalla sezione (si apre dove si è cliccato) */
+    var galleria = document.querySelector("#popup-lavori .popup-galleria");
     if (galleria) {
       galleria.innerHTML = "";
       scelti.forEach(function (p) {

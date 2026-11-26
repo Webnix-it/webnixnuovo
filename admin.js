@@ -212,7 +212,7 @@ var SEZIONI = {
       { chiave: "cta", etichetta: "Testo del bottone", tipo: "text", placeholder: "Richiedi un preventivo" },
       { chiave: "link", etichetta: "Link del bottone (facoltativo)", tipo: "url", placeholder: "Vuoto = link WhatsApp di base" },
       { chiave: "img", etichetta: "Immagine di anteprima principale (URL o percorso)", tipo: "text", placeholder: "assets/pacchetti/sito-web.jpg", aiuto: "Compare sopra il testo della card, sia in home sia nella pagina Servizi. Vuoto = card senza immagine." },
-      { chiave: "imgs", etichetta: "Altre immagini di anteprima (una per riga)", tipo: "textarea", largo: true, placeholder: "assets/pacchetti/sito-web-2.jpg\nassets/pacchetti/sito-web-3.jpg", aiuto: "Ogni riga è un'immagine in più: si vedono cliccando l'anteprima della card, nello stesso popup del portfolio. La card continua a mostrare l'immagine principale." },
+      { chiave: "imgs", etichetta: "Altre immagini di anteprima", tipo: "elenco", largo: true, placeholder: "assets/pacchetti/sito-web-2.jpg", aiuto: "Una riga per immagine: si vedono cliccando l'anteprima della card, nello stesso popup del portfolio. La card continua a mostrare l'immagine principale." },
       { chiave: "mostraHome", etichetta: "Mostra in home", tipo: "toggle", valore: false, aiuto: "Se attivo, il pacchetto compare tra i servizi della home." },
       { chiave: "description", etichetta: "Descrizione", tipo: "textarea", largo: true }
     ],
@@ -357,6 +357,98 @@ function creaInterruttore(c) {
   return contenitore;
 }
 
+/* Elenco di immagini: un input per riga, con il "+" per aggiungerne
+   altre. Il valore viaggia come stringa con una riga per immagine,
+   cos\u00ec Firestore e il sito continuano a leggerlo allo stesso modo. */
+function creaElenco(c) {
+  var contenitore = document.createElement("div");
+  contenitore.className = "campo-elenco";
+
+  var righe = document.createElement("div");
+  righe.className = "elenco-righe";
+  contenitore.appendChild(righe);
+
+  var nascosto = document.createElement("input");
+  nascosto.type = "hidden";
+  nascosto.name = c.chiave;
+  contenitore.appendChild(nascosto);
+
+  function aggiorna() {
+    var valori = [];
+    Array.prototype.forEach.call(righe.querySelectorAll(".elenco-riga input"), function (riga) {
+      var valore = String(riga.value || "").trim();
+      if (valore) valori.push(valore);
+    });
+    nascosto.value = valori.join("\n");
+  }
+
+  function creaRiga(valore) {
+    var riga = document.createElement("div");
+    riga.className = "elenco-riga";
+
+    var input = document.createElement("input");
+    input.type = "text";
+    input.value = valore || "";
+    if (c.placeholder) input.placeholder = c.placeholder;
+    input.setAttribute("aria-label", c.etichetta);
+    input.addEventListener("input", aggiorna);
+    riga.appendChild(input);
+
+    var rimuovi = document.createElement("button");
+    rimuovi.type = "button";
+    rimuovi.className = "elenco-rimuovi";
+    rimuovi.title = "Rimuovi questa immagine";
+    rimuovi.setAttribute("aria-label", "Rimuovi questa immagine");
+    var icona = document.createElement("i");
+    icona.className = "fa-solid fa-xmark";
+    icona.setAttribute("aria-hidden", "true");
+    rimuovi.appendChild(icona);
+    rimuovi.addEventListener("click", function () {
+      riga.remove();
+      if (!righe.querySelector(".elenco-riga")) righe.appendChild(creaRiga(""));
+      aggiorna();
+    });
+    riga.appendChild(rimuovi);
+
+    return riga;
+  }
+
+  function imposta(valore) {
+    righe.innerHTML = "";
+    String(valore === undefined || valore === null ? "" : valore)
+      .split(/\r?\n/)
+      .forEach(function (riga) {
+        if (riga.trim()) righe.appendChild(creaRiga(riga.trim()));
+      });
+    if (!righe.querySelector(".elenco-riga")) righe.appendChild(creaRiga(""));
+    aggiorna();
+  }
+
+  var aggiungi = document.createElement("button");
+  aggiungi.type = "button";
+  aggiungi.className = "elenco-aggiungi";
+  var piu = document.createElement("i");
+  piu.className = "fa-solid fa-plus";
+  piu.setAttribute("aria-hidden", "true");
+  aggiungi.appendChild(piu);
+  aggiungi.appendChild(document.createTextNode(" Aggiungi immagine"));
+  aggiungi.addEventListener("click", function () {
+    var riga = creaRiga("");
+    righe.appendChild(riga);
+    aggiorna();
+    var input = riga.querySelector("input");
+    if (input) input.focus();
+  });
+  contenitore.appendChild(aggiungi);
+
+  imposta(c.valore || "");
+
+  /* letti dal modulo (form.elements[chiave]) */
+  nascosto.imposta = imposta;
+  nascosto.aggiorna = aggiorna;
+  return contenitore;
+}
+
 function creaCampo(c) {
   var label = document.createElement("label");
   label.className = "campo" + (c.largo ? " campo-largo" : "");
@@ -370,6 +462,20 @@ function creaCampo(c) {
   if (c.tipo === "toggle") {
     label.classList.add("campo-toggle");
     label.appendChild(creaInterruttore(c));
+    return label;
+  }
+
+  if (c.tipo === "elenco") {
+    var titoloElenco = document.createElement("span");
+    titoloElenco.textContent = c.etichetta;
+    label.appendChild(titoloElenco);
+    label.appendChild(creaElenco(c));
+    if (c.aiuto) {
+      var aiutoElenco = document.createElement("small");
+      aiutoElenco.className = "campo-aiuto";
+      aiutoElenco.textContent = c.aiuto;
+      label.appendChild(aiutoElenco);
+    }
     return label;
   }
 
@@ -485,6 +591,9 @@ function creaForm(chiave) {
       var campo = form.elements[c.chiave];
       if (!campo) return;
       if (c.tipo === "toggle") campo.checked = Boolean(c.valore);
+      else if (c.tipo === "elenco") {
+        if (campo.imposta) campo.imposta(c.valore || "");
+      }
       else if (c.tipo === "date") campo.value = c.valore ? String(c.valore) : oggiISO();
       else if (c.valore !== undefined) campo.value = String(c.valore);
       if (campo.aggiornaAnteprima) campo.aggiornaAnteprima();
@@ -505,6 +614,7 @@ function creaForm(chiave) {
         dati[c.chiave] = Boolean(campo && campo.checked);
         return;
       }
+      if (c.tipo === "elenco" && campo && campo.aggiorna) campo.aggiorna();
       var valore = campo ? String(campo.value).trim() : "";
       if (c.tipo === "number" && valore !== "") valore = Number(valore);
       dati[c.chiave] = valore;
@@ -544,6 +654,10 @@ function creaForm(chiave) {
       var valore = dati[c.chiave];
       if (c.tipo === "toggle") {
         campo.checked = valore === true || valore === "true";
+        return;
+      }
+      if (c.tipo === "elenco") {
+        if (campo.imposta) campo.imposta(valore === undefined || valore === null ? "" : String(valore));
         return;
       }
       if (c.tipo === "date") {
