@@ -23,8 +23,8 @@
   <meta name="twitter:title" content="Webnix Digital Agency">
   <meta name="twitter:description" content="Siti web, brand identity e visibilità online per la tua attività.">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
-  <link rel="stylesheet" href="style.css?v=20261122-6">
-  <link rel="stylesheet" href="modulo-bozza.css?v=20261121-5">
+  <link rel="stylesheet" href="style.css?v=20261124-20">
+  <link rel="stylesheet" href="modulo-bozza.css?v=20261125-9">
 
   <!-- JSON-LD: Organization + WebSite/WebPage + BreadcrumbList (struttura per i sitelinks di Google) -->
   <script type="application/ld+json">
@@ -136,7 +136,10 @@
           <h1 id="titolo-hero" reveal>La tua attività non è su Google? I tuoi clienti ti stanno cercando, ma stanno trovando i tuoi <em>concorrenti</em>.</h1>
           <p id="sottotitolo-hero" reveal delay="1">Aiutiamo le nuove attività a ottenere una presenza digitale professionale, senza costi nascosti e senza la complessità di WordPress. <strong>Ottieni una bozza gratuita del tuo sito in 48 ore.</strong></p>
           <div id="fila-cta-hero" reveal delay="2">
-            <button id="bottone1" type="button" title="Paghi solo se ti piace">Richiedi la tua bozza</button>
+            <div class="cta-bozza-wrap">
+              <button id="bottone1" type="button" aria-describedby="tooltip-bozza">Richiedi la tua bozza</button>
+              <span class="tooltip-bozza" id="tooltip-bozza" role="tooltip">Paghi solo se ti piace</span>
+            </div>
             <button id="bottone2-hero" type="button" onclick="document.getElementById('sezione-processo').scrollIntoView({behavior:'smooth'})">
               <i class="fa-solid fa-play" aria-hidden="true"></i> Vedi come funziona
             </button>
@@ -191,7 +194,8 @@
 
     <!-- ============ 4. COME FUNZIONA — timeline orizzontale minimal senza card ============ -->
     <section id="sezione-processo" reveal>
-      <h1 id="titoloprocesso">Come <span class="accento-brand">Funziona</span></h1>
+      <h1 id="titoloprocesso" class="split-testo"><span class="parte-testo parte-sinistra">Come</span>
+        <span class="parte-testo parte-destra accento-brand">Funziona</span></h1>
       <p id="fraseprocesso">
         Un processo chiaro, senza rischi: bozza gratuita, solo se ti piace proseguiamo.
       </p>
@@ -284,124 +288,11 @@
           </ul>
         </div>
 
-                <div id="vetrina-cosa-facciamo" aria-hidden="true">
-          <div id="scena-cosa">
-
-            <!-- 1. barra di ricerca che digita da sola -->
-            <div id="cosa-ricerca" class="pezzo">
-              <svg class="cosa-lente" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" focusable="false">
-                <circle cx="10.5" cy="10.5" r="6.5"/><path d="m15.5 15.5 4.5 4.5"/>
-              </svg>
-              <span id="cosa-testo"></span><span id="cosa-caret"></span>
-            </div>
-
-            <!-- 2. risultato della ricerca: l'attività compare tra i risultati -->
-            <div id="cosa-risultato" class="pezzo">
-              <span class="cosa-ris-foto"></span>
-              <span class="cosa-ris-testi">
-                <strong>La Mia Attività</strong>
-                <span class="cosa-ris-voto"><em>4,9</em><i>★★★★★</i><b>(128)</b></span>
-                <small>Ristorante · <u>Aperto</u></small>
-              </span>
-              <span class="cosa-ris-badge">Maps</span>
-            </div>
-
-            <!-- 3. finestra del browser con il sito -->
-            <div id="cosa-browser" class="pezzo">
-              <div class="cosa-browser-barra">
-                <span class="cosa-pallini"><i></i><i></i><i></i></span>
-                <span class="cosa-addr">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" focusable="false">
-                    <rect x="4.5" y="10.5" width="15" height="9.5" rx="2.2"/><path d="M8.5 10.5V8a3.5 3.5 0 0 1 7 0v2.5"/>
-                  </svg>
-                  lamiaattivita.it
-                </span>
-              </div>
-              <div class="cosa-browser-pagina">
-                <div class="cosa-pag-top">
-                  <span class="cosa-pag-logo"></span>
-                  <span class="cosa-pag-nome">La Mia Attività</span>
-                  <span class="cosa-pag-nav"></span><span class="cosa-pag-nav"></span><span class="cosa-pag-nav"></span>
-                </div>
-                <div class="cosa-pag-hero">
-                  <div class="cosa-pag-testi">
-                    <span class="titolo"></span>
-                    <span class="titolo corto"></span>
-                    <span></span>
-                    <span class="corto"></span>
-                    <span class="cosa-pag-cta"></span>
-                  </div>
-                  <div class="cosa-pag-foto"></div>
-                </div>
-                <div class="cosa-pag-righe">
-                  <span><i></i></span><span><i></i></span><span><i></i></span>
-                </div>
-              </div>
-            </div>
-
-            <!-- 4. mappa con il pin che si posa -->
-            <div id="cosa-mappa" class="pezzo">
-              <svg class="cosa-mappa-disegno" viewBox="0 0 168 104" preserveAspectRatio="none" focusable="false">
-                <rect width="168" height="104" fill="#eef2f5"/>
-                <path d="M0 0h56v26H0z" fill="#e5eaef"/>
-                <path d="M118 74h50v30h-50z" fill="#e5eaef"/>
-                <path d="M104 0h40v20h-40z" fill="#e2ecdb"/>
-                <path d="M0 60h24v18H0z" fill="#dcebf8"/>
-                <g stroke="#e0e6ec" fill="none" stroke-width="10" stroke-linecap="round">
-                  <path d="M-8 78 44 70 94 80 176 64"/>
-                  <path d="M56 -8 64 42 56 112"/>
-                </g>
-                <g stroke="#fff" fill="none" stroke-width="8" stroke-linecap="round">
-                  <path d="M-8 78 44 70 94 80 176 64"/>
-                  <path d="M56 -8 64 42 56 112"/>
-                </g>
-                <g stroke="#fff" fill="none" stroke-width="5" stroke-linecap="round">
-                  <path d="M-8 32 52 28 104 38 176 26"/>
-                  <path d="M114 -8 106 46 118 112"/>
-                </g>
-                <path d="M120 46h20v16h-20z" fill="#e7ecf1"/>
-              </svg>
-              <span class="cosa-onda"></span>
-              <span id="cosa-pin">
-                <svg viewBox="0 0 32 42" focusable="false">
-                  <defs>
-                    <linearGradient id="cosa-pin-grad" x1="0" y1="1" x2="1" y2="0">
-                      <stop stop-color="#e81cff"/><stop offset="1" stop-color="#40c9ff"/>
-                    </linearGradient>
-                  </defs>
-                  <path d="M16 1C7.7 1 1 7.7 1 16c0 10.6 15 25 15 25s15-14.4 15-25C31 7.7 24.3 1 16 1Z" fill="url(#cosa-pin-grad)"/>
-                  <circle cx="16" cy="16" r="5.6" fill="#fff"/>
-                </svg>
-              </span>
-              <span class="cosa-eti">La Mia Attività</span>
-            </div>
-
-            <!-- 5. smartphone con lo stesso sito, versione responsive -->
-            <div id="cosa-telefono" class="pezzo">
-              <span class="cosa-tel-isola"></span>
-              <span class="cosa-tel-pagina">
-                <span class="cosa-tel-hero"></span>
-                <span class="cosa-tel-righe"><i></i><i></i><i class="corta"></i></span>
-                <span class="cosa-tel-cta"></span>
-              </span>
-            </div>
-
-            <!-- 6. scheda attività di Google con recensioni e azioni -->
-            <div id="cosa-scheda" class="pezzo">
-              <div class="cosa-sch-testa">
-                <strong>La Mia Attività</strong>
-                <span class="cosa-sch-voto">4,9 <em>★★★★★</em> <i>(128 recensioni)</i></span>
-                <span class="cosa-sch-cat">Ristorante · <b>Aperto</b> · $$</span>
-              </div>
-              <div class="cosa-sch-azioni">
-                <span><i class="fa-solid fa-phone" aria-hidden="true"></i>Chiama</span>
-                <span><i class="fa-solid fa-diamond-turn-right" aria-hidden="true"></i>Indicazioni</span>
-                <span><i class="fa-regular fa-bookmark" aria-hidden="true"></i>Salva</span>
-                <span><i class="fa-solid fa-globe" aria-hidden="true"></i>Sito web</span>
-              </div>
-            </div>
-
-          </div>
+                <div id="vetrina-cosa-facciamo">
+          <!-- video dimostrativo: parte solo quando la sezione è a schermo -->
+          <figure id="cornice-video-cosa">
+            <video id="video-cosa" src="vide3.webm" muted loop playsinline preload="metadata" aria-hidden="true"></video>
+          </figure>
         </div>
       </div>
     </section>
@@ -486,6 +377,25 @@
         <div id="griglia-recensioni"></div>
       </div>
       <p id="avviso-demo-recensioni"></p>
+      <!-- Link diretto alle recensioni su Google (sostituisci l'href con il
+           tuo link breve g.page / Google Business quando lo hai) -->
+      <div id="azione-recensioni" reveal>
+        <a class="bottone-recensione" href="https://www.google.com/search?q=Webnix+Digital+Agency+recensioni" target="_blank" rel="noopener">
+          <svg class="stella-recensione" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+            <defs>
+              <linearGradient id="grad-stella-recensione" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0%" stop-color="#fff2b0"/>
+                <stop offset="45%" stop-color="#ffd45e"/>
+                <stop offset="100%" stop-color="#ffa41b"/>
+              </linearGradient>
+            </defs>
+            <path d="M12 2.6l2.86 5.8 6.4.93-4.63 4.51 1.09 6.37L12 17.2l-5.72 3.01 1.09-6.37L2.74 9.33l6.4-.93L12 2.6z"
+                  fill="url(#grad-stella-recensione)"
+                  stroke="rgba(255,255,255,.7)" stroke-width=".7" stroke-linejoin="round"/>
+          </svg>
+          Lascia una recensione
+        </a>
+      </div>
     </section>
 
     <!-- ============ LA SOLUZIONE (Loro vs Noi) — sotto le recensioni ============ -->
@@ -502,6 +412,7 @@
             <div>
               <span id="etichetta-loro">Loro</span>
               <h3>WordPress / Wix / Shopify</h3>
+              <span class="targhetta-confronto rossa"><i class="fa-solid fa-arrow-trend-up" aria-hidden="true"></i>+300 € all'anno</span>
             </div>
           </div>
           <ul>
@@ -517,6 +428,7 @@
             <div>
               <span id="etichetta-noi">Noi</span>
               <h3>Codice pulito, veloce, tuo per sempre</h3>
+              <span class="targhetta-confronto verde"><i class="fa-solid fa-arrow-trend-down" aria-hidden="true"></i>90% di risparmio all'anno</span>
             </div>
           </div>
           <ul>
@@ -525,6 +437,88 @@
             <li><i class="fa-solid fa-check" aria-hidden="true"></i><span><strong>Proprietà totale del codice</strong>Te lo consegniamo: è tuo per sempre.</span></li>
             <li><i class="fa-solid fa-check" aria-hidden="true"></i><span><strong>Hosting statico su Netlify o GitHub Pages</strong>Robusto e quasi gratuito.</span></li>
           </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ FAQ IN HOME: intro + rullo delle domande ============ -->
+    <section id="faq-home" reveal>
+      <div class="fh-sezione">
+        <div class="fh-intro" reveal>
+          <span class="fh-etichetta">FAQ / Support</span>
+          <h2 class="fh-titolo">Hai qualche<br><span>domanda?</span></h2>
+          <p class="fh-testo">Abbiamo raccolto le risposte alle domande più frequenti. Scorri l'elenco e trova rapidamente quello che stai cercando.</p>
+        </div>
+
+        <div class="fh-corpo">
+          <div class="fh-finestra">
+            <div class="fh-pista">
+              <button type="button" class="fh-voce" data-risposta="Il costo dipende dalle caratteristiche e dalle funzionalità richieste. Ogni progetto viene personalizzato in base alle esigenze della tua attività.">
+                <span class="fh-badge">01</span>
+                <span class="fh-icona"><i class="fa-solid fa-tag" aria-hidden="true"></i></span>
+                <span class="fh-domanda">Quanto costa realizzare un sito web?</span>
+              </button>
+              <button type="button" class="fh-voce" data-risposta="I tempi dipendono dalla complessità del progetto e dai materiali disponibili. Prima di iniziare definiamo insieme le tempistiche.">
+                <span class="fh-badge">02</span>
+                <span class="fh-icona"><i class="fa-solid fa-truck" aria-hidden="true"></i></span>
+                <span class="fh-domanda">Quanto tempo serve per creare il sito?</span>
+              </button>
+              <button type="button" class="fh-voce" data-risposta="Assolutamente sì. Ogni sito viene progettato per adattarsi a smartphone, tablet e computer.">
+                <span class="fh-badge">03</span>
+                <span class="fh-icona"><i class="fa-solid fa-mobile-screen" aria-hidden="true"></i></span>
+                <span class="fh-domanda">Il sito sarà ottimizzato per smartphone?</span>
+              </button>
+              <button type="button" class="fh-voce" data-risposta="Sì, il progetto può essere aggiornato e ampliato nel tempo in base alle nuove esigenze della tua attività.">
+                <span class="fh-badge">04</span>
+                <span class="fh-icona"><i class="fa-solid fa-pen-to-square" aria-hidden="true"></i></span>
+                <span class="fh-domanda">Posso modificare il sito in futuro?</span>
+              </button>
+              <button type="button" class="fh-voce" data-risposta="Sì, possiamo aiutarti a creare o ottimizzare il profilo della tua attività su Google Maps.">
+                <span class="fh-badge">05</span>
+                <span class="fh-icona"><i class="fa-solid fa-location-dot" aria-hidden="true"></i></span>
+                <span class="fh-domanda">Vi occupate anche di Google Maps?</span>
+              </button>
+              <button type="button" class="fh-voce" data-risposta="Il sito viene realizzato con attenzione alla SEO tecnica di base, per facilitare l'indicizzazione sui motori di ricerca. Il posizionamento non è garantito.">
+                <span class="fh-badge">06</span>
+                <span class="fh-icona"><i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i></span>
+                <span class="fh-domanda">Il sito sarà visibile su Google?</span>
+              </button>
+              <button type="button" class="fh-voce" data-risposta="No, possiamo aiutarti anche nella scelta e nella configurazione del dominio.">
+                <span class="fh-badge">07</span>
+                <span class="fh-icona"><i class="fa-solid fa-globe" aria-hidden="true"></i></span>
+                <span class="fh-domanda">Devo avere già un dominio?</span>
+              </button>
+              <button type="button" class="fh-voce" data-risposta="Sì, realizziamo anche loghi, grafiche e contenuti visivi per dare alla tua attività un'identità riconoscibile.">
+                <span class="fh-badge">08</span>
+                <span class="fh-icona"><i class="fa-solid fa-palette" aria-hidden="true"></i></span>
+                <span class="fh-domanda">Realizzate anche loghi e grafiche?</span>
+              </button>
+              <button type="button" class="fh-voce" data-risposta="Sì, possiamo concordare eventuali interventi di assistenza e aggiornamento dopo la consegna.">
+                <span class="fh-badge">09</span>
+                <span class="fh-icona"><i class="fa-solid fa-headset" aria-hidden="true"></i></span>
+                <span class="fh-domanda">Offrite assistenza dopo la consegna?</span>
+              </button>
+              <button type="button" class="fh-voce" data-risposta="Puoi contattarci attraverso il modulo presente sul sito. Raccontaci la tua idea e prepareremo una proposta.">
+                <span class="fh-badge">10</span>
+                <span class="fh-icona"><i class="fa-solid fa-envelope" aria-hidden="true"></i></span>
+                <span class="fh-domanda">Come posso richiedere un preventivo?</span>
+              </button>
+            </div>
+          </div>
+
+          <div class="fh-rotella" role="slider" tabindex="0" aria-label="Scorri le domande frequenti" aria-valuemin="1" aria-valuemax="10" aria-valuenow="1">
+            <span class="fh-linea"></span>
+            <span class="fh-progresso"></span>
+            <span class="fh-pomello"></span>
+          </div>
+        </div>
+
+        <p class="fh-risposta" aria-live="polite"></p>
+
+        <div class="fh-controlli">
+          <span class="fh-contatore"><strong data-fh-numero>01</strong> / <span data-fh-totale>10</span></span>
+          <button type="button" class="fh-freccia" data-fh-prev aria-label="Domanda precedente">↑</button>
+          <button type="button" class="fh-freccia" data-fh-next aria-label="Domanda successiva">↓</button>
         </div>
       </div>
     </section>
@@ -554,7 +548,7 @@
             allowfullscreen></iframe>
         </div>
       </div>
-      <a id="link-whatsapp-hero" href="#" data-webnix-bozza="bozza" aria-haspopup="dialog" reveal delay="3">
+      <a id="link-whatsapp-hero" href="#" data-webnix-bozza="bozza" data-pacchetto="Sito Web" aria-haspopup="dialog" reveal delay="3">
         <button id="glow-button" type="button">
           <div id="glow-top"></div><div id="glow-bottom"></div>
           <div id="glow-left"></div><div id="glow-right"></div>
@@ -568,7 +562,7 @@
       <div class="contenuto-esplora">
         <div class="intestazione-esplora">
           <span class="eyebrow-esplora"><i class="fa-solid fa-compass" aria-hidden="true"></i> Esplora il sito</span>
-          <h2 id="titolo-esplora">Scegli la tua prossima mossa</h2>
+          <h2 id="titolo-esplora">Scegli la tua <span class="accento-brand">prossima mossa</span></h2>
           <p class="sottotitolo-esplora">Cinque strade, un solo obiettivo: far crescere la tua attività online. Apri quella che ti serve.</p>
         </div>
 
@@ -680,7 +674,7 @@
                   <li><a href="servizi.html#sezione-servizi-completi">Creazione Logo</a></li>
                   <li><a href="servizi.html#sezione-servizi-completi">Locandine</a></li>
                   <li><a href="servizi.html#sezione-servizi-completi">Rebranding Social</a></li>
-                  <li><a href="servizi.html#sezione-servizi-completi">Restyling Sito Web</a></li>
+                  <li><a class="link-restyling" href="servizi.html#sezione-servizi-completi">Restyling Sito Web</a></li>
                 </ul>
               </div>
 
@@ -779,10 +773,10 @@
   </main>
 
   <script src="config.js"></script>
-  <script src="script.js?v=20261122-1"></script>
+  <script src="script.js?v=20261124-13"></script>
   <script src="firebase-config.js"></script>
   <script src="modulo-config.js?v=20261122-1"></script>
-  <script src="modulo-bozza.js?v=20261122-3"></script>
-  <script src="dati-remoti.js?v=20261120-4"></script>
+  <script src="modulo-bozza.js?v=20261125-5"></script>
+  <script src="dati-remoti.js?v=20261124-5"></script>
 </body>
 </html>

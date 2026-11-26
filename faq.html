@@ -16,8 +16,8 @@
   <meta property="og:url" content="https://webnixit.netlify.app/faq.html">
   <link rel="icon" type="image/svg+xml" href="favicon.svg">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
-  <link rel="stylesheet" href="style.css?v=20261122-6">
-  <link rel="stylesheet" href="modulo-bozza.css?v=20261121-5">
+  <link rel="stylesheet" href="style.css?v=20261124-20">
+  <link rel="stylesheet" href="modulo-bozza.css?v=20261125-9">
 </head>
 <body id="pagina-faq">
   <main id="corpo-pagina">
@@ -59,7 +59,8 @@
     </aside>
 
     <section id="banda-pagina" reveal>
-      <h1>Domande <span class="accento-brand">frequenti</span></h1>
+      <h1 class="split-testo"><span class="parte-testo parte-sinistra">Domande</span>
+        <span class="parte-testo parte-destra accento-brand">frequenti</span></h1>
       <p>Le risposte che vorresti, dette come vanno dette: senza promesse impossibili.</p>
     </section>
     <!-- Barra di ricerca FAQ -->
@@ -74,314 +75,86 @@
     </div>
 
     <section id="sezione-faq" class="sezione-comune" reveal>
-      <div id="pannello-faq">
+      <div id="sezione-faq-rullo">
+        <div id="rullo-riga">
+          <div id="rullo-finestra">
+            <div id="rullo-pista">
+              <button type="button" class="rullo-voce" data-risposta="I pacchetti hanno prezzi chiari, una tantum, decisi in base alle funzionalità che ti servono. La bozza invece è sempre gratuita: paghi solo se il progetto ti piace.">
+                <span class="rullo-badge">01</span>
+                <span class="rullo-icona"><i class="fa-solid fa-tag" aria-hidden="true"></i></span>
+                <span class="rullo-domanda">Quanto costa realizzare un sito web?</span>
+              </button>
+              <button type="button" class="rullo-voce" data-risposta="Sì: in 48 ore progettiamo una bozza reale del tuo sito e te la mostriamo. Se non ti piace la tieni e non paghi nulla, il rischio è tutto nostro.">
+                <span class="rullo-badge">02</span>
+                <span class="rullo-icona"><i class="fa-solid fa-gift" aria-hidden="true"></i></span>
+                <span class="rullo-domanda">La bozza gratuita è davvero gratis?</span>
+              </button>
+              <button type="button" class="rullo-voce" data-risposta="Un sito richiede da 5 a 45 giorni secondo la complessità, un logo 1-3 giorni, una brand identity 2-7 giorni. Le tempistiche le concordiamo prima di iniziare.">
+                <span class="rullo-badge">03</span>
+                <span class="rullo-icona"><i class="fa-solid fa-truck" aria-hidden="true"></i></span>
+                <span class="rullo-domanda">Quanto tempo serve per la consegna?</span>
+              </button>
+              <button type="button" class="rullo-voce" data-risposta="Sì, ogni sito è responsive: si adatta a smartphone, tablet e computer, e viene testato su tutti gli schermi prima della consegna.">
+                <span class="rullo-badge">04</span>
+                <span class="rullo-icona"><i class="fa-solid fa-mobile-screen" aria-hidden="true"></i></span>
+                <span class="rullo-domanda">Il sito sarà ottimizzato per smartphone?</span>
+              </button>
+              <button type="button" class="rullo-voce" data-risposta="No: il dominio (es. www.tuositoweb.it) si acquista a parte, costa 10-20 € l'anno ed è intestato a te. Possiamo partire gratis con un sottodominio GitHub Pages o Netlify.">
+                <span class="rullo-badge">05</span>
+                <span class="rullo-icona"><i class="fa-solid fa-globe" aria-hidden="true"></i></span>
+                <span class="rullo-domanda">Il dominio è incluso nel prezzo?</span>
+              </button>
+              <button type="button" class="rullo-voce" data-risposta="Sì: il sito è in HTML, CSS e JavaScript puri, senza database né plugin da aggiornare. È tuo e chiunque potrà modificarlo in futuro, anche senza di noi.">
+                <span class="rullo-badge">06</span>
+                <span class="rullo-icona"><i class="fa-solid fa-pen-to-square" aria-hidden="true"></i></span>
+                <span class="rullo-domanda">Posso modificare il sito in futuro?</span>
+              </button>
+              <button type="button" class="rullo-voce" data-risposta="Tutti i pacchetti tranne Sito Web Base includono un'ottimizzazione SEO di base. Non promettiamo il primo posto su Google: chi lo promette mente.">
+                <span class="rullo-badge">07</span>
+                <span class="rullo-icona"><i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i></span>
+                <span class="rullo-domanda">Il sito sarà visibile su Google?</span>
+              </button>
+              <button type="button" class="rullo-voce" data-risposta="Sì: 30 giorni di assistenza gratuita dopo la consegna, con fino a 3 modifiche incluse. Dopo restiamo disponibili per accordi di manutenzione su richiesta.">
+                <span class="rullo-badge">08</span>
+                <span class="rullo-icona"><i class="fa-solid fa-headset" aria-hidden="true"></i></span>
+                <span class="rullo-domanda">Offrite assistenza dopo la consegna?</span>
+              </button>
+              <button type="button" class="rullo-voce" data-risposta="PayPal, carte di credito, Revolut e cripto. I servizi esterni come il dominio non sono rimborsabili.">
+                <span class="rullo-badge">09</span>
+                <span class="rullo-icona"><i class="fa-solid fa-credit-card" aria-hidden="true"></i></span>
+                <span class="rullo-domanda">Quali metodi di pagamento accettate?</span>
+              </button>
+              <button type="button" class="rullo-voce" data-risposta="Compila il modulo gratuito o scrivici su WhatsApp: raccontaci la tua idea e prepariamo una proposta senza impegno.">
+                <span class="rullo-badge">10</span>
+                <span class="rullo-icona"><i class="fa-solid fa-envelope" aria-hidden="true"></i></span>
+                <span class="rullo-domanda">Come posso richiedere un preventivo?</span>
+              </button>
+            </div>
+          </div>
 
-      <div class="faq-item">
-        <div class="faq-question">
-          <span class="faq-punto"><i class="fas fa-code" aria-hidden="true"></i></span>
-          <span class="faq-testo">Perché solo HTML, CSS e JavaScript? Nessun altro linguaggio?</span>
-          <i class="fas fa-chevron-down faq-icon"></i>
+          <div id="rullo-rotella" role="slider" tabindex="0" aria-label="Scorri le domande frequenti" aria-valuemin="1" aria-valuemax="10" aria-valuenow="1">
+            <span class="rullo-linea"></span>
+            <span class="rullo-progresso" id="rulloProgresso"></span>
+            <span class="rullo-pomello" id="rulloPomello"></span>
+          </div>
         </div>
-        <div class="faq-answer">
-          È il trio nativo del web: niente database da aggiornare, niente plugin da patchare, niente licenze da pagare. Il sito carica in meno di un secondo, piace a Google e soprattutto <strong>è tuo</strong>: chiunque potrà modificarlo in futuro, anche senza di noi. <strong>Solo HTML, CSS e JS — nessun altro linguaggio.</strong>
+
+        <p id="rullo-risposta" aria-live="polite"></p>
+
+        <div id="rullo-controlli">
+          <span class="rullo-contatore"><strong id="rulloNumero">01</strong> / <span id="rulloTotale">10</span></span>
+          <button type="button" class="rullo-freccia" id="rulloPrev" aria-label="Domanda precedente">↑</button>
+          <button type="button" class="rullo-freccia" id="rulloNext" aria-label="Domanda successiva">↓</button>
         </div>
       </div>
 
-      <div class="faq-item">
-        <div class="faq-question">
-          <span class="faq-punto"><i class="fas fa-gift" aria-hidden="true"></i></span>
-          <span class="faq-testo">La bozza è davvero gratuita? Qual è la fregatura?</span>
-          <i class="fas fa-chevron-down faq-icon"></i>
-        </div>
-        <div class="faq-answer">
-          ✅ Nessuna fregatura: progettiamo una bozza reale in 48 ore e te la mostriamo. Se ti piace, procedi e paghi solo alla fine. Se non ti piace, tieni la bozza e non paghi nulla. Il rischio è tutto nostro.
-        </div>
-      </div>
-
-      <div class="faq-item">
-        <div class="faq-question">
-          <span class="faq-punto"><i class="fas fa-truck" aria-hidden="true"></i></span>
-          <span class="faq-testo">Quali sono i tempi di consegna?</span>
-          <i class="fas fa-chevron-down faq-icon"></i>
-        </div>
-        <div class="faq-answer">
-          Ogni servizio ha una tempistica diversa:
-          <ul>
-            <li><strong>Siti Web</strong>: 5 – 45 giorni</li>
-            <li><strong>Logo</strong>: 1 – 3 giorni</li>
-            <li><strong>Brand Identity</strong>: 2 – 7 giorni</li>
-            <li><strong>Grafica</strong>: 1 – 4 giorni</li>
-            <li><strong>Rebranding Social</strong>: 1 – 3 giorni</li>
-            <li><strong>Restyling Sito Web</strong>: 3 – 6 giorni</li>
-          </ul>
-        </div>
-      </div>
-
-      <div class="faq-item">
-        <div class="faq-question">
-          <span class="faq-punto"><i class="fas fa-globe" aria-hidden="true"></i></span>
-          <span class="faq-testo">Il dominio è incluso nel prezzo?</span>
-          <i class="fas fa-chevron-down faq-icon"></i>
-        </div>
-        <div class="faq-answer">
-          ❌ No: la registrazione del dominio (es. www.tuositoweb.it) <strong>non è inclusa</strong> nei pacchetti. Ti guidiamo comunque nell'acquisto (costo indicativo 10–20 €/anno, intestato a te) e configuriamo DNS e hosting. Puoi partire subito a costo zero con sottodominio GitHub Pages o Netlify.
-        </div>
-      </div>
-
-      <div class="faq-item">
-        <div class="faq-question">
-          <span class="faq-punto"><i class="fas fa-search" aria-hidden="true"></i></span>
-          <span class="faq-testo">Il sito sarà visibile su Google?</span>
-          <i class="fas fa-chevron-down faq-icon"></i>
-        </div>
-        <div class="faq-answer">
-          ⚠️ Dipende dal pacchetto: il pacchetto 💻 <strong>Sito Web - Base</strong> <strong>NON</strong> include l'ottimizzazione SEO — è pensato per essere condiviso tramite link diretto (bio di Instagram, WhatsApp, ecc.). Gli altri pacchetti sito includono un'ottimizzazione SEO base che permette all'indicizzazione sui motori di ricerca. In ogni caso non promettiamo mai il "primo posto su Google garantito": chi lo promette mente.
-        </div>
-      </div>
-
-      <div class="faq-item">
-        <div class="faq-question">
-          <span class="faq-punto"><i class="fas fa-server" aria-hidden="true"></i></span>
-          <span class="faq-testo">Che tipo di hosting utilizzate?</span>
-          <i class="fas fa-chevron-down faq-icon"></i>
-        </div>
-        <div class="faq-answer">
-          Utilizziamo hosting gratuito e permanente su GitHub Pages o Netlify, entrambi veloci, affidabili e sicuri. Su richiesta possiamo configurare un altro hosting.
-        </div>
-      </div>
-
-      <div class="faq-item">
-        <div class="faq-question">
-          <span class="faq-punto"><i class="fas fa-shield-alt" aria-hidden="true"></i></span>
-          <span class="faq-testo">I miei dati saranno conformi al GDPR?</span>
-          <i class="fas fa-chevron-down faq-icon"></i>
-        </div>
-        <div class="faq-answer">
-          Forniamo CookieBot per la gestione dei cookie e pagine legali (Privacy Policy, Termini e Condizioni, Cookie Policy) generate con IA.<br>Tuttavia, consigliamo di farle validare da un professionista legale per una piena conformità.
-        </div>
-      </div>
-
-      <div class="faq-item">
-        <div class="faq-question">
-          <span class="faq-punto"><i class="fa-brands fa-facebook" aria-hidden="true"></i></span>
-          <span class="faq-testo">Facebook Pixel?</span>
-          <i class="fas fa-chevron-down faq-icon"></i>
-        </div>
-        <div class="faq-answer">
-          Il Facebook Pixel è uno strumento di tracciamento di Facebook. In breve:
-          <ul>
-            <li>È un pezzetto di codice che inserisci nel tuo sito web.</li>
-            <li>Ti permette di monitorare le azioni degli utenti sul sito (acquisti, clic, visite a pagine specifiche).</li>
-            <li>Aiuta a ottimizzare le campagne pubblicitarie su Facebook, mostrando gli annunci alle persone più propense a compiere determinate azioni.</li>
-            <li>Permette di creare pubblici personalizzati e fare retargeting (mostrare annunci a chi ha già visitato il tuo sito).</li>
-          </ul>
-          In sostanza, è un modo per collegare il tuo sito a Facebook e migliorare l'efficacia delle tue pubblicità.
-        </div>
-      </div>
-
-      <div class="faq-item">
-        <div class="faq-question">
-          <span class="faq-punto"><i class="fa-brands fa-facebook" aria-hidden="true"></i></span>
-          <span class="faq-testo">Come installare il Facebook Pixel sul sito?</span>
-          <i class="fas fa-chevron-down faq-icon"></i>
-        </div>
-        <div class="faq-answer">
-          <strong>1. Crea il Pixel su Facebook</strong>
-          <ul>
-            <li>Vai su Meta Business Suite → Event Manager.</li>
-            <li>Clicca su "+ Aggiungi Pixel" e dai un nome al tuo Pixel.</li>
-            <li>Copia il codice Pixel che Facebook ti dà.</li>
-          </ul>
-          <strong>2. Inserisci il Pixel nel tuo sito</strong>
-          <ul>
-            <li>Se il tuo sito è fatto a mano: incolla il codice nella sezione &lt;head&gt; di tutte le pagine.</li>
-            <li>Se usi WordPress o Wix: di solito c'è una sezione tipo "Integrazioni" o "Code Snippet" dove puoi incollare il Pixel senza toccare il codice.</li>
-          </ul>
-          <strong>3. Verifica che funzioni</strong>
-          <ul>
-            <li>Installa l'estensione Facebook Pixel Helper su Chrome.</li>
-            <li>Vai sul tuo sito: l'estensione ti dirà se il Pixel sta registrando correttamente le visite.</li>
-          </ul>
-        </div>
-      </div>
-
-      <div class="faq-item">
-        <div class="faq-question">
-          <span class="faq-punto"><i class="fas fa-paint-brush" aria-hidden="true"></i></span>
-          <span class="faq-testo">Come funziona il rebranding social?</span>
-          <i class="fas fa-chevron-down faq-icon"></i>
-        </div>
-        <div class="faq-answer">
-          Rinnoviamo l'estetica del tuo profilo social: colori, layout, bio, stile dei post.<br>Includiamo anche strategie di contenuti, guide pratiche e prompt per ChatGPT per aumentare l'engagement.
-        </div>
-      </div>
-
-      <div class="faq-item">
-        <div class="faq-question">
-          <span class="faq-punto"><i class="fas fa-briefcase" aria-hidden="true"></i></span>
-          <span class="faq-testo">Realizzate siti per qualsiasi tipo di attività?</span>
-          <i class="fas fa-chevron-down faq-icon"></i>
-        </div>
-        <div class="faq-answer">
-          ✅ Sì, realizziamo siti web personalizzati per attività di ogni settore: negozi, professionisti, aziende, freelance, eventi e molto altro.
-        </div>
-      </div>
-
-      <div class="faq-item">
-        <div class="faq-question">
-          <span class="faq-punto"><i class="fas fa-desktop" aria-hidden="true"></i></span>
-          <span class="faq-testo">A cosa serve Bing Webmaster Tools?</span>
-          <i class="fas fa-chevron-down faq-icon"></i>
-        </div>
-        <div class="faq-answer">
-          È uno strumento gratuito di Microsoft che ti permette di controllare come il tuo sito viene visto dai motori di ricerca (Bing, Yahoo e servizi AI che usano Bing come fonte, come ChatGPT con Browse o Copilot).<br><br>💡 <strong>Perché è utile anche per le IA?</strong>
-          <ul>
-            <li>Molte IA generative (ChatGPT, Copilot, Perplexity) usano i dati dei motori di ricerca tradizionali.</li>
-            <li>Se il tuo sito è registrato e indicizzato correttamente su Bing (e Google), sarà più facile che venga citato e trovato.</li>
-          </ul>
-        </div>
-      </div>
-
-      <div class="faq-item">
-        <div class="faq-question">
-          <span class="faq-punto"><i class="fas fa-wrench" aria-hidden="true"></i></span>
-          <span class="faq-testo">Offrite manutenzione periodica del sito dopo la consegna?</span>
-          <i class="fas fa-chevron-down faq-icon"></i>
-        </div>
-        <div class="faq-answer">
-          La manutenzione <strong>non è inclusa</strong> nei pacchetti standard, ma siamo disponibili per accordi di manutenzione continuativa su richiesta.
-        </div>
-      </div>
-
-      <div class="faq-item">
-        <div class="faq-question">
-          <span class="faq-punto"><i class="fas fa-palette" aria-hidden="true"></i></span>
-          <span class="faq-testo">Cosa include il design del logo?</span>
-          <i class="fas fa-chevron-down faq-icon"></i>
-        </div>
-        <div class="faq-answer">
-          <ul>
-            <li>Logo personalizzato creato da zero in base al tuo stile, settore e obiettivi.</li>
-            <li>2 proposte di design iniziali per scegliere la direzione migliore.</li>
-            <li>File in tutti i formati principali: PNG (trasparente), JPG, SVG (vettoriale), PDF.</li>
-            <li>Formati adatti a ogni uso: web, social, biglietti da visita, packaging e stampe grandi.</li>
-            <li>Anteprima del logo su prodotti reali (t-shirt, tazze, badge, ecc.).</li>
-            <li>3 revisioni fino al risultato perfetto.</li>
-            <li>Consegna in 1-3 giorni lavorativi (spesso entro 24h).</li>
-          </ul>
-        </div>
-      </div>
-
-      <div class="faq-item">
-        <div class="faq-question">
-          <span class="faq-punto"><i class="fas fa-bullhorn" aria-hidden="true"></i></span>
-          <span class="faq-testo">Cosa offre il piano gratuito di CookieBot? (come configurato nel tuo sito)</span>
-          <i class="fas fa-chevron-down faq-icon"></i>
-        </div>
-        <div class="faq-answer">
-          <strong>Cosa offre il piano gratuito di CookieBot:</strong><br>
-          ✅ Banner informativo per il consenso dei cookie<br>
-          ✅ Scansione automatica dei cookie utilizzati dal sito (solo cookie tecnici di base, senza tracciamento)<br>
-          ✅ Possibilità per gli utenti di accettare o rifiutare i cookie (se presenti)<br>
-          ✅ Generazione di un'informativa cookie base<br>
-          ✅ Conformità di base al GDPR per siti senza cookie di tracciamento (es. Google Analytics, Facebook Pixel, ecc.)<br><br>
-          ⚠️ <strong>Limiti del Piano Gratuito:</strong><br>
-          ❌ Nessuna scansione avanzata dei cookie di terze parti<br>
-          ❌ Nessun aggiornamento automatico della lista dei cookie<br>
-          ❌ Nessun supporto legale diretto da CookieBot<br>
-          ❌ Non include cookie di tracciamento o marketing (il sito non ne utilizza)<br>
-          ❌ Nessuna dashboard avanzata o reportistica dettagliata<br>
-          ❌ Non è possibile personalizzare completamente il banner<br><br>
-          📌 <strong>Nota Importante:</strong> il sito che realizzeremo non utilizza cookie di profilazione o tracciamento (es. Google Analytics, pubblicità, pixel), quindi il piano gratuito di CookieBot è sufficiente per garantire una conformità di base.<br>
-          Se in futuro vorrai aggiungere strumenti come Google Analytics, newsletter o pixel pubblicitari, sarà necessario passare al piano a pagamento di CookieBot (circa 9–15€/mese) oppure utilizzare soluzioni alternative conformi. Possiamo aiutarti nell'upgrade, ma i costi saranno a tuo carico.
-        </div>
-      </div>
-
-      <div class="faq-item">
-        <div class="faq-question">
-          <span class="faq-punto"><i class="fas fa-percentage" aria-hidden="true"></i></span>
-          <span class="faq-testo">Offrite sconti?</span>
-          <i class="fas fa-chevron-down faq-icon"></i>
-        </div>
-        <div class="faq-answer">
-          ✅ Se acquisti 3 servizi, ricevi un <strong>10% di sconto</strong>!
-        </div>
-      </div>
-
-      <div class="faq-item">
-        <div class="faq-question">
-          <span class="faq-punto"><i class="fas fa-sync-alt" aria-hidden="true"></i></span>
-          <span class="faq-testo">Posso richiedere modifiche dopo la consegna?</span>
-          <i class="fas fa-chevron-down faq-icon"></i>
-        </div>
-        <div class="faq-answer">
-          ✅ Offriamo un periodo di assistenza gratuita di 30 giorni dopo il completamento del progetto.<br>Durante questo periodo, puoi richiedere fino a 3 modifiche al tuo sito web senza costi aggiuntivi (Escluso nuove Funzionalità). Dopo le 3 modifiche gratuite o il termine dei 30 giorni, eventuali ulteriori interventi saranno valutati e potrebbero comportare costi extra, in base alla complessità della richiesta.<br>Siamo comunque a disposizione per fornirti un preventivo dettagliato.
-        </div>
-      </div>
-
-      <div class="faq-item">
-        <div class="faq-question">
-          <span class="faq-punto"><i class="fa-solid fa-circle-info" aria-hidden="true"></i></span>
-          <span class="faq-testo">Come posso contattare il servizio clienti?</span>
-          <i class="fas fa-chevron-down faq-icon"></i>
-        </div>
-        <div class="faq-answer">
-          <ul>
-            <li><span data-canale="email">Puoi inviarci un'email a <a href="mailto:webnixit@gmail.com">webnixit@gmail.com</a></span><br><span data-canale="whatsapp">o scriverci su <a href="https://wa.me/14132259397?text=Ciao!%20Sto%20cercando%20qualcuno%20che%20mi%20aiuti%20a%20creare%20una%20presenza%20online.%20Da%20dove%20possiamo%20partire?" target="_blank" rel="noopener">WhatsApp</a></span>. Ti risponderemo il prima possibile per offrirti assistenza personalizzata.</li>
-            <li>Visita la pagina <a href="assistenza.html">assistenza</a> per ulteriori dettagli.</li>
-          </ul>
-        </div>
-      </div>
-
-      <div class="faq-item">
-        <div class="faq-question">
-          <span class="faq-punto"><i class="fas fa-credit-card" aria-hidden="true"></i></span>
-          <span class="faq-testo">Quali sono i metodi di pagamento accettati?</span>
-          <i class="fas fa-chevron-down faq-icon"></i>
-        </div>
-        <div class="faq-answer">
-          <section id="payment-section">
-            <h2 id="section-title">Metodi di Pagamento <span class="accento-brand">Accettati</span></h2>
-            <ul id="payment-methods">
-              <li><svg viewBox="0 0 48 32" aria-label="Visa"><rect width="48" height="32" rx="4" fill="#1A1F71"/><text x="24" y="21" text-anchor="middle" fill="#fff" font-size="13" font-weight="bold" font-style="italic" font-family="Arial">VISA</text></svg></li>
-              <li><svg viewBox="0 0 48 32" aria-label="Mastercard"><rect width="48" height="32" rx="4" fill="#2b2b2b"/><circle cx="20" cy="16" r="9" fill="#EB001B"/><circle cx="28" cy="16" r="9" fill="#F79E1B" opacity=".85"/></svg></li>
-              <li><svg viewBox="0 0 48 32" aria-label="PayPal"><rect width="48" height="32" rx="4" fill="#F5F5F5"/><text x="24" y="21" text-anchor="middle" fill="#003087" font-size="11" font-weight="bold" font-style="italic" font-family="Arial">PayPal</text></svg></li>
-              <li><svg viewBox="0 0 48 32" aria-label="Revolut"><rect width="48" height="32" rx="4" fill="#191C1F"/><text x="24" y="21" text-anchor="middle" fill="#fff" font-size="10" font-weight="bold" font-family="Arial">Revolut</text></svg></li>
-              <li><svg viewBox="0 0 48 32" aria-label="Bitcoin"><rect width="48" height="32" rx="4" fill="#F7931A"/><text x="24" y="22" text-anchor="middle" fill="#fff" font-size="15" font-weight="bold" font-family="Arial">₿</text></svg></li>
-            </ul>
-          </section>
-        </div>
-      </div>
-
-      <div class="faq-item">
-        <div class="faq-question">
-          <span class="faq-punto"><i class="fa-solid fa-hand-holding-dollar" aria-hidden="true"></i></span>
-          <span class="faq-testo">Come posso richiedere un rimborso?</span>
-          <i class="fas fa-chevron-down faq-icon"></i>
-        </div>
-        <div class="faq-answer">
-          Il rimborso è possibile solo prima della consegna del progetto.<br>Per richiederlo, contattaci via email. I servizi esterni non sono rimborsabili.
-        </div>
-      </div>
-
-      <div class="faq-item">
-        <div class="faq-question">
-          <span class="faq-punto"><i class="fas fa-code" aria-hidden="true"></i></span>
-          <span class="faq-testo">Bisogna mantenere qualche costo per mantenere il Sito Web online?</span>
-          <i class="fas fa-chevron-down faq-icon"></i>
-        </div>
-        <div class="faq-answer">
-          Dipende dal pacchetto che scegli: l'unico costo solitamente che dovrai sostenere ogni anno/mese sarà il rinnovo del dominio acquistato. Con hosting gratuito (GitHub Pages / Netlify) e sito statico in HTML, CSS e JS, <strong>✅ Nessun Costo</strong> di mantenimento oltre quello.
-        </div>
-      </div>
-
-      </div>
       <div id="cta-faq" reveal>
         <h3>Non trovi la tua <span class="accento-brand">risposta</span>?</h3>
         <p>Scrivici o passa su WhatsApp: ti rispondiamo entro un giorno lavorativo.</p>
         <div id="cta-faq-azioni">
-          <a class="bottone-faq-scrivici" href="chi-siamo.html#infoContactsSection"><i class="fa-solid fa-envelope" aria-hidden="true"></i> Scrivici</a>
+          <a class="bottone-faq-scrivici" href="#" data-wbx-domanda aria-haspopup="dialog"><i class="fa-solid fa-envelope" aria-hidden="true"></i> Scrivici</a>
           <a class="bottone-faq-whatsapp" data-canale="whatsapp" href="https://wa.me/14132259397" target="_blank" rel="noopener"><i class="fa-brands fa-whatsapp" aria-hidden="true"></i> WhatsApp</a>
+          <a class="bottone-faq-instagram" data-canale-fisso="instagram" href="https://www.instagram.com/webnix.it" target="_blank" rel="noopener"><i class="fa-brands fa-instagram" aria-hidden="true"></i> Instagram</a>
         </div>
       </div>
     </section>
@@ -417,7 +190,7 @@
                   <li><a href="servizi.html#sezione-servizi-completi">Creazione Logo</a></li>
                   <li><a href="servizi.html#sezione-servizi-completi">Locandine</a></li>
                   <li><a href="servizi.html#sezione-servizi-completi">Rebranding Social</a></li>
-                  <li><a href="servizi.html#sezione-servizi-completi">Restyling Sito Web</a></li>
+                  <li><a class="link-restyling" href="servizi.html#sezione-servizi-completi">Restyling Sito Web</a></li>
                 </ul>
               </div>
 
@@ -516,10 +289,11 @@
   </main>
 
   <script src="config.js"></script>
-  <script src="script.js?v=20261120-3"></script>
+  <script src="script.js?v=20261124-13"></script>
   <script src="firebase-config.js"></script>
   <script src="modulo-config.js?v=20261122-1"></script>
-  <script src="modulo-bozza.js?v=20261122-3"></script>
-  <script src="dati-remoti.js?v=20261120-4"></script>
+  <script src="modulo-bozza.js?v=20261125-5"></script>
+  <script src="dati-remoti.js?v=20261124-5"></script>
+  <script src="moduli-extra.js?v=20261125-8"></script>
 </body>
 </html>

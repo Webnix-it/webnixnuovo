@@ -1576,6 +1576,61 @@ button, input, textarea, select { font: inherit; color: inherit; }
 #titolo-hero { font-size: clamp(1.85rem, 4.2vw, 3.35rem); line-height: 1.15; max-width: 24ch; margin: 0 0 22px; text-shadow: 0 4px 30px rgba(0,0,0,.45); }
 #sottotitolo-hero { max-width: 58ch; color: #f2f2f2; font-size: clamp(1rem, 1.7vw, 1.15rem); margin: 0 0 36px; text-shadow: 0 2px 16px rgba(0,0,0,.4); }
 #fila-cta-hero { display: flex; flex-direction: row; flex-wrap: wrap; gap: 18px; justify-content: flex-start; align-items: center; }
+
+/* ---------- TOOLTIP "Richiedi la tua bozza" ----------
+   Sostituisce il title nativo del browser con un fumetto del brand:
+   appare sopra il bottone, con freccia, ombra neon ed entrata morbida.
+   Il wrapper serve solo a dare un riferimento di posizionamento: il
+   bottone mantiene intatti bordo gradiente, glow e zoom 1.2. */
+.cta-bozza-wrap {
+  position: relative;
+  display: inline-flex;
+  flex: 0 0 auto;
+  z-index: 5;
+}
+.cta-bozza-wrap:hover,
+.cta-bozza-wrap:focus-within { z-index: 40; }
+.tooltip-bozza {
+  position: absolute;
+  left: 50%;
+  bottom: calc(100% + 14px);
+  z-index: 40;
+  padding: 9px 15px;
+  border-radius: 12px;
+  background: rgba(10, 12, 18, .96);
+  border: 1px solid rgba(232, 28, 255, .45);
+  box-shadow: 0 16px 34px rgba(0, 0, 0, .55), 0 0 26px rgba(232, 28, 255, .22);
+  color: #ffffff;
+  font-size: .8rem;
+  font-weight: 600;
+  line-height: 1.2;
+  letter-spacing: .01em;
+  white-space: nowrap;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transform: translate(-50%, 10px) scale(.94);
+  transform-origin: 50% 100%;
+  transition: opacity .38s ease, transform .45s cubic-bezier(.22, 1, .36, 1), visibility .38s;
+}
+.tooltip-bozza::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  bottom: -6px;
+  width: 12px;
+  height: 12px;
+  transform: translateX(-50%) rotate(45deg);
+  background: rgba(10, 12, 18, .96);
+  border-right: 1px solid rgba(232, 28, 255, .45);
+  border-bottom: 1px solid rgba(232, 28, 255, .45);
+}
+.cta-bozza-wrap:hover .tooltip-bozza,
+.cta-bozza-wrap:focus-within .tooltip-bozza {
+  opacity: 1;
+  visibility: visible;
+  transform: translate(-50%, 0) scale(1);
+}
 /* Freccia scroll: SU E GIÙ lenta e continua. Il movimento è sull'icona interna
    (transform del figlio), così l'hover globale scale(1.2) sul link non può mai
    sovrascrivere o "congelare" il bounce. */
@@ -1593,7 +1648,7 @@ button, input, textarea, select { font: inherit; color: inherit; }
   transition: all 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 #freccia-scroll > .fa-chevron-down,
-#freccia-scroll i { display: inline-block; animation: altalena-freccia 2.5s ease-in-out infinite; }
+#freccia-scroll i { display: inline-block; will-change: transform; animation: altalena-freccia 2.5s ease-in-out infinite; }
 @keyframes altalena-freccia { 0%, 100% { transform: translateY(-7px); } 50% { transform: translateY(7px); } }
 
 /* ---------- HERO: bottoni con FADE-IN. Il fade-in e' solo OPACITA', cosi'
@@ -1914,6 +1969,34 @@ details.domanda summary:hover {
 #etichetta-loro { color: #ff6b6b; }
 #etichetta-noi { color: var(--ciano); }
 #pannello-loro h3, #pannello-noi h3 { margin: 0; font-size: 1.05rem; line-height: 1.3; color: #fff; }
+
+/* Targhette economiche: rosso = costo in più, verde = risparmio */
+.targhetta-confronto {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 9px;
+  padding: 5px 12px;
+  border-radius: 999px;
+  font-size: .72rem;
+  font-weight: 800;
+  letter-spacing: .04em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+.targhetta-confronto i { font-size: .7rem; }
+.targhetta-confronto.rossa {
+  background: rgba(255, 90, 112, .14);
+  border: 1px solid rgba(255, 90, 112, .5);
+  color: #ff8fa0;
+  box-shadow: 0 0 18px rgba(255, 90, 112, .18);
+}
+.targhetta-confronto.verde {
+  background: rgba(46, 213, 115, .14);
+  border: 1px solid rgba(46, 213, 115, .5);
+  color: #6ff2a3;
+  box-shadow: 0 0 18px rgba(46, 213, 115, .18);
+}
 
 /* Voci: icona in pastiglia + titolo in evidenza + dettaglio */
 #pannello-loro ul, #pannello-noi ul { display: flex; flex-direction: column; }
@@ -2497,6 +2580,7 @@ details.domanda summary:hover {
 #ul2 li:last-child { margin-bottom: 0; }
 #ul2 a { display: inline-block; color: #ffffff; text-decoration: none; transform-origin: left center; transition: all 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
 #ul2 a:hover, #ul2 a:focus-visible { color: var(--azione); text-decoration: none; transform: scale(1.2); }
+#ul2 a.link-restyling:hover, #ul2 a.link-restyling:focus-visible { transform: scale(1.3); }
 #ul3 { display: flex; flex-wrap: wrap; justify-content: center; gap: 15px; list-style: none; padding: 0; margin: 0; }
 #cards { display: flex; gap: 15px; flex-wrap: wrap; align-items: center; flex-direction: column; align-content: center; justify-content: center; }
 .card-container {
@@ -2615,10 +2699,13 @@ details.domanda[open] summary { color: var(--ciano); }
 
 /* ---------- COSA FACCIAMO: sito web + scheda su Google Maps ---------- */
 #cosa-facciamo { padding-top: clamp(30px, 5vw, 70px); }
+/* il video a destra è il pezzo forte: la sezione si allarga e la colonna
+   del video si tiene almeno 700px, così il video supera i 650px */
+#cosa-facciamo.sezione-comune { max-width: 1440px; }
 #griglia-cosa-facciamo {
   display: grid;
-  grid-template-columns: minmax(0, 1.05fr) minmax(0, .95fr);
-  gap: clamp(30px, 5vw, 66px);
+  grid-template-columns: minmax(0, 1fr) minmax(700px, 1.1fr);
+  gap: clamp(30px, 4vw, 58px);
   align-items: center;
 }
 #testo-cosa-facciamo .titoli-sezione { text-align: left; }
@@ -2641,173 +2728,30 @@ details.domanda[open] summary { color: var(--ciano); }
 #punti-cosa-facciamo h3 { font-size: 1.02rem; margin-bottom: 4px; color: #fff; }
 #punti-cosa-facciamo p { color: var(--testo-3); font-size: .93rem; line-height: 1.55; }
 
-/* --- scena: browser, telefono, mappa, scheda e ricerca, sovrapposti --- */
-#vetrina-cosa-facciamo { position: relative; justify-self: center; width: min(460px, 100%); }
-#scena-cosa { position: relative; width: 100%; height: 500px; }
-
-/* 1. barra di ricerca */
-#cosa-ricerca {
-  position: absolute; z-index: 7; top: 0; left: 0; right: 0;
-  height: 46px; padding: 0 16px;
-  display: flex; align-items: center; gap: 10px;
-  border-radius: 999px; background: #fff;
-  box-shadow: 0 12px 30px rgba(0, 0, 0, .35);
+/* --- video di presentazione, a destra del testo --- */
+#vetrina-cosa-facciamo { position: relative; justify-self: center; width: 100%; max-width: 760px; }
+/* bordo da 1px nel gradiente del brand: si vede solo il filo esterno, perché
+   il video copre tutto il resto del contenitore. L'ombra stacca la cornice
+   dallo sfondo scuro e prende un riflesso viola/ciano */
+#cornice-video-cosa {
+  margin: 0;
+  padding: 1px;
+  border-radius: 20px;
+  background: var(--gradiente-brand);
+  box-shadow: 0 22px 55px rgba(0, 0, 0, .5),
+              0 0 40px rgba(232, 28, 255, .22),
+              0 0 60px rgba(64, 201, 255, .14);
 }
-.cosa-lente { width: 18px; height: 18px; flex: none; color: #9aa0a6; }
-#cosa-testo { font-size: .96rem; color: #2b3035; white-space: nowrap; overflow: hidden; }
-#cosa-caret { width: 1.5px; height: 18px; background: var(--azione); opacity: 0; }
-
-/* 2. risultato con l'attività */
-#cosa-risultato {
-  position: absolute; z-index: 6; top: 56px; left: 8px; right: 8px;
-  display: flex; align-items: center; gap: 11px;
-  padding: 10px 12px; border-radius: 14px; background: #fff;
-  box-shadow: 0 18px 38px rgba(0, 0, 0, .34);
+#video-cosa {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: 19px; /* 20px del contenitore meno il filo di bordo */
+  background: #05060a;
 }
-.cosa-ris-foto {
-  position: relative; width: 40px; height: 40px; flex: none;
-  border-radius: 10px; background: var(--gradiente-brand);
+@media (max-width: 560px) {
+  #vetrina-cosa-facciamo { width: 100%; }
 }
-.cosa-ris-foto::after {
-  content: ""; position: absolute; inset: 9px;
-  border-radius: 50%; border: 2px solid rgba(255, 255, 255, .85);
-}
-.cosa-ris-testi { display: flex; flex-direction: column; gap: 2px; min-width: 0; line-height: 1.15; }
-.cosa-ris-testi strong { font-size: .78rem; color: #20252a; letter-spacing: -.01em; }
-.cosa-ris-voto { display: flex; align-items: center; gap: 5px; font-size: .6rem; color: #6d7479; line-height: 1; }
-.cosa-ris-voto em { font-style: normal; font-weight: 700; color: #d99a1f; }
-.cosa-ris-voto i { font-style: normal; font-size: .6rem; letter-spacing: .5px; color: #f0b429; }
-.cosa-ris-voto b { font-weight: 500; }
-.cosa-ris-testi small { font-size: .58rem; line-height: 1.1; color: #6d7479; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.cosa-ris-testi small u { text-decoration: none; color: #1e8e3e; font-weight: 700; }
-.cosa-ris-badge {
-  margin-left: auto; flex: none;
-  padding: 4px 7px; border-radius: 7px;
-  background: rgba(0, 180, 254, .09); color: var(--azione);
-  font-size: .54rem; font-weight: 800; letter-spacing: 1.3px; text-transform: uppercase;
-}
-
-/* 3. browser con il sito */
-#cosa-browser {
-  position: absolute; z-index: 1; top: 124px; left: 0; right: 24px;
-  height: 182px; border-radius: 14px; overflow: hidden;
-  background: #fff; box-shadow: 0 22px 48px rgba(0, 0, 0, .42);
-}
-.cosa-browser-barra {
-  display: flex; align-items: center; gap: 10px; height: 30px; padding: 0 11px;
-  background: linear-gradient(#f5f7f9, #eef1f4); border-bottom: 1px solid #e6eaee;
-}
-.cosa-pallini { display: flex; gap: 5px; flex: none; }
-.cosa-pallini i { width: 7px; height: 7px; border-radius: 50%; background: #d9dee3; }
-.cosa-addr {
-  display: flex; align-items: center; gap: 5px;
-  height: 18px; max-width: 190px; padding: 0 8px;
-  border-radius: 9px; background: #fff; border: 1px solid #e6eaee;
-  font-size: .55rem; color: #7c8288; white-space: nowrap; overflow: hidden;
-}
-.cosa-addr svg { width: 9px; height: 9px; flex: none; color: #1e8e3e; }
-.cosa-browser-pagina { padding: 10px 13px 8px; }
-.cosa-pag-top {
-  display: flex; align-items: center; gap: 7px;
-  padding-bottom: 9px; border-bottom: 1px solid #f0f3f5;
-}
-.cosa-pag-logo { width: 16px; height: 16px; flex: none; border-radius: 5px; background: var(--gradiente-brand); }
-.cosa-pag-nome { margin-right: auto; font-size: .56rem; font-weight: 700; color: #2b3035; white-space: nowrap; }
-.cosa-pag-nav { width: 20px; height: 4px; flex: none; border-radius: 2px; background: #e4e8ec; }
-.cosa-pag-hero { display: flex; gap: 12px; height: 64px; margin-top: 10px; }
-.cosa-pag-testi { flex: 1; display: flex; flex-direction: column; justify-content: center; gap: 6px; }
-.cosa-pag-testi span { height: 5px; border-radius: 3px; background: #eef1f4; }
-.cosa-pag-testi span.titolo { width: 94%; height: 9px; background: #d8dde2; }
-.cosa-pag-testi span.titolo.corto { width: 66%; }
-.cosa-pag-testi span.corto { width: 52%; }
-.cosa-pag-cta { width: 62px; height: 17px; border-radius: 9px; background: var(--gradiente-brand); margin-top: 3px; }
-.cosa-pag-foto {
-  position: relative; width: 96px; flex: none; overflow: hidden;
-  border-radius: 10px;
-  background: linear-gradient(150deg, rgba(232, 28, 255, .26), rgba(64, 201, 255, .26));
-}
-.cosa-pag-foto::after {
-  content: ""; position: absolute; inset: 0;
-  background: radial-gradient(60% 46% at 66% 30%, rgba(255, 255, 255, .9), transparent 72%);
-}
-.cosa-pag-righe { display: flex; gap: 9px; margin-top: 10px; }
-.cosa-pag-righe span {
-  flex: 1; height: 24px; padding: 6px 7px;
-  border-radius: 8px; background: #f4f6f8;
-}
-.cosa-pag-righe span i { display: block; width: 7px; height: 7px; border-radius: 50%; background: var(--gradiente-brand); }
-
-/* 4. mappa e pin */
-#cosa-mappa {
-  position: absolute; z-index: 3; top: 240px; left: 0;
-  width: 168px; height: 104px; border-radius: 14px; overflow: hidden;
-  background: #eef2f5; box-shadow: 0 16px 34px rgba(0, 0, 0, .4);
-}
-.cosa-mappa-disegno { display: block; width: 100%; height: 100%; }
-.cosa-onda {
-  position: absolute; z-index: 1; left: 50%; top: 52%;
-  width: 42px; height: 17px; transform: translate(-50%, -50%);
-  border-radius: 50%;
-  background: radial-gradient(closest-side, rgba(0, 180, 254, .34), transparent);
-}
-#cosa-pin {
-  position: absolute; z-index: 2; left: 50%; top: 48%;
-  width: 22px; height: 29px; transform: translate(-50%, -100%);
-  filter: drop-shadow(0 5px 9px rgba(0, 0, 0, .4));
-}
-#cosa-pin svg { display: block; width: 100%; height: 100%; }
-.cosa-eti {
-  position: absolute; z-index: 2; left: 50%; top: 57%; transform: translateX(-50%);
-  padding: 3px 7px; border-radius: 6px; background: #fff;
-  font-size: .48rem; font-weight: 700; color: #2b3035; white-space: nowrap;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, .22);
-}
-
-/* 5. smartphone */
-#cosa-telefono {
-  position: absolute; z-index: 4; top: 218px; right: 0;
-  width: 92px; height: 188px;
-  border: 5px solid #17191b; border-radius: 20px;
-  background: #fff; overflow: hidden;
-  box-shadow: 0 18px 38px rgba(0, 0, 0, .45);
-}
-.cosa-tel-isola { position: absolute; left: 50%; top: 5px; transform: translateX(-50%); width: 30px; height: 6px; border-radius: 4px; background: #17191b; }
-.cosa-tel-pagina { position: absolute; inset: 18px 8px 10px; display: flex; flex-direction: column; gap: 6px; }
-.cosa-tel-hero { height: 46px; border-radius: 6px; background: linear-gradient(150deg, rgba(232, 28, 255, .55), rgba(64, 201, 255, .55)); }
-.cosa-tel-righe { display: flex; flex-direction: column; gap: 5px; }
-.cosa-tel-righe i { display: block; height: 5px; border-radius: 3px; background: #e7ebee; }
-.cosa-tel-righe i.corta { width: 62%; }
-.cosa-tel-cta { margin-top: auto; height: 14px; border-radius: 7px; background: #22272b; }
-
-/* 6. scheda attività */
-#cosa-scheda {
-  position: absolute; z-index: 5; top: 352px; left: 16px; right: 0;
-  padding: 12px 14px 10px; border-radius: 14px; background: #fff;
-  box-shadow: 0 18px 40px rgba(0, 0, 0, .4);
-}
-.cosa-sch-testa { display: flex; flex-direction: column; gap: 2px; }
-.cosa-sch-testa strong { font-size: .92rem; color: #22272b; }
-.cosa-sch-voto { display: flex; align-items: center; gap: 5px; font-size: .7rem; color: #6d7479; }
-.cosa-sch-voto em { font-style: normal; color: #f2b51b; letter-spacing: -.5px; }
-.cosa-sch-voto i { font-style: normal; color: #526f91; text-decoration: underline; }
-.cosa-sch-cat { font-size: .68rem; color: #747b7e; }
-.cosa-sch-cat b { color: #4d9860; font-weight: 600; }
-.cosa-sch-azioni {
-  display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px;
-  margin-top: 10px; padding-top: 9px;
-  border-top: 1px solid #edeff1;
-}
-.cosa-sch-azioni span { display: flex; flex-direction: column; align-items: center; gap: 3px; font-size: .58rem; font-weight: 600; color: #376f9e; }
-.cosa-sch-azioni i { font-size: .82rem; }
-
-/* --- animazioni: un elemento alla volta, poi il ciclo riparte --- */
-#scena-cosa .pezzo {
-  opacity: 0;
-  transform: translateY(16px);
-  transition: opacity .9s cubic-bezier(.22, .61, .36, 1),
-              transform .9s cubic-bezier(.22, .61, .36, 1);
-}
-#scena-cosa .pezzo.acceso { opacity: 1; transform: none; }
 
 /* testo della colonna sinistra: compare riga per riga */
 .entra-cosa,
@@ -2828,25 +2772,10 @@ details.domanda[open] summary { color: var(--ciano); }
   to   { opacity: 1; transform: none; }
 }
 
-@media (max-width: 900px) {
+@media (max-width: 1200px) {
   #griglia-cosa-facciamo { grid-template-columns: 1fr; }
-  #vetrina-cosa-facciamo { order: -1; }
+  #vetrina-cosa-facciamo { order: -1; max-width: 760px; }
 }
-@media (max-width: 560px) {
-  #scena-cosa { height: 470px; }
-  #cosa-risultato { top: 52px; padding: 9px 11px; gap: 9px; }
-  #cosa-ris-foto { width: 34px; height: 34px; }
-  #cosa-browser { top: 118px; height: 162px; right: 16px; }
-  .cosa-pag-hero { height: 48px; margin-top: 8px; }
-  .cosa-pag-testi { gap: 4px; }
-  .cosa-pag-cta { height: 14px; margin-top: 0; }
-  .cosa-pag-righe { margin-top: 8px; }
-  .cosa-pag-righe span { height: 20px; padding: 5px 6px; }
-  #cosa-mappa { top: 236px; width: 148px; height: 96px; }
-  #cosa-telefono { top: 202px; width: 84px; height: 172px; }
-  #cosa-scheda { top: 322px; left: 8px; }
-}
-
 /* ---------- RESPONSIVE ---------- */
 @media (max-width: 900px) {
   #nav-desk { display: none; }
@@ -2891,10 +2820,9 @@ details.domanda[open] summary { color: var(--ciano); }
      attivo nel sistema (freccia su/giù e cursore della demo Google). */
   #freccia-scroll > .fa-chevron-down,
   #freccia-scroll i { animation-duration: 2.5s !important; animation-iteration-count: infinite !important; }
-  /* Sezione "Cosa facciamo": testi e scena restano animati */
+  /* Sezione "Cosa facciamo": i testi restano animati */
   #cosa-facciamo.demo-attiva .entra-cosa,
   #cosa-facciamo.demo-attiva #punti-cosa-facciamo li { animation-duration: .7s !important; }
-  #scena-cosa .pezzo { transition-duration: .9s !important; }
   /* Pacchetti: apertura dei dettagli resta animata */
   .card-servizio .lista-trasparenza { transition-duration: .45s !important; }
   .card-garanzia, .icona-garanzia { transition-duration: .45s !important; }
@@ -3187,8 +3115,11 @@ details.domanda[open] summary { color: var(--ciano); }
 /* ============ SEZIONE SUPPORTO CLIENTI E GARANZIE ============ */
 #sezione-assistenza { padding-top: calc(var(--header-h) + clamp(46px, 7vw, 84px)); }
 
-#sezione-supporto-garanzie {
-  padding: clamp(50px, 7vw, 90px) 20px clamp(60px, 8vw, 100px);
+/* il selettore con section#... pareggia la regola globale
+   "#corpo-pagina > section:not(#hero)" che impone 15px in alto */
+#corpo-pagina > section.sezione-comune#sezione-supporto-garanzie {
+  /* solo 10px in alto: il titolo resta attaccato alla sezione precedente */
+  padding: 10px 20px clamp(60px, 8vw, 100px);
 }
 .solo-lettori {
   position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
@@ -3243,10 +3174,11 @@ details.domanda[open] summary { color: var(--ciano); }
   .card-garanzia { padding: 24px 20px; }
 }
 
-/* ============ FAQ NUOVO STILE (accordion .faq-item) — SFONDO BIANCO ============ */
+/* ============ FAQ NUOVO STILE (accordion .faq-item) — SFONDO SCURO COME LA HOME ============ */
+/* stessa base cromatica di index.html: nessun fondo bianco */
 #corpo-pagina:has(#sezione-faq),
-body:has(#sezione-faq) { background: #ffffff; }
-#pagina-faq #banda-pagina { background: radial-gradient(800px 300px at 50% -40%, rgba(64,201,255,.18), transparent 70%), #ffffff; }
+body:has(#sezione-faq) { background: var(--sfondo); }
+#pagina-faq #banda-pagina { background: radial-gradient(800px 300px at 50% -40%, rgba(64,201,255,.18), transparent 70%), var(--sfondo); }
 /* titolo pagina: sans-serif, tutto maiuscolo, bold, colore principale del brand */
 #pagina-faq #banda-pagina h1 {
   color: var(--viola);
@@ -3255,7 +3187,7 @@ body:has(#sezione-faq) { background: #ffffff; }
   letter-spacing: .02em;
   line-height: 1.15;
 }
-#pagina-faq #banda-pagina p { color: #444; }
+#pagina-faq #banda-pagina p { color: var(--testo-3); }
 #pagina-faq [reveal] { opacity: 1; transform: none; transition: none; }
 #sezione-faq #pannello-faq { max-width: 900px; margin: 0 auto; padding: 0 20px; }
 
@@ -3353,12 +3285,16 @@ body:has(#sezione-faq) { background: #ffffff; }
 #cta-faq p { color: var(--testo-3); font-size: .94rem; margin-bottom: 22px; }
 #cta-faq-azioni { display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; }
 #cta-faq-azioni a {
+  position: relative;
   display: inline-flex; align-items: center; gap: 9px;
   padding: 10px 20px; border-radius: 999px;
   font-size: .9rem; font-weight: 700; text-decoration: none;
-  transition: transform .3s cubic-bezier(.22, .61, .36, 1), box-shadow .3s ease, background-color .3s ease;
+  transition: transform .6s cubic-bezier(.22, 1, .36, 1), box-shadow .6s ease, background-color .6s ease, border-color .6s ease;
 }
-#cta-faq-azioni a:hover { transform: translateY(-2px); }
+#cta-faq-azioni a:hover {
+  transform: scale(1.2);
+  z-index: 1;
+}
 #cta-faq .bottone-faq-scrivici { background: var(--gradiente-brand); color: #fff; box-shadow: 0 8px 20px rgba(232, 28, 255, .28); }
 #cta-faq .bottone-faq-scrivici:hover { box-shadow: 0 12px 26px rgba(232, 28, 255, .4); }
 #cta-faq .bottone-faq-whatsapp { background: transparent; color: #fff; border: 1px solid rgba(255, 255, 255, .22); }
@@ -3415,8 +3351,11 @@ body:has(#sezione-faq) { background: #ffffff; }
 
 /* --- BARRA RICERCA FAQ --- */
 #centrale { display: flex; justify-content: center; padding: 30px 20px 0; }
-#contenitore-ricerca { position: relative; display: inline-block; transition: all 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
-#contenitore-ricerca:hover, #contenitore-ricerca.cliccata { transform: scale(1.2); }
+#contenitore-ricerca { position: relative; display: inline-block; transition: transform 1s cubic-bezier(.22, 1, .36, 1), filter 1s ease; }
+#contenitore-ricerca:hover, #contenitore-ricerca.cliccata {
+  transform: scale(1.2);
+  filter: drop-shadow(0 12px 26px rgba(64, 201, 255, .22));
+}
 #search-input {
   width: 200px;
   padding: 12px 16px 12px 44px;
@@ -3425,7 +3364,7 @@ body:has(#sezione-faq) { background: #ffffff; }
   background: #fff;
   color: #000;
   font-size: 1rem;
-  transition: all 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  transition: all 0.75s ease;
   outline: none;
   opacity: .92;
   box-shadow: 0 2px 6px rgba(0, 0, 0, .13);
@@ -3586,9 +3525,11 @@ body:has(#sezione-faq) { background: #ffffff; }
 
 #infoContactGrid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 30px;
+  /* una card sopra l'altra: Email in alto, Instagram sotto */
+  grid-template-columns: minmax(0, 1fr);
+  gap: 22px;
   margin: 0 auto;
+  width: 100%;
 }
 
 .infoContactItem {
@@ -3983,10 +3924,13 @@ body:has(#sezione-faq) { background: #ffffff; }
   margin-bottom: 16px;
 }
 #sezione-nostri-lavori .titoli-sezione {
-  font-size: clamp(2.6rem, 6.2vw, 5rem);
-  line-height: 1.04;
+  /* "I nostri lavori" sempre su una sola riga */
+  font-size: clamp(1.55rem, 2.9vw, 2.6rem);
+  line-height: 1.1;
   letter-spacing: -.02em;
-  margin-bottom: 20px;
+  margin-bottom: 18px;
+  white-space: nowrap;
+  text-wrap: nowrap;
 }
 
 /* ---- scena ---- */
@@ -4614,11 +4558,13 @@ body.popup-aperto { overflow: hidden; }
   color: #ffffff;
   font-size: .95rem;
   box-shadow: 0 0 24px rgba(232, 28, 255, .22);
-  animation: freccia-su-giu 2s cubic-bezier(.45, 0, .55, 1) infinite;
+  /* su e giù in loop, 2,5 secondi per ciclo, senza scatti */
+  will-change: transform;
+  animation: freccia-su-giu 2.5s ease-in-out infinite;
 }
 @keyframes freccia-su-giu {
-  0%, 100% { transform: translateY(-4px); }
-  50% { transform: translateY(10px); }
+  0%, 100% { transform: translateY(-6px); }
+  50% { transform: translateY(8px); }
 }
 
 /* ============ VIDEO NELLA CTA FINALE ============ */
@@ -4736,10 +4682,10 @@ body:has(#esplora-sito) #footer { margin-top: 0; }
   box-shadow: 0 1px 2px rgba(13, 17, 23, .05);
   transform-origin: center;
   will-change: transform;
-  /* hover fluido e lento: nessun rimbalzo, una sola curva morbida */
-  transition: transform .85s cubic-bezier(.16, 1, .3, 1),
-              box-shadow .65s ease, border-color .65s ease,
-              color .6s ease, filter .55s ease, opacity .55s ease;
+  /* hover lento e continuo: nessun rimbalzo, una sola curva morbida */
+  transition: transform 1.15s cubic-bezier(.22, 1, .36, 1),
+              box-shadow .95s cubic-bezier(.22, 1, .36, 1),
+              border-color .85s ease, color .8s ease, opacity .55s ease;
 }
 .scheda-esplora.scheda-larga { grid-column: span 3; }
 .scheda-esplora > * { position: relative; z-index: 1; }
@@ -4817,6 +4763,9 @@ body:has(#esplora-sito) #footer { margin-top: 0; }
 .scheda-esplora:focus-visible {
   transform: scale(1.2);
   z-index: 6;
+  transition: transform 1.15s cubic-bezier(.22, 1, .36, 1),
+              box-shadow .95s cubic-bezier(.22, 1, .36, 1),
+              border-color .85s ease, color .8s ease;
   color: #ffffff;
   border-color: transparent;
   box-shadow: 0 30px 64px color-mix(in srgb, var(--viola) 34%, transparent),
@@ -4920,4 +4869,1219 @@ body:has(#esplora-sito) #footer { margin-top: 0; }
   .scheda-esplora:hover,
   .scheda-esplora:focus-visible { transform: scale(1.03); }
   #video-cta { margin-bottom: 32px; }
+}
+
+/* ============================================================
+   PORTFOLIO — frecce leggibili anche in hover + dot del brand
+   ============================================================ */
+#portfolio .freccia-portfolio:hover,
+#portfolio .freccia-portfolio:focus-visible {
+  background: var(--gradiente-brand);
+  border-color: transparent;
+  color: #ffffff;
+  box-shadow: 0 10px 24px rgba(232, 28, 255, .35);
+}
+#portfolio .punto-portfolio[aria-current="true"] {
+  background: var(--gradiente-brand);
+  box-shadow: 0 0 12px rgba(232, 28, 255, .45);
+}
+.freccia-portfolio { flex-shrink: 0; }
+
+/* ============================================================
+   RECENSIONI — bottone minimal "Lascia una recensione"
+   ============================================================ */
+#azione-recensioni { display: flex; justify-content: center; margin-top: 34px; }
+.bottone-recensione {
+  display: inline-flex; align-items: center; gap: 10px;
+  padding: 12px 24px;
+  border: 1px solid rgba(255, 255, 255, .22);
+  border-radius: 999px;
+  color: #ffffff; font-weight: 700; font-size: .92rem;
+  text-decoration: none; background: transparent;
+  transform-origin: center;
+  transition: border-color .55s ease, background .55s ease,
+              transform .9s cubic-bezier(.22, 1, .36, 1), box-shadow .55s ease;
+}
+/* la stella: SVG con gradiente oro, bordo luminoso e alone, non un'icona piatta */
+.stella-recensione {
+  flex: 0 0 auto;
+  width: 18px;
+  height: 18px;
+  filter: drop-shadow(0 0 5px rgba(255, 200, 61, .5));
+  transition: transform .55s cubic-bezier(.22, 1, .36, 1), filter .45s ease;
+}
+.bottone-recensione:hover .stella-recensione,
+.bottone-recensione:focus-visible .stella-recensione {
+  transform: rotate(-12deg) scale(1.15);
+  filter: drop-shadow(0 0 10px rgba(255, 214, 100, .95));
+}
+.bottone-recensione:hover,
+.bottone-recensione:focus-visible {
+  border-color: transparent;
+  background: var(--gradiente-brand);
+  /* zoom 1.2 lento e continuo: una sola curva, nessun rimbalzo */
+  transform: translateY(-2px) scale(1.2);
+  box-shadow: 0 16px 34px rgba(232, 28, 255, .38);
+  transition: transform .9s cubic-bezier(.22, 1, .36, 1),
+              border-color .55s ease, background .55s ease, box-shadow .55s ease;
+}
+@media (prefers-reduced-motion: reduce) {
+  .bottone-recensione:hover, .bottone-recensione:focus-visible { transform: none; }
+}
+
+/* ============================================================
+   BOTTONE MINIMAL (Scopri di più / Voglio assistenza)
+   ============================================================ */
+#azione-garanzie { display: flex; justify-content: center; margin-top: 40px; }
+.bottone-minimal {
+  display: inline-flex; align-items: center; gap: 10px;
+  padding: 13px 28px;
+  border: 1px solid rgba(255, 255, 255, .22);
+  border-radius: 999px;
+  background: transparent;
+  color: #ffffff; font-weight: 700; font-size: .95rem;
+  text-decoration: none; cursor: pointer;
+  transform-origin: center;
+  transition: border-color .45s ease, background .45s ease, transform .45s cubic-bezier(.22, 1, .36, 1), box-shadow .45s ease;
+}
+.bottone-minimal i { font-size: .85rem; }
+.bottone-minimal:hover,
+.bottone-minimal:focus-visible {
+  border-color: transparent;
+  background: var(--gradiente-brand);
+  /* zoom 1.2, velocità normale */
+  transform: scale(1.2);
+  box-shadow: 0 12px 26px rgba(232, 28, 255, .32);
+  transition: transform .45s cubic-bezier(.22, 1, .36, 1),
+              border-color .45s ease, background .45s ease, box-shadow .45s ease;
+}
+.bottone-minimal:active { transform: scale(.97); }
+@media (prefers-reduced-motion: reduce) {
+  .bottone-minimal { transition-duration: .45s, .45s, .45s, .45s !important; }
+  .bottone-minimal:hover, .bottone-minimal:focus-visible {
+    transform: scale(1.2) !important;
+    transition-duration: .45s, .45s, .45s, .45s !important;
+  }
+}
+
+/* ============================================================
+   FAQ — terzo canale: Instagram
+   ============================================================ */
+#cta-faq .bottone-faq-instagram {
+  background: transparent; color: #fff; border: 1px solid rgba(255, 255, 255, .22);
+}
+#cta-faq .bottone-faq-instagram:hover {
+  background: rgba(232, 28, 255, .16); border-color: rgba(232, 28, 255, .55);
+}
+
+/* ============================================================
+   CHI SIAMO — video sotto il titolo
+   ============================================================ */
+#video-chi-siamo {
+  max-width: 860px;
+  margin: 0 auto clamp(34px, 5vw, 56px);
+  border-radius: 24px;
+  overflow: hidden;
+  background: #05070b;
+  border: 1px solid rgba(255, 255, 255, .08);
+  box-shadow: 0 30px 60px -28px rgba(0, 0, 0, .9), 0 0 60px -30px rgba(64, 201, 255, .35);
+}
+#video-chi-siamo video {
+  display: block; width: 100%; height: auto;
+  border-radius: 24px;
+  object-fit: cover;
+}
+@media (max-width: 640px) {
+  #video-chi-siamo, #video-chi-siamo video { border-radius: 18px; }
+}
+
+/* ============================================================
+   CHI SIAMO — sezione contatti più ordinata
+   ============================================================ */
+#infoContactsSection { max-width: 1040px; }
+#infoContactGrid { grid-template-columns: minmax(0, 1fr); align-items: stretch; }
+.infoContactItem { height: 100%; justify-content: center; padding: 32px 25px; }
+#contatti-a-destra-e-sinistra { gap: clamp(20px, 3vw, 34px); }
+@media (min-width: 769px) {
+  #contatti-a-destra-e-sinistra > #infoContactGrid { flex: 1 1 50%; }
+  #contatti-a-destra-e-sinistra > #whatsappContainer { flex: 1 1 50%; }
+}
+
+/* ============================================================
+   POPUP WEBNIX EXTRA (assistenza + modulo gratuito Chi Siamo)
+   Prefisso .wbx per non toccare gli stili del modulo bozza.
+   ============================================================ */
+.wbx {
+  position: fixed; inset: 0; z-index: 9990;
+  display: grid; place-items: center;
+  padding: clamp(12px, 3vw, 28px);
+}
+.wbx[hidden] { display: none; }
+.wbx-sfondo {
+  position: absolute; inset: 0;
+  background: rgba(5, 7, 11, .78);
+  -webkit-backdrop-filter: blur(9px); backdrop-filter: blur(9px);
+}
+.wbx-card {
+  position: relative;
+  width: min(580px, 100%);
+  max-height: 90svh;
+  overflow-y: auto;
+  padding: 30px clamp(18px, 3vw, 32px) 28px;
+  border-radius: 24px;
+  border: 1px solid rgba(255, 255, 255, .1);
+  background: linear-gradient(180deg, #171d25 0%, #0e131a 100%);
+  color: var(--testo);
+  box-shadow: 0 40px 90px -30px rgba(0, 0, 0, .95), 0 0 80px -34px rgba(64, 201, 255, .45);
+  animation: wbx-entra .32s cubic-bezier(.22, 1, .36, 1) both;
+}
+@keyframes wbx-entra {
+  from { opacity: 0; transform: translateY(18px) scale(.98); }
+  to { opacity: 1; transform: none; }
+}
+.wbx-chiusura { animation: wbx-esce .22s ease forwards; }
+@keyframes wbx-esce {
+  to { opacity: 0; transform: translateY(12px) scale(.98); }
+}
+body.wbx-blocco { overflow: hidden; }
+.wbx-chiudi {
+  position: absolute; top: 14px; right: 14px;
+  width: 38px; height: 38px; border-radius: 50%;
+  display: grid; place-items: center;
+  border: 1px solid rgba(255, 255, 255, .14);
+  background: rgba(255, 255, 255, .04);
+  color: #fff; cursor: pointer;
+  transition: background .3s ease, border-color .3s ease, transform .3s ease;
+}
+.wbx-chiudi:hover { background: rgba(232, 28, 255, .2); border-color: rgba(232, 28, 255, .5); transform: rotate(90deg); }
+.wbx-testa { padding-right: 46px; margin-bottom: 22px; }
+.wbx-occhiello {
+  display: inline-block; font-size: .7rem; letter-spacing: 2px; text-transform: uppercase;
+  color: var(--ciano); font-weight: 800; margin-bottom: 8px;
+}
+.wbx-titolo { font-size: clamp(1.25rem, 2.6vw, 1.6rem); color: #fff; margin-bottom: 8px; line-height: 1.2; }
+.wbx-sotto { color: var(--testo-3); font-size: .93rem; line-height: 1.55; margin: 0; }
+
+/* scelta del canale */
+.wbx-canali { display: grid; gap: 12px; }
+.wbx-canale {
+  display: flex; align-items: center; gap: 14px;
+  width: 100%; padding: 16px 18px;
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, .1);
+  background: rgba(255, 255, 255, .03);
+  color: #fff; text-align: left; text-decoration: none; cursor: pointer;
+  font: inherit;
+  transition: border-color .4s ease, background .4s ease, transform .4s cubic-bezier(.175, .885, .32, 1.275);
+}
+.wbx-canale:hover, .wbx-canale:focus-visible {
+  border-color: rgba(232, 28, 255, .5);
+  background: rgba(232, 28, 255, .08);
+  transform: translateY(-2px);
+}
+.wbx-canale i { font-size: 1.15rem; width: 22px; text-align: center; color: var(--ciano); }
+.wbx-canale span { display: flex; flex-direction: column; gap: 2px; }
+.wbx-canale strong { font-size: .98rem; }
+.wbx-canale small { color: var(--testo-3); font-size: .82rem; }
+
+/* modulo */
+.wbx-form { display: grid; gap: 16px; }
+.wbx-avviso { color: var(--testo-3); font-size: .88rem; line-height: 1.55; margin: 0; }
+.wbx-campo { display: grid; gap: 7px; border: 0; padding: 0; margin: 0; }
+.wbx-etichetta { color: #fff; font-size: .87rem; font-weight: 700; }
+.wbx-input {
+  width: 100%; padding: 12px 14px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, .14);
+  background: rgba(5, 7, 11, .6);
+  color: #fff; font: inherit; font-size: .92rem;
+  transition: border-color .3s ease, box-shadow .3s ease;
+}
+.wbx-input::placeholder { color: rgba(255, 255, 255, .32); }
+.wbx-input:focus {
+  outline: none; border-color: var(--ciano);
+  box-shadow: 0 0 0 3px rgba(64, 201, 255, .16);
+}
+textarea.wbx-input { resize: vertical; min-height: 96px; }
+.wbx-aiuto { color: var(--testo-3); font-size: .78rem; margin: 0; }
+.wbx-scelte-fila { display: flex; flex-wrap: wrap; gap: 8px; }
+.wbx-scelta {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 9px 14px; border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, .14);
+  background: rgba(255, 255, 255, .03);
+  color: var(--testo-2); font-size: .85rem; cursor: pointer;
+  transition: border-color .3s ease, background .3s ease, color .3s ease;
+}
+.wbx-scelta input { accent-color: #e81cff; margin: 0; }
+.wbx-scelta:has(input:checked) {
+  border-color: transparent;
+  background: var(--gradiente-brand);
+  color: #fff;
+}
+.wbx-consenso {
+  display: flex; align-items: flex-start; gap: 10px;
+  font-size: .82rem; color: var(--testo-3); line-height: 1.5;
+}
+.wbx-consenso input { margin-top: 3px; accent-color: #e81cff; }
+.wbx-consenso a { color: var(--ciano); }
+.wbx-invia {
+  margin-top: 4px; width: 100%;
+  padding: 14px 20px; border: 0; border-radius: 999px;
+  background: var(--gradiente-brand); color: #fff;
+  font: inherit; font-weight: 800; font-size: .95rem; cursor: pointer;
+  box-shadow: 0 12px 28px rgba(232, 28, 255, .3);
+  transition: transform .4s cubic-bezier(.175, .885, .32, 1.275), box-shadow .4s ease, opacity .3s ease;
+}
+.wbx-invia:hover { transform: translateY(-2px); box-shadow: 0 16px 34px rgba(232, 28, 255, .42); }
+.wbx-invia:disabled { opacity: .65; cursor: progress; transform: none; }
+.wbx-nota { color: var(--testo-3); font-size: .78rem; text-align: center; margin: 0; }
+.wbx-campo.wbx-mancante .wbx-input { border-color: #ff5c8a; box-shadow: 0 0 0 3px rgba(255, 92, 138, .16); }
+.wbx-campo.wbx-mancante .wbx-etichetta { color: #ff8aa9; }
+.wbx-errore {
+  padding: 12px 14px; border-radius: 12px;
+  border: 1px solid rgba(255, 92, 138, .4);
+  background: rgba(255, 92, 138, .1);
+  color: #ffd7e2; font-size: .84rem; line-height: 1.5;
+}
+.wbx-errore a { color: #fff; font-weight: 700; }
+.wbx-successo { text-align: center; display: grid; gap: 12px; justify-items: center; padding: 8px 0 4px; }
+.wbx-successo-segno {
+  width: 62px; height: 62px; border-radius: 50%;
+  display: grid; place-items: center;
+  background: var(--gradiente-brand); color: #fff; font-size: 1.3rem;
+  box-shadow: 0 0 26px rgba(232, 28, 255, .5);
+}
+.wbx-successo h3 { color: #fff; font-size: 1.15rem; }
+.wbx-successo p { color: var(--testo-3); font-size: .9rem; line-height: 1.55; margin: 0; }
+.wbx-successo .wbx-invia { width: auto; padding: 12px 30px; }
+@media (max-width: 520px) {
+  .wbx-card { padding: 26px 16px 22px; border-radius: 20px; }
+  .wbx-scelta { font-size: .8rem; padding: 8px 11px; }
+}
+
+/* il pulsante «Compila il modulo gratuito» è un <button>, non un link */
+button.cta-button { border: 0; font-family: inherit; }
+/* i blocchi nascosti dei popup .wbx devono restare nascosti */
+.wbx [hidden] { display: none !important; }
+
+/* ============================================================
+   MODULI EXTRA — assistenza, domanda FAQ, diagnosi
+   Usano lo stesso telaio del modulo bozza (.wb-* di
+   modulo-bozza.css): stessa card, stessi campi, stessi passi e
+   stessa casella di consenso animata. Qui solo i ritocchi.
+   ============================================================ */
+.wbx .wb-card { width: min(680px, 100%); }
+.wbx h2.wb-titolo-extra {
+  margin: 0;
+  font-size: clamp(1.2rem, 2.6vw, 1.62rem);
+  line-height: 1.15;
+  letter-spacing: -.02em;
+  color: #fff;
+}
+.wbx .wb-corpo { padding-top: clamp(14px, 2.6vw, 22px); }
+.wbx .wb-domanda { min-width: 0; }
+.wbx .wb-opzione .wb-testo-scelta {
+  flex: 1;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+/* le opzioni multiple hanno la casella quadrata, non il pallino */
+.wbx .wb-opzione-multi .wb-segno { border-radius: 4px; }
+.wbx .wb-domanda-consenso { margin-bottom: 9px; }
+.wbx .wb-domanda-consenso:last-of-type { margin-bottom: 18px; }
+.wbx .wb-errore { margin-top: 8px; }
+.wbx .wb-domanda.wb-non-valida .wb-opzione { border-color: rgba(255, 90, 130, .4); }
+.wbx .wb-errore-invio { margin-bottom: 16px; }
+.wbx .wb-successo .wb-avanti { margin-top: 4px; }
+/* pannello di scelta del canale (assistenza) */
+.wbx-canali-pannello { display: grid; gap: 14px; }
+.wbx-canali-pannello .wbx-avviso { margin: 0; }
+@media (max-width: 560px) {
+  .wbx { padding: 0; align-items: end; }
+}
+
+/* ============================================================
+   PAGINA FAQ — RULLO DELLE DOMANDE
+   Intro a sinistra, elenco scorrevole con rotella a destra.
+   ============================================================ */
+#sezione-faq-rullo { max-width: 900px; margin: 0 auto; padding: 0 20px; }
+#rullo-riga { position: relative; display: flex; align-items: center; gap: 25px; }
+#rullo-finestra {
+  height: 400px;
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  position: relative;
+  -webkit-mask-image: linear-gradient(to bottom, transparent, #000 13%, #000 87%, transparent);
+  mask-image: linear-gradient(to bottom, transparent, #000 13%, #000 87%, transparent);
+}
+#rullo-pista {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  will-change: transform;
+  transition: transform .65s cubic-bezier(.22, 1, .36, 1);
+}
+.rullo-voce {
+  position: relative;
+  min-height: 74px;
+  width: 100%;
+  padding: 24px 22px 20px;
+  border: 1px solid rgba(255, 255, 255, .12);
+  background: #1C1C1C;
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  text-align: left;
+  color: #fff;
+  font-family: inherit;
+  cursor: pointer;
+  opacity: .7;
+  transform: scale(.97);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, .25);
+  transition: opacity .45s ease, transform .45s ease, background .4s ease, border-color .4s ease, box-shadow .4s ease;
+}
+.rullo-voce:hover {
+  opacity: 1;
+  background: #242424;
+  border-color: rgba(64, 201, 255, .4);
+}
+.rullo-voce.attiva {
+  opacity: 1;
+  transform: scale(1);
+  border-color: rgba(64, 201, 255, .6);
+  background-image: linear-gradient(110deg, rgba(232, 28, 255, .2), rgba(64, 201, 255, .16));
+  background-color: #1C1C1C;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, .38), 0 0 0 1px rgba(64, 201, 255, .16), 0 0 30px rgba(64, 201, 255, .12);
+}
+/* targhetta col numero, appoggiata sull'angolo in alto a sinistra */
+.rullo-badge {
+  position: absolute;
+  top: 0;
+  left: 14px;
+  transform: translateY(-50%);
+  min-width: 34px;
+  padding: 3px 10px;
+  border-radius: 999px;
+  background: var(--gradiente-brand);
+  color: #fff;
+  font-size: .72rem;
+  font-weight: 700;
+  letter-spacing: .04em;
+  line-height: 1.4;
+  text-align: center;
+  box-shadow: 0 4px 14px rgba(232, 28, 255, .45), 0 0 0 3px rgba(13, 17, 23, .9);
+}
+.rullo-icona {
+  flex-shrink: 0;
+  width: 38px;
+  height: 38px;
+  display: grid;
+  place-items: center;
+  border-radius: 11px;
+  color: #fff;
+  font-size: .9rem;
+  background: linear-gradient(135deg, rgba(232, 28, 255, .32), rgba(64, 201, 255, .26));
+  border: 1px solid rgba(232, 28, 255, .4);
+}
+.rullo-voce.attiva .rullo-icona {
+  border-color: rgba(64, 201, 255, .65);
+  box-shadow: 0 0 18px rgba(64, 201, 255, .35);
+}
+.rullo-domanda {
+  font-size: 1rem;
+  line-height: 1.45;
+  font-weight: 700;
+  color: #fff;
+  letter-spacing: -.01em;
+}
+
+/* rotella */
+#rullo-rotella {
+  width: 34px;
+  height: 260px;
+  position: relative;
+  flex-shrink: 0;
+  display: flex;
+  justify-content: center;
+  cursor: grab;
+  touch-action: none;
+  outline: none;
+}
+#rullo-rotella:active { cursor: grabbing; }
+.rullo-linea {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: rgba(255, 255, 255, .12);
+  border-radius: 10px;
+  transition: background .45s ease, box-shadow .45s ease;
+}
+#rullo-rotella:hover .rullo-linea,
+#rullo-rotella:focus-visible .rullo-linea {
+  background: rgba(255, 255, 255, .22);
+  box-shadow: 0 0 12px rgba(64, 201, 255, .2);
+}
+.rullo-progresso {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  top: 0;
+  width: 3px;
+  height: 20%;
+  background: linear-gradient(var(--viola), var(--ciano));
+  border-radius: 10px;
+  box-shadow: 0 0 12px rgba(64, 201, 255, .5);
+  transition: top .45s cubic-bezier(.22, 1, .36, 1), box-shadow .45s ease;
+}
+.rullo-pomello {
+  position: absolute;
+  left: 50%;
+  top: 0;
+  width: 30px;
+  height: 30px;
+  border: 2px solid var(--ciano);
+  border-radius: 50%;
+  background: var(--sfondo);
+  box-shadow: 0 0 18px rgba(64, 201, 255, .25);
+  transform: translate(-50%, -50%) scale(1);
+  transition: transform .55s cubic-bezier(.22, 1, .36, 1),
+              box-shadow .55s ease,
+              border-color .45s ease,
+              top .45s cubic-bezier(.22, 1, .36, 1);
+  will-change: transform, top;
+}
+.rullo-pomello::after {
+  content: "";
+  position: absolute;
+  inset: 7px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--viola), var(--ciano));
+  transition: inset .55s cubic-bezier(.22, 1, .36, 1);
+}
+/* onda che parte dal pomello quando cambia la domanda */
+.rullo-pomello::before {
+  content: "";
+  position: absolute;
+  inset: -3px;
+  border-radius: 50%;
+  border: 2px solid rgba(64, 201, 255, .55);
+  opacity: 0;
+  pointer-events: none;
+}
+.rullo-pomello.pulsa::before { animation: rullo-onda .7s cubic-bezier(.22, 1, .36, 1) forwards; }
+@keyframes rullo-onda {
+  0%   { opacity: .75; transform: scale(.8); }
+  70%  { opacity: .18; }
+  100% { opacity: 0; transform: scale(1.85); }
+}
+/* hover / tastiera: zoom 1.2 lento */
+#rullo-rotella:hover .rullo-pomello,
+#rullo-rotella:focus-visible .rullo-pomello {
+  transform: translate(-50%, -50%) scale(1.2);
+  border-color: #86e0ff;
+  box-shadow: 0 0 0 4px rgba(64, 201, 255, .12),
+              0 0 32px rgba(64, 201, 255, .7),
+              0 8px 20px rgba(0, 0, 0, .35);
+}
+#rullo-rotella:hover .rullo-pomello::after {
+  inset: 5px;
+}
+#rullo-rotella:focus-visible .rullo-pomello {
+  box-shadow: 0 0 0 4px rgba(64, 201, 255, .45), 0 0 32px rgba(64, 201, 255, .7);
+}
+/* trascinamento: il pomello si "stringe" e segue il puntatore senza ritardo */
+#rullo-rotella.trascinamento .rullo-pomello,
+#rullo-rotella:active .rullo-pomello {
+  transform: translate(-50%, -50%) scale(1.08);
+  border-color: #fff;
+  box-shadow: 0 0 0 6px rgba(64, 201, 255, .16), 0 0 34px rgba(64, 201, 255, .75);
+  transition: transform .18s ease, box-shadow .25s ease, border-color .25s ease;
+}
+#rullo-rotella.trascinamento .rullo-progresso {
+  transition: box-shadow .45s ease;
+}
+
+/* risposta + controlli */
+#rullo-risposta {
+  min-height: 88px;
+  margin-top: 24px;
+  padding: 18px 22px;
+  border-radius: 12px;
+  background-color: #12151b;
+  background-image: linear-gradient(110deg, rgba(232, 28, 255, .92), rgba(64, 201, 255, .92));
+  color: #fff;
+  font-size: .95rem;
+  font-weight: 500;
+  line-height: 1.75;
+  box-shadow: 0 14px 34px rgba(232, 28, 255, .22);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, .28);
+  opacity: 0;
+  transform: translateY(8px);
+  transition: opacity .35s ease, transform .35s ease;
+}
+#rullo-risposta.visibile { opacity: 1; transform: translateY(0); }
+#rullo-risposta:empty { padding: 0; background: none; box-shadow: none; }
+#rullo-controlli { display: flex; align-items: center; justify-content: flex-end; gap: 10px; margin-top: 12px; }
+.rullo-contatore { color: var(--testo-3); font-size: .78rem; margin-right: 8px; }
+.rullo-contatore strong { color: #fff; }
+.rullo-freccia {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, .15);
+  background: rgba(255, 255, 255, .04);
+  color: #fff;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background .3s ease, border-color .3s ease, transform .3s ease;
+}
+.rullo-freccia:hover, .rullo-freccia:focus-visible {
+  background: rgba(64, 201, 255, .15);
+  border-color: var(--ciano);
+  transform: scale(1.1);
+}
+@media (max-width: 750px) {
+  #rullo-finestra { height: 390px; }
+  #rullo-riga { gap: 14px; }
+  .rullo-voce { padding: 22px 15px 16px; gap: 12px; }
+  .rullo-badge { left: 12px; }
+  .rullo-icona { width: 32px; height: 32px; font-size: .8rem; }
+  .rullo-domanda { font-size: .92rem; }
+  #rullo-risposta { min-height: 0; font-size: .9rem; padding: 14px 16px; }
+}
+
+/* ============================================================
+   HOME — FAQ "Hai qualche domanda?"
+   Intro a sinistra, rullo delle domande a destra.
+   ============================================================ */
+#faq-home { padding: clamp(38px, 6vw, 78px) 20px; }
+#faq-home .fh-sezione {
+  max-width: 1050px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1fr 1.2fr;
+  grid-template-areas:
+    "intro corpo"
+    "intro risposta"
+    "intro controlli";
+  column-gap: 70px;
+  row-gap: 0;
+  align-items: center;
+}
+#faq-home .fh-intro { grid-area: intro; align-self: center; min-width: 0; }
+#faq-home .fh-etichetta {
+  display: block;
+  color: var(--ciano);
+  font-size: .72rem;
+  letter-spacing: .2em;
+  text-transform: uppercase;
+  margin-bottom: 18px;
+}
+#faq-home .fh-titolo {
+  font-size: clamp(2rem, 4.4vw, 3.4rem);
+  line-height: 1.08;
+  letter-spacing: -.02em;
+  margin-bottom: 20px;
+  color: #fff;
+}
+#faq-home .fh-titolo span {
+  background: var(--gradiente-brand);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+#faq-home .fh-testo {
+  color: var(--testo-3);
+  font-size: .95rem;
+  line-height: 1.8;
+  max-width: 350px;
+}
+#faq-home .fh-corpo {
+  grid-area: corpo;
+  display: flex;
+  align-items: center;
+  gap: 25px;
+  min-width: 0;
+}
+#faq-home .fh-finestra {
+  height: 400px;
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  position: relative;
+  -webkit-mask-image: linear-gradient(to bottom, transparent, #000 13%, #000 87%, transparent);
+  mask-image: linear-gradient(to bottom, transparent, #000 13%, #000 87%, transparent);
+}
+#faq-home .fh-pista {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  will-change: transform;
+  transition: transform .65s cubic-bezier(.22, 1, .36, 1);
+}
+#faq-home .fh-voce {
+  position: relative;
+  min-height: 74px;
+  width: 100%;
+  padding: 24px 22px 20px;
+  border: 1px solid rgba(255, 255, 255, .12);
+  background: #1C1C1C;
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  text-align: left;
+  color: #fff;
+  font-family: inherit;
+  cursor: pointer;
+  opacity: .7;
+  transform: scale(.97);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, .25);
+  transition: opacity .45s ease, transform .45s ease, background .4s ease, border-color .4s ease, box-shadow .4s ease;
+}
+#faq-home .fh-voce:hover {
+  opacity: 1;
+  background: #242424;
+  border-color: rgba(64, 201, 255, .4);
+}
+#faq-home .fh-voce.attiva {
+  opacity: 1;
+  transform: scale(1);
+  border-color: rgba(64, 201, 255, .6);
+  background-image: linear-gradient(110deg, rgba(232, 28, 255, .2), rgba(64, 201, 255, .16));
+  background-color: #1C1C1C;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, .38), 0 0 0 1px rgba(64, 201, 255, .16), 0 0 30px rgba(64, 201, 255, .12);
+}
+#faq-home .fh-badge {
+  position: absolute;
+  top: 0;
+  left: 14px;
+  transform: translateY(-50%);
+  min-width: 34px;
+  padding: 3px 10px;
+  border-radius: 999px;
+  background: var(--gradiente-brand);
+  color: #fff;
+  font-size: .72rem;
+  font-weight: 700;
+  letter-spacing: .04em;
+  line-height: 1.4;
+  text-align: center;
+  box-shadow: 0 4px 14px rgba(232, 28, 255, .45), 0 0 0 3px rgba(13, 17, 23, .9);
+}
+#faq-home .fh-icona {
+  flex-shrink: 0;
+  width: 38px;
+  height: 38px;
+  display: grid;
+  place-items: center;
+  border-radius: 11px;
+  color: #fff;
+  font-size: .9rem;
+  background: linear-gradient(135deg, rgba(232, 28, 255, .32), rgba(64, 201, 255, .26));
+  border: 1px solid rgba(232, 28, 255, .4);
+}
+#faq-home .fh-voce.attiva .fh-icona {
+  border-color: rgba(64, 201, 255, .65);
+  box-shadow: 0 0 18px rgba(64, 201, 255, .35);
+}
+#faq-home .fh-domanda {
+  font-size: 1rem;
+  line-height: 1.45;
+  font-weight: 700;
+  color: #fff;
+  letter-spacing: -.01em;
+}
+#faq-home .fh-rotella {
+  width: 34px;
+  height: 260px;
+  position: relative;
+  flex-shrink: 0;
+  display: flex;
+  justify-content: center;
+  cursor: grab;
+  touch-action: none;
+  outline: none;
+}
+#faq-home .fh-rotella:active { cursor: grabbing; }
+#faq-home .fh-linea {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: rgba(255, 255, 255, .12);
+  border-radius: 10px;
+  transition: background .45s ease, box-shadow .45s ease;
+}
+#faq-home .fh-rotella:hover .fh-linea,
+#faq-home .fh-rotella:focus-visible .fh-linea {
+  background: rgba(255, 255, 255, .22);
+  box-shadow: 0 0 12px rgba(64, 201, 255, .2);
+}
+#faq-home .fh-progresso {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  top: 0;
+  width: 3px;
+  height: 20%;
+  background: linear-gradient(var(--viola), var(--ciano));
+  border-radius: 10px;
+  box-shadow: 0 0 12px rgba(64, 201, 255, .5);
+  transition: top .45s cubic-bezier(.22, 1, .36, 1), box-shadow .45s ease;
+}
+#faq-home .fh-pomello {
+  position: absolute;
+  left: 50%;
+  top: 0;
+  width: 30px;
+  height: 30px;
+  border: 2px solid var(--ciano);
+  border-radius: 50%;
+  background: var(--sfondo);
+  box-shadow: 0 0 18px rgba(64, 201, 255, .25);
+  transform: translate(-50%, -50%) scale(1);
+  transition: transform .55s cubic-bezier(.22, 1, .36, 1),
+              box-shadow .55s ease,
+              border-color .45s ease,
+              top .45s cubic-bezier(.22, 1, .36, 1);
+  will-change: transform, top;
+}
+#faq-home .fh-pomello::after {
+  content: "";
+  position: absolute;
+  inset: 7px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--viola), var(--ciano));
+  transition: inset .55s cubic-bezier(.22, 1, .36, 1);
+}
+/* onda che parte dal pomello quando cambia la domanda */
+#faq-home .fh-pomello::before {
+  content: "";
+  position: absolute;
+  inset: -3px;
+  border-radius: 50%;
+  border: 2px solid rgba(64, 201, 255, .55);
+  opacity: 0;
+  pointer-events: none;
+}
+#faq-home .fh-pomello.pulsa::before { animation: rullo-onda .7s cubic-bezier(.22, 1, .36, 1) forwards; }
+/* hover / tastiera: zoom 1.2 lento */
+#faq-home .fh-rotella:hover .fh-pomello,
+#faq-home .fh-rotella:focus-visible .fh-pomello {
+  transform: translate(-50%, -50%) scale(1.2);
+  border-color: #86e0ff;
+  box-shadow: 0 0 0 4px rgba(64, 201, 255, .12),
+              0 0 32px rgba(64, 201, 255, .7),
+              0 8px 20px rgba(0, 0, 0, .35);
+}
+#faq-home .fh-rotella:hover .fh-pomello::after {
+  inset: 5px;
+}
+#faq-home .fh-rotella:focus-visible .fh-pomello {
+  box-shadow: 0 0 0 4px rgba(64, 201, 255, .45), 0 0 32px rgba(64, 201, 255, .7);
+}
+/* trascinamento: il pomello si "stringe" e segue il puntatore senza ritardo */
+#faq-home .fh-rotella.trascinamento .fh-pomello,
+#faq-home .fh-rotella:active .fh-pomello {
+  transform: translate(-50%, -50%) scale(1.08);
+  border-color: #fff;
+  box-shadow: 0 0 0 6px rgba(64, 201, 255, .16), 0 0 34px rgba(64, 201, 255, .75);
+  transition: transform .18s ease, box-shadow .25s ease, border-color .25s ease;
+}
+#faq-home .fh-rotella.trascinamento .fh-progresso {
+  transition: box-shadow .45s ease;
+}
+#faq-home .fh-risposta {
+  grid-area: risposta;
+  margin-top: 24px;
+  padding: 18px 22px;
+  border-radius: 12px;
+  background-color: #12151b;
+  background-image: linear-gradient(110deg, rgba(232, 28, 255, .92), rgba(64, 201, 255, .92));
+  color: #fff;
+  font-size: .95rem;
+  font-weight: 500;
+  line-height: 1.75;
+  box-shadow: 0 14px 34px rgba(232, 28, 255, .22);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, .28);
+  opacity: 0;
+  transform: translateY(8px);
+  transition: opacity .35s ease, transform .35s ease;
+}
+#faq-home .fh-risposta.visibile { opacity: 1; transform: translateY(0); }
+#faq-home .fh-risposta:empty { padding: 0; background: none; box-shadow: none; }
+#faq-home .fh-controlli {
+  grid-area: controlli;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 16px;
+}
+#faq-home .fh-contatore { color: var(--testo-3); font-size: .78rem; margin-right: 8px; }
+#faq-home .fh-contatore strong { color: #fff; }
+#faq-home .fh-freccia {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, .15);
+  background: rgba(255, 255, 255, .04);
+  color: #fff;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background .3s ease, border-color .3s ease, transform .3s ease;
+}
+#faq-home .fh-freccia:hover,
+#faq-home .fh-freccia:focus-visible {
+  background: rgba(64, 201, 255, .15);
+  border-color: var(--ciano);
+  transform: scale(1.1);
+}
+@media (max-width: 900px) {
+  #faq-home .fh-sezione {
+    grid-template-columns: 1fr;
+    grid-template-areas: "intro" "corpo" "risposta" "controlli";
+    column-gap: 0;
+  }
+  #faq-home .fh-testo { max-width: none; }
+}
+@media (max-width: 750px) {
+  #faq-home .fh-corpo { gap: 14px; }
+  #faq-home .fh-finestra { height: 390px; }
+  #faq-home .fh-voce { padding: 22px 15px 16px; gap: 12px; }
+  #faq-home .fh-badge { left: 12px; }
+  #faq-home .fh-icona { width: 32px; height: 32px; font-size: .8rem; }
+  #faq-home .fh-domanda { font-size: .92rem; }
+  #faq-home .fh-risposta { font-size: .9rem; padding: 14px 16px; }
+}
+
+/* ============================================================
+   ANIMAZIONI RICHIESTE, SEMPRE LENTE E CONTINUE
+   Anche con "movimento ridotto" attivo nel sistema, questi tre
+   hover non devono diventare scatti istantanei: sono piccoli
+   movimenti locali (un bottone, una card, una freccia).
+   ============================================================ */
+@media (prefers-reduced-motion: reduce) {
+  .bottone-recensione {
+    transition-duration: .55s, .55s, .9s, .55s !important;
+  }
+  .bottone-recensione:hover,
+  .bottone-recensione:focus-visible {
+    transform: translateY(-2px) scale(1.2) !important;
+    transition-duration: .9s, .55s, .55s, .55s !important;
+  }
+  .scheda-esplora {
+    transition-duration: 1.15s, .95s, .85s, .8s, .55s !important;
+  }
+  .scheda-esplora:hover,
+  .scheda-esplora:focus-visible {
+    transition-duration: 1.15s, .95s, .85s, .8s !important;
+  }
+  #freccia-scroll i,
+  #freccia-giu {
+    animation-duration: 2.5s !important;
+    animation-timing-function: ease-in-out !important;
+    animation-iteration-count: infinite !important;
+  }
+  .tooltip-bozza {
+    transition: opacity .3s ease, transform .4s cubic-bezier(.22, 1, .36, 1), visibility .3s !important;
+  }
+  .stella-recensione {
+    transition-duration: .55s, .45s !important;
+  }
+  #contenitore-ricerca {
+    transition-duration: 1s, 1s !important;
+  }
+  #search-input {
+    transition-duration: .75s !important;
+  }
+  #ul2 a.link-restyling {
+    transition-duration: .6s !important;
+  }
+  #rullo-pista {
+    transition-duration: .65s !important;
+  }
+  .rullo-voce {
+    transition-duration: .5s, .5s, .4s, .4s, .4s !important;
+  }
+  .rullo-pomello {
+    transition-duration: .55s, .55s, .45s, .45s !important;
+  }
+  .rullo-pomello.pulsa::before {
+    animation-duration: .7s !important;
+  }
+  .rullo-progresso {
+    transition-duration: .25s !important;
+  }
+  #rullo-risposta {
+    transition-duration: .35s, .35s !important;
+  }
+  #faq-home .fh-pista {
+    transition-duration: .65s !important;
+  }
+  #faq-home .fh-voce {
+    transition-duration: .45s, .45s, .4s, .4s, .4s !important;
+  }
+  #faq-home .fh-pomello {
+    transition-duration: .55s, .55s, .45s, .45s !important;
+  }
+  #faq-home .fh-pomello.pulsa::before {
+    animation-duration: .7s !important;
+  }
+  #faq-home .fh-progresso {
+    transition-duration: .45s, .45s !important;
+  }
+  #faq-home .fh-risposta {
+    transition-duration: .35s, .35s !important;
+  }
+  /* bottoni della CTA FAQ: zoom 1.2 con la stessa lentezza anche con "movimento ridotto" */
+  #cta-faq-azioni a {
+    transition-duration: .6s, .6s, .6s, .6s !important;
+  }
+  #cta-faq-azioni a:hover {
+    transform: scale(1.2) !important;
+    transition-duration: .6s, .6s, .6s, .6s !important;
+  }
+}
+
+/* ============================================================
+   TITOLI ANIMATI
+   1) .split-testo → le due metà del titolo entrano ai lati
+   2) #titolo-hero → battitura carattere per carattere (il testo lo scrive script.js)
+   3) #titolo-cta-finale → onda per carattere
+   ============================================================ */
+
+/* ---------- 1) TITOLI A SCORRIMENTO LATERALE ---------- */
+.split-testo {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: baseline;
+  gap: .26em;
+  overflow: hidden;
+  padding: .04em .12em .14em;
+}
+.split-testo .parte-testo { display: inline-block; }
+.split-testo .parte-sinistra { transform: translateX(-240%); }
+.split-testo .parte-destra { transform: translateX(240%); }
+/* .in-vista lo aggiunge script.js quando il titolo stesso entra nel viewport */
+.split-testo.in-vista .parte-sinistra {
+  animation: titolo-da-sinistra 1.5s cubic-bezier(.22, 1, .36, 1) forwards;
+}
+.split-testo.in-vista .parte-destra {
+  animation: titolo-da-destra 1.5s cubic-bezier(.22, 1, .36, 1) .08s forwards;
+}
+@keyframes titolo-da-sinistra {
+  from { transform: translateX(-240%); }
+  to { transform: translateX(0); }
+}
+@keyframes titolo-da-destra {
+  from { transform: translateX(240%); }
+  to { transform: translateX(0); }
+}
+
+/* ---------- 2) BATTITURA DEL TITOLO DELLA HERO ---------- */
+#titolo-hero.battitura-attiva::after {
+  content: "";
+  display: inline-block;
+  width: .085em;
+  height: .9em;
+  margin-left: .09em;
+  vertical-align: -.08em;
+  border-radius: 2px;
+  background: var(--ciano);
+  animation: cursore-battitura 1s steps(1, end) infinite;
+}
+#titolo-hero.battitura-fine::after {
+  animation: none;
+  opacity: 0;
+  transition: opacity .45s ease;
+}
+@keyframes cursore-battitura {
+  0%, 49% { opacity: 1; }
+  50%, 100% { opacity: 0; }
+}
+
+/* ---------- 3) ONDA SUL TITOLO DELLA CTA FINALE ---------- */
+#titolo-cta-finale .onda-parola { display: inline-block; white-space: nowrap; }
+#titolo-cta-finale .onda-carattere {
+  display: inline-block;
+}
+/* onda una sola volta: parte all'ingresso nella sezione e poi resta ferma */
+#titolo-cta-finale.in-vista .onda-carattere {
+  animation: onda-carattere 2.4s ease-in-out 1 both;
+  animation-delay: calc(var(--i, 0) * 45ms);
+}
+/* Le lettere di "oggi stesso" hanno il gradiente brand: va messo su ogni
+   carattere, perché il ritaglio del genitore non segue i caratteri che si
+   muovono e la scritta sparirebbe durante l'onda. Dimensioni e posizione del
+   fondo sono misurate da script.js sulla parola intera, così il gradiente
+   resta uno solo e continuo da "oggi" a "stesso" invece di ripetersi identico
+   su ogni lettera. */
+#titolo-cta-finale .accento-brand .onda-carattere {
+  background-image: var(--gradiente-brand);
+  background-repeat: no-repeat;
+  background-size: var(--gw, 100%) var(--gh, 100%);
+  background-position: calc(-1 * var(--gx, 0px)) calc(-1 * var(--gy, 0px));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+}
+/* la parte con il gradiente ha bisogno di spazio in più: i caratteri salgono
+   e non devono uscire dall'area su cui è ritagliato il gradiente */
+#titolo-cta-finale .accento-brand { padding: .34em .12em; margin: 0 -.12em; }
+@keyframes onda-carattere {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-.26em); }
+}
+
+/* Con "movimento ridotto" attivo i titoli restano animati (stessa scelta fatta
+   per rullo FAQ, preloader e frecce), con durate esplicite. */
+@media (prefers-reduced-motion: reduce) {
+  .split-testo.in-vista .parte-sinistra,
+  .split-testo.in-vista .parte-destra {
+    animation-duration: 1.5s !important;
+  }
+  #titolo-cta-finale.in-vista .onda-carattere {
+    animation-duration: 2.4s !important;
+    animation-iteration-count: 1 !important;
+  }
+  #titolo-hero.battitura-attiva::after {
+    animation-duration: 1s !important;
+    animation-iteration-count: infinite !important;
+  }
+  #titolo-hero.battitura-fine::after {
+    animation: none !important;
+    opacity: 0 !important;
+  }
+}
+
+/* ============================================================
+   COMPARSE DEI TITOLI DI SEZIONE
+   Ogni h1/h2 senza un'animazione propria riceve una comparsa diversa.
+   script.js assegna la classe .anim-* e aggiunge .titolo-in-vista
+   quando il titolo entra nella parte visibile della sua sezione.
+   ============================================================ */
+.titolo-anim,
+[reveal].titolo-anim { opacity: 0; }
+.titolo-anim.titolo-in-vista {
+  opacity: 1;
+  animation-duration: 1.15s;
+  animation-timing-function: cubic-bezier(.22, 1, .36, 1);
+  animation-fill-mode: both;
+}
+
+/* ogni variante ha la sua comparsa */
+.titolo-anim.titolo-in-vista.anim-salita { animation-name: comparsa-salita; }
+.titolo-anim.titolo-in-vista.anim-discesa { animation-name: comparsa-discesa; }
+.titolo-anim.titolo-in-vista.anim-sinistra { animation-name: comparsa-sinistra; }
+.titolo-anim.titolo-in-vista.anim-destra { animation-name: comparsa-destra; }
+.titolo-anim.titolo-in-vista.anim-zoom { animation-name: comparsa-zoom; }
+.titolo-anim.titolo-in-vista.anim-zoom-indietro { animation-name: comparsa-zoom-indietro; }
+.titolo-anim.titolo-in-vista.anim-rotazione { animation-name: comparsa-rotazione; }
+.titolo-anim.titolo-in-vista.anim-ribaltamento { animation-name: comparsa-ribaltamento; }
+.titolo-anim.titolo-in-vista.anim-tenda-sinistra { animation-name: comparsa-tenda-sinistra; }
+.titolo-anim.titolo-in-vista.anim-tenda-destra { animation-name: comparsa-tenda-destra; }
+.titolo-anim.titolo-in-vista.anim-svela { animation-name: comparsa-svela; }
+.titolo-anim.titolo-in-vista.anim-sfocatura { animation-name: comparsa-sfocatura; }
+.titolo-anim.titolo-in-vista.anim-elastico {
+  animation-name: comparsa-elastico;
+  animation-timing-function: cubic-bezier(.34, 1.56, .64, 1);
+}
+.titolo-anim.titolo-in-vista.anim-diagonale { animation-name: comparsa-diagonale; }
+.titolo-anim.titolo-in-vista.anim-spirale { animation-name: comparsa-spirale; }
+
+/* punto di rotazione per le varianti che si ribaltano */
+.anim-rotazione { transform-origin: 0% 100%; }
+.anim-ribaltamento { transform-origin: 50% 100%; }
+
+/* 1. sale dal basso */
+@keyframes comparsa-salita {
+  from { opacity: 0; transform: translateY(54px); }
+  to { opacity: 1; transform: none; }
+}
+/* 2. scende dall'alto */
+@keyframes comparsa-discesa {
+  from { opacity: 0; transform: translateY(-54px); }
+  to { opacity: 1; transform: none; }
+}
+/* 3-4. entra di lato */
+@keyframes comparsa-sinistra {
+  from { opacity: 0; transform: translateX(-70px); }
+  to { opacity: 1; transform: none; }
+}
+@keyframes comparsa-destra {
+  from { opacity: 0; transform: translateX(70px); }
+  to { opacity: 1; transform: none; }
+}
+/* 5. si ingrandisce */
+@keyframes comparsa-zoom {
+  from { opacity: 0; transform: scale(.72); }
+  to { opacity: 1; transform: scale(1); }
+}
+/* 6. si rimpicciolisce (arriva da troppo vicino) */
+@keyframes comparsa-zoom-indietro {
+  from { opacity: 0; transform: scale(1.24); }
+  to { opacity: 1; transform: scale(1); }
+}
+/* 7. ruota entrando */
+@keyframes comparsa-rotazione {
+  from { opacity: 0; transform: rotate(-8deg) translateY(34px); }
+  to { opacity: 1; transform: rotate(0deg) translateY(0); }
+}
+/* 8. si rialza come uno sportello */
+@keyframes comparsa-ribaltamento {
+  from { opacity: 0; transform: perspective(800px) rotateX(78deg); }
+  to { opacity: 1; transform: perspective(800px) rotateX(0deg); }
+}
+/* 9-10. tenda che si apre */
+@keyframes comparsa-tenda-sinistra {
+  from { clip-path: inset(0 100% 0 0); }
+  to { clip-path: inset(0 0 0 0); }
+}
+@keyframes comparsa-tenda-destra {
+  from { clip-path: inset(0 0 0 100%); }
+  to { clip-path: inset(0 0 0 0); }
+}
+/* 11. si svela dal centro */
+@keyframes comparsa-svela {
+  from { opacity: 0; clip-path: inset(0 50% 0 50%); transform: scale(.95); }
+  to { opacity: 1; clip-path: inset(0 0 0 0); transform: scale(1); }
+}
+/* 12. da sfocato a nitido */
+@keyframes comparsa-sfocatura {
+  from { opacity: 0; filter: blur(16px); transform: scale(1.05); }
+  to { opacity: 1; filter: blur(0); transform: scale(1); }
+}
+/* 13. elastico: rimbalza su */
+@keyframes comparsa-elastico {
+  from { opacity: 0; transform: translateY(80px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+/* 14. arriva in diagonale */
+@keyframes comparsa-diagonale {
+  from { opacity: 0; transform: translate(-58px, 44px) rotate(-4deg); }
+  to { opacity: 1; transform: translate(0, 0) rotate(0deg); }
+}
+/* 15. spirale: ruota mentre si apre */
+@keyframes comparsa-spirale {
+  from { opacity: 0; transform: rotate(12deg) scale(.8); }
+  to { opacity: 1; transform: rotate(0deg) scale(1); }
+}
+
+/* restano animate anche con "movimento ridotto" attivo */
+@media (prefers-reduced-motion: reduce) {
+  .titolo-anim.titolo-in-vista {
+    animation-duration: 1.15s !important;
+  }
 }

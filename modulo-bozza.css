@@ -382,8 +382,9 @@ body.wb-blocco-scroll { overflow: hidden; }
 /* ---------- CONSENSI ---------- */
 .wb-defs {
   position: absolute;
-  width: 0; height: 0;
+  width: 1px; height: 1px;
   overflow: hidden;
+  pointer-events: none;
 }
 .wb-stop-a { stop-color: var(--viola, #e81cff); }
 .wb-stop-b { stop-color: var(--ciano, #40c9ff); }
@@ -393,7 +394,7 @@ body.wb-blocco-scroll { overflow: hidden; }
   gap: 11px;
   padding: 11px 13px;
   border: 1px solid rgba(255, 255, 255, .09);
-  border-radius: 12px;
+  border-radius: 13px;
   background: rgba(255, 255, 255, .025);
   font-size: .76rem;
   line-height: 1.5;
@@ -402,10 +403,12 @@ body.wb-blocco-scroll { overflow: hidden; }
   transition: border-color .25s ease, background .25s ease;
 }
 .wb-consenso:hover { border-color: rgba(64, 201, 255, .38); }
+/* selezionato: nessuno sfondo colorato, cambia solo il testo e il bordo */
 .wb-consenso.wb-attivo {
-  border-color: rgba(232, 28, 255, .34);
-  background: rgba(232, 28, 255, .05);
-  color: rgba(255, 255, 255, .82);
+  border-color: rgba(255, 255, 255, .2);
+  background: rgba(255, 255, 255, .025);
+  color: #fff;
+  box-shadow: none;
 }
 .wb-consenso input {
   position: absolute;
@@ -414,30 +417,26 @@ body.wb-blocco-scroll { overflow: hidden; }
   opacity: 0;
   pointer-events: none;
 }
+/* From Uiverse.io by SelfMadeSystem - https://uiverse.io/SelfMadeSystem/green-bobcat-29
+   MIT License, Copyright (c) SelfMadeSystem (SelfMadeSystem) */
 .wb-consenso-icona {
   flex-shrink: 0;
-  width: 24px; height: 24px;
+  width: 2em; height: 2em;
   margin-top: -2px;
   overflow: visible;
 }
-/* animazione Uiverse: il tratto si disegna lentamente, con i colori del brand */
+/* tratto nei colori del brand: gradiente viola -> ciano (defs #wb-brand-grad) */
 .wb-consenso-path {
   fill: none;
   stroke: url(#wb-brand-grad);
   stroke-width: 6;
   stroke-linecap: round;
   stroke-linejoin: round;
-  stroke-opacity: .34;
+  transition: stroke-dasharray .5s ease, stroke-dashoffset .5s ease;
   stroke-dasharray: 241 9999999;
   stroke-dashoffset: 0;
-  transition:
-    stroke-dasharray 1.05s cubic-bezier(.65, .05, .36, 1),
-    stroke-dashoffset 1.05s cubic-bezier(.65, .05, .36, 1),
-    stroke-opacity .55s ease;
 }
-.wb-consenso:hover .wb-consenso-path { stroke-opacity: .62; }
 .wb-consenso input:checked ~ .wb-consenso-icona .wb-consenso-path {
-  stroke-opacity: 1;
   stroke-dasharray: 70.5096664428711 9999999;
   stroke-dashoffset: -262.2723388671875;
 }
@@ -457,7 +456,7 @@ body.wb-blocco-scroll { overflow: hidden; }
 /* l'animazione del consenso resta lenta anche con "movimento ridotto" attivo */
 @media (prefers-reduced-motion: reduce) {
   .wb-consenso { transition-duration: .25s !important; }
-  .wb-consenso-path { transition-duration: 1.05s, 1.05s, .55s !important; }
+  .wb-consenso-path { transition-duration: .5s, .5s !important; }
 }
 
 /* ---------- ALLEGATI ---------- */
@@ -875,7 +874,7 @@ body.wb-blocco-scroll { overflow: hidden; }
 }
 @media (prefers-reduced-motion: reduce) {
   .wb-invio-orbita, .wb-invio-nucleo { animation-duration: 6s; }
-  .wb-invio-barra span { transition-duration: 300ms !important; }
+  .wb-invio-barra span { transition-duration: 1600ms !important; }
 }
 
 /* ---------- CONFERMA ---------- */
@@ -1067,3 +1066,15 @@ body.wb-blocco-scroll { overflow: hidden; }
   .wb-testa { padding-top: 14px; padding-bottom: 8px; }
   .wb-sottotitolo { display: none; }
 }
+
+/* Pacchetto scelto prima di aprire il modulo (card servizi / CTA preventivo) */
+.wb-pacchetto-scelta {
+  display: inline-flex; align-items: center; gap: 6px;
+  margin: 0 0 14px;
+  padding: 7px 14px;
+  border-radius: 999px;
+  border: 1px solid rgba(232, 28, 255, .35);
+  background: rgba(232, 28, 255, .1);
+  color: #fff; font-size: .76rem; font-weight: 600;
+}
+.wb-pacchetto-scelta strong { font-weight: 800; }

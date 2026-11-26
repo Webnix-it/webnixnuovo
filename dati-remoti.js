@@ -143,11 +143,22 @@
     elemento.style.display = "none";
   }
 
+  /* i canali segnati come fissi (es. Instagram in FAQ o in Chi Siamo)
+     restano visibili anche se l'interruttore della dashboard è spento */
+  function canaleFisso(elemento) {
+    if (!elemento) return false;
+    if (elemento.hasAttribute && elemento.hasAttribute("data-canale-fisso")) return true;
+    return Boolean(elemento.closest && elemento.closest("[data-canale-fisso]"));
+  }
+
   function nascondiCanale(chiave) {
-    document.querySelectorAll('[data-canale="' + chiave + '"]').forEach(nascondi);
+    document.querySelectorAll('[data-canale="' + chiave + '"]').forEach(function (el) {
+      if (!canaleFisso(el)) nascondi(el);
+    });
     var selettore = CANALI[chiave];
     if (!selettore) return;
     document.querySelectorAll(selettore).forEach(function (a) {
+      if (canaleFisso(a)) return;
       /* card social del footer: nascondo tutto il link che la contiene */
       if (a.querySelector(".card-container")) return nascondi(a);
       var blocco = a.closest("[data-canale]");
@@ -621,6 +632,8 @@
     voci.forEach(function (p) {
       var card = document.createElement("article");
       card.className = "card-lavoro";
+      /* il nome del pacchetto viaggia con il click: il modulo lo mostra e lo invia */
+      card.setAttribute("data-pacchetto", p.name || "");
 
       var titolo = document.createElement("h3");
       titolo.textContent = p.name || "";
@@ -630,10 +643,16 @@
 
       var link = document.createElement("a");
       link.className = "cta-scorrimento";
-      /* link vuoto in dashboard = link WhatsApp di base */
-      link.href = p.link || linkPreventivo(p.name);
-      link.target = "_blank";
-      link.rel = "noopener";
+      /* link vuoto in dashboard = si apre il modulo con il pacchetto scelto */
+      if (p.link) {
+        link.href = p.link;
+        link.target = "_blank";
+        link.rel = "noopener";
+      } else {
+        link.href = "#";
+        link.setAttribute("data-webnix-bozza", "bozza");
+        link.setAttribute("aria-haspopup", "dialog");
+      }
       link.textContent = p.cta || "Richiedi un preventivo";
 
       card.appendChild(titolo);
@@ -662,6 +681,8 @@
       /* stessa card della pagina Servizi (.card-lavoro): targhetta, testo, CTA */
       var card = document.createElement("article");
       card.className = "card-lavoro";
+      /* il nome del pacchetto viaggia con il click: il modulo lo mostra e lo invia */
+      card.setAttribute("data-pacchetto", p.name || "");
       card.setAttribute("reveal", "");
       card.setAttribute("delay", String((i % 3) + 1));
 
@@ -673,9 +694,16 @@
 
       var link = document.createElement("a");
       link.className = "cta-scorrimento";
-      link.href = p.link || linkPreventivo(p.name);
-      link.target = "_blank";
-      link.rel = "noopener";
+      /* link vuoto in dashboard = si apre il modulo con il pacchetto scelto */
+      if (p.link) {
+        link.href = p.link;
+        link.target = "_blank";
+        link.rel = "noopener";
+      } else {
+        link.href = "#";
+        link.setAttribute("data-webnix-bozza", "bozza");
+        link.setAttribute("aria-haspopup", "dialog");
+      }
       link.textContent = p.cta || "Richiedi un preventivo";
 
       card.appendChild(titolo);
@@ -689,78 +717,41 @@
      FAQ (pagina FAQ)
      ============================================================ */
   function disegnaFaq(voci) {
-    var pannello = document.getElementById("pannello-faq");
-    if (!pannello || !voci.length) return;
+    var pista = document.getElementById("rullo-pista");
+    if (!pista || !voci.length) return;
 
     voci.sort(perOrdine);
-    pannello.innerHTML = "";
+    pista.innerHTML = "";
 
-    voci.forEach(function (f) {
-      var item = document.createElement("div");
-      item.className = "faq-item";
+    voci.forEach(function (f, posizione) {
+      var voce = document.createElement("button");
+      voce.type = "button";
+      voce.className = "rullo-voce";
+      voce.setAttribute("data-risposta", f.answer || "");
 
-      var domanda = document.createElement("div");
-      domanda.className = "faq-question";
-      domanda.setAttribute("tabindex", "0");
+      var badge = document.createElement("span");
+      badge.className = "rullo-badge";
+      badge.textContent = String(posizione + 1).padStart(2, "0");
 
-      var punto = document.createElement("span");
-      punto.className = "faq-punto";
+      var contenitoreIcona = document.createElement("span");
+      contenitoreIcona.className = "rullo-icona";
       var icona = document.createElement("i");
       icona.className = f.icon || "fa-solid fa-circle-question";
       icona.setAttribute("aria-hidden", "true");
-      punto.appendChild(icona);
+      contenitoreIcona.appendChild(icona);
 
       var testo = document.createElement("span");
-      testo.className = "faq-testo";
+      testo.className = "rullo-domanda";
       testo.textContent = f.question || "";
 
-      var freccia = document.createElement("i");
-      freccia.className = "fas fa-chevron-down faq-icon";
-      freccia.setAttribute("aria-hidden", "true");
-
-      domanda.appendChild(punto);
-      domanda.appendChild(testo);
-      domanda.appendChild(freccia);
-
-      var risposta = document.createElement("div");
-      risposta.className = "faq-answer";
-      risposta.style.whiteSpace = "pre-line"; /* rispetta gli a capo scritti in dashboard */
-      risposta.textContent = f.answer || "";
-
-      function pulsa() {
-        item.classList.toggle("aperta");
-        item.classList.remove("cliccata");
-        void item.offsetWidth;
-        item.classList.add("cliccata");
-      }
-      domanda.addEventListener("click", pulsa);
-      domanda.addEventListener("keydown", function (e) {
-        if (e.key === "Enter" || e.key === " ") {
-          e.preventDefault();
-          pulsa();
-        }
-      });
-      item.addEventListener("animationend", function () {
-        item.classList.remove("cliccata");
-      });
-
-      item.appendChild(domanda);
-      item.appendChild(risposta);
-      pannello.appendChild(item);
+      voce.appendChild(badge);
+      voce.appendChild(contenitoreIcona);
+      voce.appendChild(testo);
+      pista.appendChild(voce);
     });
 
-    /* ricerca: gli item sono nuovi, quindi il filtro viene riagganciato qui */
-    var campo = document.getElementById("search-input");
-    if (campo) {
-      campo.addEventListener("input", function () {
-        var q = campo.value.trim().toLowerCase();
-        pannello.querySelectorAll(".faq-item").forEach(function (item) {
-          var ok = !q || item.textContent.toLowerCase().indexOf(q) !== -1;
-          item.classList.toggle("nascosta-ricerca", !ok);
-          if (q && ok) item.classList.add("aperta");
-        });
-      });
-    }
+    /* il rullo rilegge le voci appena create e torna sulla prima */
+    if (typeof window.webnixRulloRicarica === "function") window.webnixRulloRicarica();
   }
 
   /* ============================================================
@@ -825,7 +816,7 @@
       });
     }
 
-    if (document.getElementById("pannello-faq")) {
+    if (document.getElementById("rullo-pista")) {
       leggiCollezione("faq").then(function (voci) {
         if (voci.length) disegnaFaq(voci);
       });

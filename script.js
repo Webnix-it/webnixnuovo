@@ -40,6 +40,8 @@
       chiuso = true;
       pre.classList.add("uscita");
       document.body.style.overflow = "";
+      /* avvisa la hero che il velo si sta alzando: il titolo inizia la battitura */
+      document.dispatchEvent(new CustomEvent("webnix:preloader-uscita"));
       setTimeout(function () { pre.style.display = "none"; }, 1000);
     }
 
@@ -1098,108 +1100,213 @@
   osservatore.observe(bersaglio);
 })();
 
-/* ============ COSA FACCIAMO: la scena gira in loop ============
-   Un elemento alla volta: barra di ricerca (che scrive da sola), browser,
-   telefono, mappa, pin, scheda attività e riga del risultato. Finito il
-   giro la scena si svuota e riparte da capo. */
+/* ============ COSA FACCIAMO: video in loop quando la sezione è a schermo ============
+   Il video parte solo quando la sezione entra in vista e si ferma quando esce;
+   la classe "demo-attiva" fa comparire il testo della colonna sinistra. */
 (function () {
   var sezione = document.getElementById("cosa-facciamo");
-  var scena = document.getElementById("scena-cosa");
-  if (!sezione || !scena) return;
+  var video = document.getElementById("video-cosa");
+  if (!sezione || !video) return;
 
-  var FRASE = "la mia attività";
-  var PEZZI = [
-    ["#cosa-ricerca", 0],
-    ["#cosa-browser", 1400],
-    ["#cosa-telefono", 2400],
-    ["#cosa-mappa", 3400],
-    ["#cosa-pin", 3800],
-    ["#cosa-scheda", 4400],
-    ["#cosa-risultato", 5400]
-  ];
-  var INIZIO_SCRITTURA = 700;
-  var PER_LETTERA = 140;
-  var FINE = 7800;
-  var PAUSA = 1500;
-
-  var testo = document.getElementById("cosa-testo");
-  var cursore = document.getElementById("cosa-caret");
-  var timer = [];
-  var giro = 0;
-
-  function dopo(ms, fn, mio) {
-    timer.push(window.setTimeout(function () { if (mio === giro) fn(); }, ms));
+  function accendi() {
+    sezione.classList.add("demo-attiva");
+    var avvio = video.play();
+    if (avvio && avvio.catch) avvio.catch(function () {});
   }
 
-  function svuota() {
-    var pezzi = scena.querySelectorAll(".pezzo");
-    for (var i = 0; i < pezzi.length; i++) pezzi[i].classList.remove("acceso");
-    if (testo) testo.textContent = "";
-    if (cursore) cursore.style.opacity = "0";
+  function spegni() {
+    sezione.classList.remove("demo-attiva");
+    video.pause();
   }
 
-  function scrivi(mio) {
-    var i = 0;
-    function passo() {
-      i++;
-      if (mio !== giro) return;
-      if (testo) testo.textContent = FRASE.slice(0, i);
-      if (cursore) cursore.style.opacity = "1";
-      if (i < FRASE.length) dopo(PER_LETTERA, passo, mio);
-    }
-    passo();
-  }
-
-  function gioca() {
-    giro++;
-    var mio = giro;
-    timer = [];
-    svuota();
-
-    for (var i = 0; i < PEZZI.length; i++) {
-      (function (sel, ritardo) {
-        dopo(ritardo, function () {
-          var el = scena.querySelector(sel);
-          if (el) el.classList.add("acceso");
-        }, mio);
-      })(PEZZI[i][0], PEZZI[i][1]);
-    }
-
-    dopo(INIZIO_SCRITTURA, function () { scrivi(mio); }, mio);
-
-    dopo(FINE, function () {
-      svuota();
-      dopo(PAUSA, gioca, mio);
-    }, mio);
-  }
-
-  function ferma() {
-    giro++;
-    timer = [];
-  }
-
-  if (!("IntersectionObserver" in window)) { gioca(); return; }
+  if (!("IntersectionObserver" in window)) { accendi(); return; }
 
   var osservatore = new IntersectionObserver(function (voci) {
     for (var i = 0; i < voci.length; i++) {
-      if (voci[i].isIntersecting) {
-        sezione.classList.add("demo-attiva");
-        gioca();
-      } else {
-        sezione.classList.remove("demo-attiva");
-        ferma();
-        svuota();
-      }
+      if (voci[i].isIntersecting) accendi();
+      else spegni();
     }
-  }, { threshold: 0.25 });
+  }, { threshold: 0.15 });
 
   osservatore.observe(sezione);
 })();
 
 /* ============ FAQ: accordion + ricerca ============ */
+/* ============ PAGINA FAQ: rullo delle domande (rotella, mouse, frecce, tastiera) ============ */
+(function () {
+  const pista = document.getElementById('rullo-pista');
+  if (!pista) return;
+
+  const finestra = document.getElementById('rullo-finestra');
+  const rotella = document.getElementById('rullo-rotella');
+  const pomello = document.getElementById('rulloPomello');
+  const progresso = document.getElementById('rulloProgresso');
+  const risposta = document.getElementById('rullo-risposta');
+  const numero = document.getElementById('rulloNumero');
+  const totale = document.getElementById('rulloTotale');
+  let tutte = Array.prototype.slice.call(pista.querySelectorAll('.rullo-voce'));
+  if (!finestra || !rotella || !tutte.length) return;
+
+  let voci = tutte.slice();
+  let corrente = 0;
+  let altezzaVoce = 76;
+  let trascinando = false;
+  let timerRisposta = null;
+  let bloccoRotella = 0;
+
+  function domandaDi(voce) {
+    const el = voce.querySelector('.rullo-domanda');
+    return el ? el.textContent : '';
+  }
+
+  function aggiorna(pos) {
+    if (!voci.length) return;
+    corrente = Math.max(0, Math.min(voci.length - 1, pos));
+
+    const stile = getComputedStyle(pista);
+    altezzaVoce = voci[0].offsetHeight + parseFloat(stile.gap || 0);
+
+    const hFinestra = finestra.clientHeight;
+    const offset = corrente * altezzaVoce - (hFinestra / 2 - voci[corrente].offsetHeight / 2);
+    pista.style.transform = 'translateY(' + (-offset) + 'px)';
+
+    tutte.forEach(function (voce) {
+      voce.classList.remove('attiva');
+      voce.removeAttribute('aria-current');
+    });
+    voci[corrente].classList.add('attiva');
+    voci[corrente].setAttribute('aria-current', 'true');
+
+    const badge = voci[corrente].querySelector('.rullo-badge');
+    numero.textContent = badge ? badge.textContent.trim() : String(corrente + 1).padStart(2, '0');
+    if (totale) totale.textContent = String(voci.length).padStart(2, '0');
+
+    const percentuale = voci.length > 1 ? corrente / (voci.length - 1) : 0;
+    pomello.style.top = (15 + percentuale * (rotella.clientHeight - 30)) + 'px';
+    progresso.style.top = (percentuale * (rotella.clientHeight - 20)) + 'px';
+
+    /* onda dal pomello a ogni cambio domanda (non mentre si trascina) */
+    if (!trascinando) {
+      pomello.classList.remove('pulsa');
+      void pomello.offsetWidth;
+      pomello.classList.add('pulsa');
+    }
+
+    rotella.setAttribute('aria-valuenow', String(corrente + 1));
+    rotella.setAttribute('aria-valuemax', String(voci.length));
+    rotella.setAttribute('aria-valuetext', domandaDi(voci[corrente]));
+
+    risposta.classList.remove('visibile');
+    clearTimeout(timerRisposta);
+    timerRisposta = setTimeout(function () {
+      risposta.textContent = voci[corrente].dataset.risposta || '';
+      risposta.classList.add('visibile');
+    }, 180);
+  }
+
+  /* click delegato: vale anche per le voci ricostruite dalla dashboard */
+  pista.addEventListener('click', function (e) {
+    const voce = e.target.closest ? e.target.closest('.rullo-voce') : null;
+    if (!voce) return;
+    const pos = voci.indexOf(voce);
+    if (pos !== -1) aggiorna(pos);
+  });
+
+  document.getElementById('rulloPrev').addEventListener('click', function () { aggiorna(corrente - 1); });
+  document.getElementById('rulloNext').addEventListener('click', function () { aggiorna(corrente + 1); });
+
+  /* rotellina del mouse sulla lista: un passo per gesto */
+  finestra.addEventListener('wheel', function (e) {
+    e.preventDefault();
+    const ora = Date.now();
+    if (ora - bloccoRotella < 260) return;
+    if (Math.abs(e.deltaY) < 4) return;
+    bloccoRotella = ora;
+    aggiorna(corrente + (e.deltaY > 0 ? 1 : -1));
+  }, { passive: false });
+
+  /* trascinamento della rotella */
+  function spostaRotella(e) {
+    if (!trascinando || voci.length < 2) return;
+    const rect = rotella.getBoundingClientRect();
+    const y = Math.max(0, Math.min(rotella.clientHeight, e.clientY - rect.top));
+    aggiorna(Math.round((y / rotella.clientHeight) * (voci.length - 1)));
+  }
+
+  function fineTrascinamento() {
+    trascinando = false;
+    rotella.classList.remove('trascinamento');
+  }
+  rotella.addEventListener('pointerdown', function (e) {
+    trascinando = true;
+    rotella.classList.add('trascinamento');
+    rotella.setPointerCapture(e.pointerId);
+    spostaRotella(e);
+  });
+  rotella.addEventListener('pointermove', spostaRotella);
+  rotella.addEventListener('pointerup', fineTrascinamento);
+  rotella.addEventListener('pointercancel', fineTrascinamento);
+
+  /* tastiera */
+  rotella.addEventListener('keydown', function (e) {
+    if (e.key === 'ArrowDown' || e.key === 'ArrowRight') { e.preventDefault(); aggiorna(corrente + 1); }
+    else if (e.key === 'ArrowUp' || e.key === 'ArrowLeft') { e.preventDefault(); aggiorna(corrente - 1); }
+    else if (e.key === 'Home') { e.preventDefault(); aggiorna(0); }
+    else if (e.key === 'End') { e.preventDefault(); aggiorna(voci.length - 1); }
+  });
+
+  /* swipe touch */
+  let partenzaTouch = 0;
+  finestra.addEventListener('touchstart', function (e) { partenzaTouch = e.touches[0].clientY; }, { passive: true });
+  finestra.addEventListener('touchend', function (e) {
+    const differenza = partenzaTouch - e.changedTouches[0].clientY;
+    if (Math.abs(differenza) > 25) aggiorna(corrente + (differenza > 0 ? 1 : -1));
+  }, { passive: true });
+
+  /* filtro dalla barra di ricerca: restano solo le domande che combaciano */
+  function filtra(q) {
+    voci = tutte.filter(function (voce) {
+      return !q || domandaDi(voce).toLowerCase().indexOf(q) !== -1;
+    });
+    tutte.forEach(function (voce) {
+      voce.style.display = voci.indexOf(voce) === -1 ? 'none' : '';
+    });
+
+    if (!voci.length) {
+      numero.textContent = '00';
+      if (totale) totale.textContent = '00';
+      pista.style.transform = 'translateY(0px)';
+      risposta.classList.remove('visibile');
+      clearTimeout(timerRisposta);
+      timerRisposta = setTimeout(function () {
+        risposta.textContent = "Nessuna domanda trovata: prova con un'altra parola.";
+        risposta.classList.add('visibile');
+      }, 180);
+      return;
+    }
+    aggiorna(0);
+  }
+  window.webnixRulloFiltra = filtra;
+
+  /* ricostruzione delle voci da dashboard (dati-remoti.js) */
+  function ricarica() {
+    tutte = Array.prototype.slice.call(pista.querySelectorAll('.rullo-voce'));
+    voci = tutte.slice();
+    const campo = document.getElementById('search-input');
+    const q = campo ? campo.value.trim().toLowerCase() : '';
+    if (q) filtra(q);
+    else aggiorna(0);
+  }
+  window.webnixRulloRicarica = ricarica;
+
+  window.addEventListener('resize', function () { aggiorna(corrente); });
+
+  if (document.readyState === 'complete') aggiorna(0);
+  else window.addEventListener('load', function () { aggiorna(0); });
+})();
+
 (function () {
   const domande = document.querySelectorAll('.faq-item');
-  if (!domande.length) return;
   domande.forEach(item => {
     const domanda = item.querySelector('.faq-question');
     const pulsa = () => {
@@ -1229,6 +1336,7 @@
         item.classList.toggle('nascosta-ricerca', !ok);
         if (q && ok) item.classList.add('aperta');
       });
+      if (typeof window.webnixRulloFiltra === 'function') window.webnixRulloFiltra(q);
     });
   }
 })();
@@ -1506,4 +1614,324 @@
     if (popup.hidden) return;
     if (e.key === 'Escape' || e.key === 'Esc') chiudi();
   });
+})();
+
+/* ============ HOME: FAQ a rullo "Hai qualche domanda?" ============ */
+(function () {
+  const radice = document.getElementById('faq-home');
+  if (!radice) return;
+
+  const pista = radice.querySelector('.fh-pista');
+  if (!pista) return;
+
+  const finestra = radice.querySelector('.fh-finestra');
+  const rotella = radice.querySelector('.fh-rotella');
+  const pomello = radice.querySelector('.fh-pomello');
+  const progresso = radice.querySelector('.fh-progresso');
+  const risposta = radice.querySelector('.fh-risposta');
+  const numero = radice.querySelector('[data-fh-numero]');
+  const totale = radice.querySelector('[data-fh-totale]');
+  const prev = radice.querySelector('[data-fh-prev]');
+  const next = radice.querySelector('[data-fh-next]');
+  const voci = Array.prototype.slice.call(pista.querySelectorAll('.fh-voce'));
+  if (!finestra || !rotella || !voci.length) return;
+
+  let corrente = 0;
+  let altezzaVoce = 76;
+  let trascinando = false;
+  let timerRisposta = null;
+  let bloccoRotella = 0;
+
+  function aggiorna(pos) {
+    corrente = Math.max(0, Math.min(voci.length - 1, pos));
+
+    const stile = getComputedStyle(pista);
+    altezzaVoce = voci[0].offsetHeight + parseFloat(stile.gap || 0);
+
+    const hFinestra = finestra.clientHeight;
+    const offset = corrente * altezzaVoce - (hFinestra / 2 - voci[corrente].offsetHeight / 2);
+    pista.style.transform = 'translateY(' + (-offset) + 'px)';
+
+    voci.forEach(function (voce, i) {
+      voce.classList.toggle('attiva', i === corrente);
+      if (i === corrente) voce.setAttribute('aria-current', 'true');
+      else voce.removeAttribute('aria-current');
+    });
+
+    if (numero) numero.textContent = String(corrente + 1).padStart(2, '0');
+    if (totale) totale.textContent = String(voci.length).padStart(2, '0');
+
+    const percentuale = voci.length > 1 ? corrente / (voci.length - 1) : 0;
+    pomello.style.top = (15 + percentuale * (rotella.clientHeight - 30)) + 'px';
+    progresso.style.top = (percentuale * (rotella.clientHeight - 20)) + 'px';
+
+    /* onda dal pomello a ogni cambio domanda (non mentre si trascina) */
+    if (!trascinando) {
+      pomello.classList.remove('pulsa');
+      void pomello.offsetWidth;
+      pomello.classList.add('pulsa');
+    }
+
+    rotella.setAttribute('aria-valuenow', String(corrente + 1));
+    rotella.setAttribute('aria-valuemax', String(voci.length));
+
+    risposta.classList.remove('visibile');
+    clearTimeout(timerRisposta);
+    timerRisposta = setTimeout(function () {
+      risposta.textContent = voci[corrente].getAttribute('data-risposta') || '';
+      risposta.classList.add('visibile');
+    }, 180);
+  }
+
+  voci.forEach(function (voce, i) {
+    voce.addEventListener('click', function () { aggiorna(i); });
+  });
+
+  if (prev) prev.addEventListener('click', function () { aggiorna(corrente - 1); });
+  if (next) next.addEventListener('click', function () { aggiorna(corrente + 1); });
+
+  finestra.addEventListener('wheel', function (e) {
+    e.preventDefault();
+    const ora = Date.now();
+    if (ora - bloccoRotella < 260) return;
+    if (Math.abs(e.deltaY) < 4) return;
+    bloccoRotella = ora;
+    aggiorna(corrente + (e.deltaY > 0 ? 1 : -1));
+  }, { passive: false });
+
+  function spostaRotella(e) {
+    if (!trascinando || voci.length < 2) return;
+    const rect = rotella.getBoundingClientRect();
+    const y = Math.max(0, Math.min(rotella.clientHeight, e.clientY - rect.top));
+    aggiorna(Math.round((y / rotella.clientHeight) * (voci.length - 1)));
+  }
+
+  function fineTrascinamento() {
+    trascinando = false;
+    rotella.classList.remove('trascinamento');
+  }
+  rotella.addEventListener('pointerdown', function (e) {
+    trascinando = true;
+    rotella.classList.add('trascinamento');
+    rotella.setPointerCapture(e.pointerId);
+    spostaRotella(e);
+  });
+  rotella.addEventListener('pointermove', spostaRotella);
+  rotella.addEventListener('pointerup', fineTrascinamento);
+  rotella.addEventListener('pointercancel', fineTrascinamento);
+
+  rotella.addEventListener('keydown', function (e) {
+    if (e.key === 'ArrowDown' || e.key === 'ArrowRight') { e.preventDefault(); aggiorna(corrente + 1); }
+    else if (e.key === 'ArrowUp' || e.key === 'ArrowLeft') { e.preventDefault(); aggiorna(corrente - 1); }
+    else if (e.key === 'Home') { e.preventDefault(); aggiorna(0); }
+    else if (e.key === 'End') { e.preventDefault(); aggiorna(voci.length - 1); }
+  });
+
+  let partenzaTouch = 0;
+  finestra.addEventListener('touchstart', function (e) { partenzaTouch = e.touches[0].clientY; }, { passive: true });
+  finestra.addEventListener('touchend', function (e) {
+    const differenza = partenzaTouch - e.changedTouches[0].clientY;
+    if (Math.abs(differenza) > 25) aggiorna(corrente + (differenza > 0 ? 1 : -1));
+  }, { passive: true });
+
+  window.addEventListener('resize', function () { aggiorna(corrente); });
+
+  if (document.readyState === 'complete') aggiorna(0);
+  else window.addEventListener('load', function () { aggiorna(0); });
+})();
+
+/* ============ TITOLI ANIMATI: battitura della hero e onda della CTA finale ============ */
+(function () {
+  /* ---------- AVVIO ALL'INGRESSO NEL VIEWPORT ----------
+     Le animazioni partono quando il titolo stesso entra nella parte visibile
+     della pagina, non quando la sezione che lo contiene viene marcata come
+     "visibile" (una sezione alta si attiva molto prima di arrivare al titolo). */
+  function avviaInVista(elementi, avvia) {
+    var inAttesa = Array.prototype.slice.call(elementi).filter(Boolean);
+    if (!inAttesa.length) return;
+
+    function controlla() {
+      var altezza = window.innerHeight || document.documentElement.clientHeight;
+      inAttesa = inAttesa.filter(function (el) {
+        var r = el.getBoundingClientRect();
+        if (r.top < altezza * 0.55 && r.bottom > 0) {
+          avvia(el);
+          return false;
+        }
+        return true;
+      });
+      if (!inAttesa.length) {
+        window.removeEventListener('scroll', controlla);
+        window.removeEventListener('resize', controlla);
+        window.removeEventListener('load', controlla);
+        window.removeEventListener('hashchange', controlla);
+        document.removeEventListener('webnix:preloader-uscita', controlla);
+      }
+    }
+
+    window.addEventListener('scroll', controlla, { passive: true });
+    window.addEventListener('resize', controlla);
+    window.addEventListener('load', controlla);
+    window.addEventListener('hashchange', controlla);
+    document.addEventListener('webnix:preloader-uscita', controlla);
+    controlla();
+  }
+  /* ---------- BATTITURA (#titolo-hero) ----------
+     Il testo viene scritto carattere per carattere svuotando e riempiendo i
+     nodi di testo originali: i tag interni (<em> con il gradiente) restano
+     intatti, quindi il colore del brand non si perde. */
+  const hero = document.getElementById('titolo-hero');
+  if (hero) {
+    const nodi = [];
+    const cammino = document.createTreeWalker(hero, NodeFilter.SHOW_TEXT, null);
+    let nodo;
+    let totale = 0;
+    while ((nodo = cammino.nextNode())) {
+      nodi.push({ nodo: nodo, testo: nodo.nodeValue, inizio: totale });
+      totale += nodo.nodeValue.length;
+    }
+
+    if (totale > 0) {
+      hero.setAttribute('aria-label', hero.textContent.replace(/\s+/g, ' ').trim());
+      let partita = false;
+
+      function scrivi(quanti) {
+        nodi.forEach(function (parte) {
+          const n = Math.max(0, Math.min(parte.testo.length, quanti - parte.inizio));
+          parte.nodo.nodeValue = parte.testo.slice(0, n);
+        });
+      }
+
+      function avvia() {
+        if (partita) return;
+        partita = true;
+
+        /* altezza piena riservata: il titolo si riempie senza far saltare la hero */
+        const altezza = hero.getBoundingClientRect().height;
+        if (altezza) hero.style.minHeight = altezza + 'px';
+
+        scrivi(0);
+        hero.classList.add('battitura-attiva');
+
+        const inizio = performance.now ? performance.now() : Date.now();
+        const passo = 18; // ms per carattere
+
+        function frame(adesso) {
+          const ora = adesso || (performance.now ? performance.now() : Date.now());
+          const quanti = Math.min(totale, Math.floor((ora - inizio) / passo) + 1);
+          scrivi(quanti);
+          if (quanti < totale) {
+            requestAnimationFrame(frame);
+            return;
+          }
+          hero.style.minHeight = '';
+          setTimeout(function () { hero.classList.add('battitura-fine'); }, 1400);
+        }
+        requestAnimationFrame(frame);
+      }
+
+      /* parte quando il velo del preloader si alza; senza preloader, subito */
+      if (document.getElementById('preloader-home')) {
+        document.addEventListener('webnix:preloader-uscita', avvia, { once: true });
+        setTimeout(avvia, 9000); // rete lenta: si parte comunque
+      } else {
+        avvia();
+      }
+    }
+  }
+
+  /* ---------- ONDA (#titolo-cta-finale) ----------
+     Ogni carattere diventa uno span con il suo indice: il ritardo (--i) crea
+     l'onda. Le parole restano intere, così il testo va a capo come prima. */
+  const cta = document.getElementById('titolo-cta-finale');
+  if (cta) {
+    cta.setAttribute('aria-label', cta.textContent.replace(/\s+/g, ' ').trim());
+
+    const testi = [];
+    const camminoT = document.createTreeWalker(cta, NodeFilter.SHOW_TEXT, null);
+    let t;
+    while ((t = camminoT.nextNode())) testi.push(t);
+
+    let indice = 0;
+    testi.forEach(function (nodoTesto) {
+      const testo = nodoTesto.nodeValue;
+      if (!testo) return;
+      const frammento = document.createDocumentFragment();
+      testo.split(/(\s+)/).forEach(function (pezzo) {
+        if (!pezzo) return;
+        if (/^\s+$/.test(pezzo)) {
+          frammento.appendChild(document.createTextNode(pezzo));
+          return;
+        }
+        const parola = document.createElement('span');
+        parola.className = 'onda-parola';
+        for (let i = 0; i < pezzo.length; i++) {
+          const carattere = document.createElement('span');
+          carattere.className = 'onda-carattere';
+          carattere.style.setProperty('--i', String(indice++));
+          carattere.textContent = pezzo.charAt(i);
+          parola.appendChild(carattere);
+        }
+        frammento.appendChild(parola);
+      });
+      nodoTesto.parentNode.replaceChild(frammento, nodoTesto);
+    });
+
+    /* ---------- GRADIENTE CONTINUO SU "oggi stesso" ----------
+       Ogni lettera porta il gradiente brand, ma dimensionato sulla parola
+       intera e spostato della sua posizione: così la sfumatura viola→ciano
+       scorre una volta sola da "oggi" a "stesso" anche mentre le lettere
+       saltano (il ritaglio del genitore non seguirebbe i caratteri mossi). */
+    function allineaGradienteOnda() {
+      cta.querySelectorAll('.accento-brand').forEach(function (blocco) {
+        var r = blocco.getBoundingClientRect();
+        if (!r.width || !r.height) return;
+        blocco.querySelectorAll('.onda-carattere').forEach(function (carattere) {
+          var c = carattere.getBoundingClientRect();
+          carattere.style.setProperty('--gw', r.width.toFixed(2) + 'px');
+          carattere.style.setProperty('--gh', r.height.toFixed(2) + 'px');
+          carattere.style.setProperty('--gx', (c.left - r.left).toFixed(2) + 'px');
+          carattere.style.setProperty('--gy', (c.top - r.top).toFixed(2) + 'px');
+        });
+      });
+    }
+
+    allineaGradienteOnda();
+    window.addEventListener('resize', allineaGradienteOnda);
+    window.addEventListener('load', allineaGradienteOnda);
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(allineaGradienteOnda);
+  }
+
+  /* ---------- INGRESSO NELLE SEZIONI ----------
+     Split dei titoli e onda partono quando il singolo titolo è entrato bene
+     nel viewport (poco sotto la metà dello schermo), così l'animazione si vede
+     mentre lo si guarda e non mentre è ancora nascosto dalla sezione. */
+  function segnaInVista(el) { el.classList.add('in-vista'); }
+
+  avviaInVista(document.querySelectorAll('.split-testo'), segnaInVista);
+  if (cta) avviaInVista([cta], segnaInVista);
+
+  /* ---------- COMPARSE DEI TITOLI DI SEZIONE ----------
+     Ogni h1/h2 che non ha già un'animazione propria ne riceve una diversa.
+     L'ordine delle varianti è fisso, l'indice di partenza cambia da pagina a
+     pagina: così nessun titolo ripete la comparsa di un altro. */
+  const COMPARSE = ['anim-salita', 'anim-discesa', 'anim-sinistra', 'anim-destra',
+    'anim-zoom', 'anim-zoom-indietro', 'anim-rotazione', 'anim-ribaltamento',
+    'anim-tenda-sinistra', 'anim-tenda-destra', 'anim-svela', 'anim-sfocatura',
+    'anim-elastico', 'anim-diagonale', 'anim-spirale'];
+  const PAGINA_OFFSET = { 'index.html': 0, 'servizi.html': 7, 'chi-siamo.html': 10, 'assistenza.html': 13 };
+  const paginaCorrente = location.pathname.split('/').pop() || 'index.html';
+
+  if (Object.prototype.hasOwnProperty.call(PAGINA_OFFSET, paginaCorrente)) {
+    const daAnimare = Array.prototype.slice.call(document.querySelectorAll('h1, h2')).filter(function (el) {
+      if (el.closest('#header, #drawer-mobile, #preloader-home, .wbx, [hidden]')) return false;
+      return !el.matches('#titolo-hero, .split-testo, #titolo-cta-finale, .entra-cosa, .solo-lettori');
+    });
+
+    daAnimare.forEach(function (el, i) {
+      el.classList.add('titolo-anim', COMPARSE[(PAGINA_OFFSET[paginaCorrente] + i) % COMPARSE.length]);
+    });
+
+    avviaInVista(daAnimare, function (el) { el.classList.add('titolo-in-vista'); });
+  }
 })();

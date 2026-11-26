@@ -174,6 +174,7 @@
     inviato: false,
     invio: false,
     provenienza: "",
+    pacchetto: "",
     fuocoPrecedente: null,
     inizioInvio: 0
   };
@@ -196,11 +197,11 @@
   var invioNota = null;
   var invioBarra = null;
   var timerInvio = [];
-  var INVIO_DURATA = 2600;
+  var INVIO_DURATA = 5200;
   var PASSI_INVIO = [
     { dopo: 0, titolo: "Invio della richiesta…", nota: "Collegamento sicuro del modulo con EmailJS." },
-    { dopo: 900, titolo: "Prepariamo l'email per il team…", nota: "Raccogliamo le tue risposte in un unico riepilogo." },
-    { dopo: 1800, titolo: "Ultimi controlli…", nota: "Stiamo consegnando la richiesta: un attimo di pazienza." }
+    { dopo: 1700, titolo: "Prepariamo l'email per il team…", nota: "Raccogliamo le tue risposte in un unico riepilogo." },
+    { dopo: 3400, titolo: "Ultimi controlli…", nota: "Stiamo consegnando la richiesta: un attimo di pazienza." }
   ];
 
   /* ============================================================
@@ -223,7 +224,9 @@
       '<stop offset="0%" class="wb-stop-a"></stop>' +
       '<stop offset="100%" class="wb-stop-b"></stop>' +
       '</linearGradient></defs>';
-    radice.appendChild(defsIcone);
+    /* i gradienti stanno fuori dal popup: dentro un contenitore nascosto il browser
+       non li disegna e la spunta del consenso resterebbe invisibile */
+    if (!document.getElementById("wb-brand-grad")) document.body.appendChild(defsIcone);
 
     var sfondo = crea("div", "wb-sfondo");
     sfondo.setAttribute("data-wb-chiudi", "");
@@ -1074,6 +1077,14 @@
 
   function compilaRisposte() {
     var risposte = [];
+    if (stato.pacchetto) {
+      risposte.push({
+        passo: "Pacchetto",
+        domanda: "Pacchetto scelto",
+        chiave: "pacchetto",
+        risposta: stato.pacchetto
+      });
+    }
     (stato.config.step || []).forEach(function (s) {
       if (!s || s.attivo === false) return;
       (s.domande || []).forEach(function (d) {
@@ -1113,13 +1124,15 @@
   function inviaEmailJS(dati) {
     var c = (stato.config.notifica || {}).emailjs || {};
     var parametri = {
-      subject: "Nuova richiesta bozza — " + (dati.nome || "senza nome") + " (" + dati.riferimento + ")",
+      subject: (stato.pacchetto ? "Nuova richiesta — " + stato.pacchetto + " — " : "Nuova richiesta bozza — ") +
+        (dati.nome || "senza nome") + " (" + dati.riferimento + ")",
       to_email: (stato.config.notifica || {}).emailAdmin || "",
       from_name: dati.nome || "",
       reply_to: dati.email || "",
       nome: dati.nome || "",
       email: dati.email || "",
       attivita: dati.attivita || "",
+      pacchetto: stato.pacchetto || "",
       budget: dati.budget || "",
       riferimento: dati.riferimento || "",
       pagina: location.pathname + location.search,
@@ -1219,6 +1232,14 @@
   /* risposte raggruppate per step, nell'ordine del modulo */
   function gruppiRisposte() {
     var gruppi = [];
+    /* pacchetto scelto prima di aprire il modulo (card servizi, CTA preventivo) */
+    if (stato.pacchetto) {
+      gruppi.push({
+        id: "pacchetto",
+        titolo: "Pacchetto scelto",
+        righe: [{ chiave: "pacchetto", etichetta: "Pacchetto", valore: stato.pacchetto }]
+      });
+    }
     (stato.config.step || []).forEach(function (s, indice) {
       if (!s || s.attivo === false) return;
       var righe = [];
@@ -1567,12 +1588,24 @@
     bottoneAvanti.disabled = false;
   }
 
-  function apri(provenienza) {
+  /* pillola con il pacchetto scelto, in cima al modulo */
+  function mostraPacchetto() {
+    var vecchio = card.querySelector(".wb-pacchetto-scelta");
+    if (vecchio) vecchio.remove();
+    if (!stato.pacchetto) return;
+    var chip = crea("p", "wb-pacchetto-scelta");
+    chip.appendChild(document.createTextNode("Pacchetto scelto: "));
+    chip.appendChild(crea("strong", "", stato.pacchetto));
+    corpo.insertBefore(chip, corpo.firstChild);
+  }
+
+  function apri(provenienza, pacchetto) {
     costruisci();
     if (aperto) return;
     if (!stato.config || !stato.passi.length) return;
 
     stato.provenienza = provenienza || "cta";
+    stato.pacchetto = String(pacchetto || "").trim();
     stato.fuocoPrecedente = document.activeElement;
     if (stato.inviato) azzera();
 
@@ -1586,6 +1619,7 @@
     radice.hidden = false;
     aperto = true;
     document.body.classList.add("wb-blocco-scroll");
+    mostraPacchetto();
     disegnaPasso("avanti");
     var primoCampo = card.querySelector(".wb-campo, .wb-opzione, .wb-consenso input");
     var chiudiBtn = card.querySelector(".wb-chiudi");
@@ -1681,7 +1715,9 @@
 
       e.preventDefault();
       e.stopPropagation();
-      apri(p.chiave || "cta");
+      /* il pacchetto arriva dalla card o dal pulsante cliccato */
+      var scelta = el.closest("[data-pacchetto]");
+      apri(p.chiave || "cta", scelta ? scelta.getAttribute("data-pacchetto") : "");
     }, true);
   }
 
@@ -1712,14 +1748,14 @@
   }
 
   /* il popup è pronto anche per chiamate esterne */
-  window.__webnixApriBozza = function (provenienza) {
-    if (stato.config) return apri(provenienza);
+  window.__webnixApriBozza = function (provenienza, pacchetto) {
+    if (stato.config) return apri(provenienza, pacchetto);
     leggiConfig().then(function (config) {
       stato.config = config;
       applicaStile();
       preparaPassi();
       collegaPulsanti();
-      apri(provenienza);
+      apri(provenienza, pacchetto);
     });
   };
 
