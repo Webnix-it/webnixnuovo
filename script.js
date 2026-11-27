@@ -1564,6 +1564,8 @@
       galleria.appendChild(b);
       miniature.push(b);
     });
+    /* con una sola immagine le frecce del popup non hanno senso */
+    popup.classList.toggle('popup-senza-frecce', miniature.length < 2);
   }
 
   disegnaGalleria(vociPortfolio);
@@ -1609,6 +1611,22 @@
     if (!voci || !voci.length || !voci[0].img) return;
     apri(voci[0].img, titolo || voci[0].titolo, voci);
   };
+
+  /* frecce ai lati dell'anteprima: foto precedente / successiva, in ciclo */
+  function passo(direzione) {
+    if (miniature.length < 2) return;
+    var corrente = 0;
+    for (var i = 0; i < miniature.length; i++) {
+      if (miniature[i].getAttribute('aria-current') === 'true') { corrente = i; break; }
+    }
+    var prossima = miniature[(corrente + direzione + miniature.length) % miniature.length];
+    seleziona(prossima.getAttribute('data-immagine'), prossima.getAttribute('data-didascalia'));
+  }
+
+  var frecciaPrev = document.getElementById('popup-freccia-prev');
+  var frecciaNext = document.getElementById('popup-freccia-next');
+  if (frecciaPrev) frecciaPrev.addEventListener('click', function () { passo(-1); });
+  if (frecciaNext) frecciaNext.addEventListener('click', function () { passo(1); });
 
   function chiudi() {
     if (popup.hidden || inChiusura) return;
@@ -1701,7 +1719,7 @@
   const totale = radice.querySelector('[data-fh-totale]');
   const prev = radice.querySelector('[data-fh-prev]');
   const next = radice.querySelector('[data-fh-next]');
-  const voci = Array.prototype.slice.call(pista.querySelectorAll('.fh-voce'));
+  let voci = Array.prototype.slice.call(pista.querySelectorAll('.fh-voce'));
   if (!finestra || !rotella || !voci.length) return;
 
   let corrente = 0;
@@ -1711,6 +1729,7 @@
   let bloccoRotella = 0;
 
   function aggiorna(pos) {
+    if (!voci.length) return;
     corrente = Math.max(0, Math.min(voci.length - 1, pos));
 
     const stile = getComputedStyle(pista);
@@ -1726,7 +1745,8 @@
       else voce.removeAttribute('aria-current');
     });
 
-    if (numero) numero.textContent = String(corrente + 1).padStart(2, '0');
+    const badge = voci[corrente].querySelector('.fh-badge');
+    if (numero) numero.textContent = badge ? badge.textContent.trim() : String(corrente + 1).padStart(2, '0');
     if (totale) totale.textContent = String(voci.length).padStart(2, '0');
 
     const percentuale = voci.length > 1 ? corrente / (voci.length - 1) : 0;
@@ -1751,8 +1771,12 @@
     }, 180);
   }
 
-  voci.forEach(function (voce, i) {
-    voce.addEventListener('click', function () { aggiorna(i); });
+  /* click delegato: vale anche per le domande ricostruite dalla dashboard */
+  pista.addEventListener('click', function (e) {
+    const voce = e.target.closest ? e.target.closest('.fh-voce') : null;
+    if (!voce) return;
+    const pos = voci.indexOf(voce);
+    if (pos !== -1) aggiorna(pos);
   });
 
   if (prev) prev.addEventListener('click', function () { aggiorna(corrente - 1); });
@@ -1801,6 +1825,14 @@
     const differenza = partenzaTouch - e.changedTouches[0].clientY;
     if (Math.abs(differenza) > 25) aggiorna(corrente + (differenza > 0 ? 1 : -1));
   }, { passive: true });
+
+  /* ricostruzione delle voci da dashboard (dati-remoti.js) */
+  function ricarica() {
+    voci = Array.prototype.slice.call(pista.querySelectorAll('.fh-voce'));
+    if (!voci.length) return;
+    aggiorna(0);
+  }
+  window.webnixFaqHomeRicarica = ricarica;
 
   window.addEventListener('resize', function () { aggiorna(corrente); });
 

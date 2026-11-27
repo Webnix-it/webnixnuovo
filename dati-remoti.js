@@ -7,7 +7,7 @@
    - recensioni        → carosello recensioni della home
    - portfolio         → lavori della home
    - pacchetti         → card della pagina Servizi
-   - faq               → domande della pagina FAQ
+   - faq               → domande della pagina FAQ e della home
 
    Se firebase-config.js è vuoto (o la rete non risponde) il sito
    resta esattamente com'è, con i contenuti scritti nell'HTML.
@@ -61,10 +61,19 @@
     return dati;
   }
 
-  function leggiJson(url) {
+  /* Lettura di un documento o di una collezione via REST.
+     Il primo caricamento di una pagina pesante può ritardare la richiesta:
+     con un solo tentativo e pochi secondi di attesa le FAQ (e gli altri
+     contenuti) restavano quelli scritti nell'HTML. Qui la richiesta ha più
+     tempo e, se fallisce, viene ripetuta una volta. */
+  function leggiJson(url, tentativiRimasti) {
+    var tentativi = tentativiRimasti === undefined ? 1 : tentativiRimasti;
     var controllo = typeof AbortController === "function" ? new AbortController() : null;
-    var timer = controllo ? setTimeout(function () { controllo.abort(); }, 7000) : null;
-    return fetch(url, controllo ? { signal: controllo.signal } : undefined)
+    var timer = controllo ? setTimeout(function () { controllo.abort(); }, 15000) : null;
+    var opzioni = { cache: "no-store" };
+    if (controllo) opzioni.signal = controllo.signal;
+
+    return fetch(url, opzioni)
       .then(function (res) {
         if (timer) clearTimeout(timer);
         if (!res.ok) throw new Error("HTTP " + res.status);
@@ -72,6 +81,10 @@
       })
       .catch(function (err) {
         if (timer) clearTimeout(timer);
+        if (tentativi > 0) {
+          return new Promise(function (riprova) { setTimeout(riprova, 1200); })
+            .then(function () { return leggiJson(url, tentativi - 1); });
+        }
         throw err;
       });
   }
@@ -826,6 +839,52 @@
   }
 
   /* ============================================================
+     FAQ IN HOME (sezione "Hai qualche domanda?")
+     Stesse domande della pagina FAQ, al posto di quelle scritte
+     nell'HTML: se la collezione è vuota resta il contenuto statico.
+     ============================================================ */
+  function disegnaFaqHome(voci) {
+    var pista = document.querySelector("#faq-home .fh-pista");
+    if (!pista || !voci.length) return;
+
+    voci.sort(perOrdine);
+    pista.innerHTML = "";
+
+    voci.forEach(function (f, posizione) {
+      var voce = document.createElement("button");
+      voce.type = "button";
+      voce.className = "fh-voce";
+      voce.setAttribute("data-risposta", f.answer || "");
+
+      var badge = document.createElement("span");
+      badge.className = "fh-badge";
+      badge.textContent = String(posizione + 1).padStart(2, "0");
+
+      var contenitoreIcona = document.createElement("span");
+      contenitoreIcona.className = "fh-icona";
+      var icona = document.createElement("i");
+      icona.className = f.icon || "fa-solid fa-circle-question";
+      icona.setAttribute("aria-hidden", "true");
+      contenitoreIcona.appendChild(icona);
+
+      var testo = document.createElement("span");
+      testo.className = "fh-domanda";
+      testo.textContent = f.question || "";
+
+      voce.appendChild(badge);
+      voce.appendChild(contenitoreIcona);
+      voce.appendChild(testo);
+      pista.appendChild(voce);
+    });
+
+    var totale = document.querySelector("#faq-home [data-fh-totale]");
+    if (totale) totale.textContent = String(voci.length).padStart(2, "0");
+
+    /* il rullo della home rilegge le voci appena create e torna sulla prima */
+    if (typeof window.webnixFaqHomeRicarica === "function") window.webnixFaqHomeRicarica();
+  }
+
+  /* ============================================================
      AVVIO
      ============================================================ */
   function avvia() {
@@ -890,6 +949,12 @@
     if (document.getElementById("rullo-pista")) {
       leggiCollezione("faq").then(function (voci) {
         if (voci.length) disegnaFaq(voci);
+      });
+    }
+
+    if (document.getElementById("faq-home")) {
+      leggiCollezione("faq").then(function (voci) {
+        if (voci.length) disegnaFaqHome(voci);
       });
     }
   }
