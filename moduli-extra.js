@@ -13,7 +13,8 @@
         domanda, dati e consensi.
 
      3) DIAGNOSI (chi-siamo.html): domande guidate sull'attività
-        (sito, logo, social, esigenze) per capire da dove partire.
+        (tipo, situazione, presenza online, problemi, obiettivi,
+        comunicazione, esigenze, brand/logo) per capire da dove partire.
 
    Le credenziali EmailJS arrivano da modulo-config.js
    (window.WEBNIX_MODULO_DEFAULT.notifica.emailjs): nessuna chiave
@@ -79,17 +80,20 @@
   /* Il gradiente del brand serve alla casella di consenso animata e al
      segno di conferma: se il modulo bozza non è ancora passato, lo creiamo. */
   function aggiungiGradienti(radice) {
-    if (document.getElementById("wb-brand-grad")) return;
+    var mancaBrand = !document.getElementById("wb-brand-grad");
+    if (!mancaBrand && document.getElementById("wb-grad")) return;
     var svg = document.createElementNS(NS, "svg");
     svg.setAttribute("class", "wb-defs");
     svg.setAttribute("aria-hidden", "true");
     svg.setAttribute("focusable", "false");
     svg.innerHTML =
       '<defs>' +
-      '<linearGradient id="wb-brand-grad" x1="0" y1="1" x2="1" y2="0">' +
-      '<stop offset="0%" class="wb-stop-a"></stop>' +
-      '<stop offset="100%" class="wb-stop-b"></stop>' +
-      '</linearGradient>' +
+      (mancaBrand
+        ? '<linearGradient id="wb-brand-grad" x1="0" y1="1" x2="1" y2="0">' +
+          '<stop offset="0%" class="wb-stop-a"></stop>' +
+          '<stop offset="100%" class="wb-stop-b"></stop>' +
+          '</linearGradient>'
+        : '') +
       '<linearGradient id="wb-grad" x1="0" y1="1" x2="1" y2="0">' +
       '<stop offset="0%" class="wb-stop-a"></stop>' +
       '<stop offset="100%" class="wb-stop-b"></stop>' +
@@ -771,8 +775,8 @@
       },
       titoloSuccesso: "Richiesta inviata!",
       testoSuccesso: function (dati) {
-        return "Abbiamo ricevuto la tua richiesta di assistenza: ti rispondiamo entro un giorno lavorativo all'indirizzo " +
-          (dati.email || "indicato") + ".";
+        return "Abbiamo ricevuto la tua richiesta di assistenza: ti rispondiamo entro un giorno lavorativo" +
+          (dati.email ? " all'indirizzo " + dati.email + "." : ".");
       }
     });
 
@@ -870,52 +874,144 @@
       id: "wbx-diagnosi",
       occhiello: "Modulo gratuito",
       titolo: "Facciamo il punto sulla tua attività",
-      sottotitolo: "Sei domande veloci: ci bastano per capire da dove partire.",
+      sottotitolo: "Nove domande veloci: ci bastano per capire da dove partire.",
       passi: [
         {
-          titolo: "La tua attività",
-          descrizione: "Così capiamo subito di che settore hai bisogno.",
+          titolo: "Che tipo di attività hai?",
+          descrizione: "Domanda 01 · Attività — Raccontaci brevemente di cosa ti occupi.",
           campi: [
-            campoTesto("attivita", "Che attività hai?", "text", {
-              obbligatorio: true,
-              segno: "Es. bar, studio di fisioterapia, negozio di abbigliamento…"
+            campoScelte("tipo_attivita", "Scegli la voce che ti descrive meglio", [
+              "Negozio o attività commerciale",
+              "Ristorante, bar o attività di ristorazione",
+              "Professionista o consulente",
+              "Attività di servizi o artigianale",
+              "Fitness, benessere o coaching",
+              "Azienda o attività B2B",
+              "Altro"
+            ], false, true),
+            campoTesto("dettaglio_attivita", "In una frase, di cosa ti occupi?", "text", {
+              segno: "Es. bar di quartiere con cucina, studio di fisioterapia…"
             })
           ]
         },
         {
-          titolo: "Il tuo sito web",
-          descrizione: "Se c'è già, lo guardiamo con occhi onesti.",
+          titolo: "A che punto si trova la tua attività?",
+          descrizione: "Domanda 02 · Situazione attuale — Da quanto tempo è attiva la tua attività?",
           campi: [
-            campoScelte("sito", "Hai già un sito web?", [
-              "No, non ce l'ho", "Sì, ma va rifatto", "Sì, ed è aggiornato"
-            ], false, false)
-          ]
-        },
-        {
-          titolo: "I tuoi social",
-          descrizione: "Dove sei già presente oggi.",
-          campi: [
-            campoScelte("social", "Quali social usi? (anche più di uno)", [
-              "Instagram", "Facebook", "TikTok", "LinkedIn", "Google Business", "Nessuno"
-            ], true, false)
-          ]
-        },
-        {
-          titolo: "Il tuo logo",
-          descrizione: "Se non ce l'hai possiamo occuparcene noi.",
-          campi: [
-            campoScelte("logo", "Hai un logo?", [
-              "Sì", "No", "Sì, ma vorrei rifarlo"
+            campoScelte("situazione", "Scegli la situazione che ti somiglia di più", [
+              "È ancora un'idea, sto progettando di aprire",
+              "Sto per aprire o ho appena aperto",
+              "È già avviata e operativa",
+              "È avviata, ma voglio rinnovarla o rilanciarla"
             ], false, true)
           ]
         },
         {
-          titolo: "Cosa ti serve",
-          descrizione: "Scegli quello che ti interessa, anche più di uno.",
+          titolo: "Come si presenta oggi la tua attività?",
+          descrizione: "Domanda 03 · Presenza online — Come possono trovarti oggi i tuoi potenziali clienti?",
           campi: [
-            campoScelte("servizi", "Di cosa hai bisogno? (anche più di uno)", [
-              "Sito web", "Logo", "Grafica", "Social", "Restyling"
-            ], true, true)
+            campoScelte("presenza", "Seleziona tutte le risposte che descrivono la tua situazione", [
+              "Ho già un sito web",
+              "Ho un profilo Instagram o Facebook",
+              "La mia attività è presente su Google Maps",
+              "Ho già un logo e un'immagine coordinata",
+              "Utilizzo strumenti online per ricevere prenotazioni",
+              "Non ho ancora una presenza online"
+            ], true, false)
+          ]
+        },
+        {
+          titolo: "Qual è la situazione che vorresti migliorare?",
+          descrizione: "Domanda 04 · Problemi e difficoltà — Non serve il gergo tecnico: raccontaci cosa non ti soddisfa.",
+          campi: [
+            campoTesto("problema", "C'è qualcosa della tua attività che oggi non ti soddisfa?", "area", {
+              righe: 5,
+              segno: "Es. Le persone non riescono a trovare la mia attività su Google, il mio sito è vecchio, non riesco a comunicare sui social…"
+            })
+          ]
+        },
+        {
+          titolo: "Che cosa vorresti ottenere?",
+          descrizione: "Domanda 05 · Obiettivi — Se potessi migliorare una cosa della tua attività, quale sarebbe?",
+          campi: [
+            campoScelte("obiettivo", "Scegli il tuo obiettivo principale", [
+              "Raggiungere nuovi clienti",
+              "Aumentare la visibilità della mia attività",
+              "Presentare la mia attività in modo più professionale",
+              "Vendere di più o promuovere i miei servizi",
+              "Ricevere e gestire più prenotazioni",
+              "Comunicare meglio con i miei clienti",
+              "Ho un altro obiettivo"
+            ], false, true),
+            campoTesto("obiettivo_extra", "Se vuoi, raccontaci qualcosa in più (facoltativo)", "area", {
+              righe: 3,
+              segno: "Qual è il risultato che vorresti raggiungere?"
+            })
+          ]
+        },
+        {
+          titolo: "Come stai gestendo oggi la comunicazione?",
+          descrizione: "Domanda 06 · Comunicazione — Come promuovi oggi la tua attività?",
+          campi: [
+            campoScelte("promozione", "Come promuovi oggi la tua attività?", [
+              "Principalmente tramite il passaparola",
+              "Pubblico sui social in autonomia",
+              "Mi affido già a un professionista o a un'agenzia",
+              "Utilizzo anche campagne pubblicitarie",
+              "Al momento non faccio attività di promozione"
+            ], false, true),
+            campoScelte("frequenza_social", "Quanto spesso comunichi sui social?", [
+              "Regolarmente",
+              "Ogni tanto",
+              "Quasi mai o mai"
+            ], false, true)
+          ]
+        },
+        {
+          titolo: "Informazioni aggiuntive",
+          descrizione: "Domanda 07 · Esigenze e priorità — C'è qualcosa che dovremmo sapere per aiutarti meglio?",
+          campi: [
+            campoTesto("esigenze", "Raccontaci esigenze particolari, idee o progetti che hai in mente", "area", {
+              righe: 4,
+              segno: "Scrivi qui tutto ciò che ritieni importante…"
+            }),
+            campoScelte("tempistica", "Entro quando vorresti realizzare il tuo progetto?", [
+              "Il prima possibile",
+              "Entro un mese",
+              "Entro i prossimi 3 mesi",
+              "Sto ancora valutando"
+            ], false, true)
+          ]
+        },
+        {
+          titolo: "Il tuo brand e la tua identità visiva",
+          descrizione: "Domanda 08 · Brand, logo e immagine — Ci aiuta a capire da dove partire anche graficamente.",
+          campi: [
+            campoScelte("logo", "Hai già un logo per la tua attività?", [
+              "Sì, realizzato da un professionista",
+              "Sì, ma vorrei rinnovarlo",
+              "Sì, l'ho fatto io",
+              "No, non ho un logo"
+            ], false, true),
+            campoScelte("immagine_coordinata", "Hai un'identità visiva coordinata (colori, font, materiali)?", [
+              "Sì, completa e coerente",
+              "Solo in parte",
+              "No, non ancora"
+            ], false, true),
+            campoScelte("nome_brand", "Il nome e il logo ti rappresentano davvero?", [
+              "Sì, sono soddisfatto",
+              "In parte, c'è qualcosa da sistemare",
+              "No, vorrei cambiarli"
+            ], false, true),
+            campoScelte("materiali_foto", "Hai foto e materiali della tua attività?", [
+              "Foto professionali",
+              "Foto fatte col telefono",
+              "Non ho materiale fotografico"
+            ], false, true),
+            campoTesto("brand_note", "C'è qualcosa del tuo brand che non ti convince? (facoltativo)", "area", {
+              righe: 3,
+              segno: "Es. Il logo è vecchio, i colori non mi piacciono, non ho materiali coerenti…"
+            })
           ]
         },
         {
@@ -924,11 +1020,7 @@
           campi: [
             campoTesto("nome", "Nome e cognome", "text", { obbligatorio: true, segno: "Es. Mario Rossi" }),
             campoTesto("email", "Email", "email", { obbligatorio: true, segno: "nome@email.it" }),
-            campoTesto("telefono", "Telefono o WhatsApp (facoltativo)", "tel", { segno: "+39…" }),
-            campoTesto("messaggio", "Vuoi aggiungere qualcosa?", "area", {
-              righe: 4,
-              segno: "Es. apro a settembre e vorrei essere pronto su Google…"
-            })
+            campoTesto("telefono", "Telefono o WhatsApp (facoltativo)", "tel", { segno: "+39…" })
           ].concat(consensi())
         }
       ],
@@ -939,7 +1031,7 @@
         return "Modulo gratuito — " + (dati.nome || "senza nome") + " (" + rif + ")";
       },
       attivita: function (dati) {
-        return dati.attivita || "";
+        return [dati.tipo_attivita, dati.situazione].filter(Boolean).join(" — ");
       },
       componi: function (dati, rif) {
         return [
@@ -948,15 +1040,29 @@
           "Ricevuta il: " + new Date().toLocaleString("it-IT"),
           "Pagina: " + location.pathname + location.search,
           "",
-          "ATTIVITÀ: " + (dati.attivita || "—"),
+          "ATTIVITÀ: " + (dati.tipo_attivita || "—"),
+          "DETTAGLIO ATTIVITÀ: " + (dati.dettaglio_attivita || "—"),
+          "SITUAZIONE: " + (dati.situazione || "—"),
+          "PRESENZA ONLINE: " + (dati.presenza || "—"),
+          "OBIETTIVO: " + (dati.obiettivo || "—"),
+          "OBIETTIVO (dettaglio): " + (dati.obiettivo_extra || "—"),
+          "PROMOZIONE: " + (dati.promozione || "—"),
+          "FREQUENZA SOCIAL: " + (dati.frequenza_social || "—"),
+          "TEMPISTICA: " + (dati.tempistica || "—"),
           "LOGO: " + (dati.logo || "—"),
-          "SITO WEB: " + (dati.sito || "—"),
-          "SOCIAL: " + (dati.social || "—"),
-          "SERVIZI: " + (dati.servizi || "—"),
+          "IMMAGINE COORDINATA: " + (dati.immagine_coordinata || "—"),
+          "NOME E LOGO: " + (dati.nome_brand || "—"),
+          "MATERIALI FOTO: " + (dati.materiali_foto || "—"),
           "TELEFONO: " + (dati.telefono || "—"),
           "",
-          "MESSAGGIO",
-          dati.messaggio || "—",
+          "PROBLEMA DA MIGLIORARE",
+          dati.problema || "—",
+          "",
+          "ESIGENZE E PRIORITÀ",
+          dati.esigenze || "—",
+          "",
+          "BRAND — NOTE",
+          dati.brand_note || "—",
           "",
           "CONSENSI",
           righeConsensi(dati)
